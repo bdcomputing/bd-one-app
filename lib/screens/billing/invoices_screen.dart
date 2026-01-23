@@ -1,5 +1,6 @@
 import 'package:bdcomputing/models/common/invoice.dart';
 import 'package:bdcomputing/screens/billing/invoices_provider.dart';
+import 'package:bdcomputing/screens/common/pdf_viewer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -484,12 +485,41 @@ class _InvoiceDetailSheetState extends State<InvoiceDetailSheet> {
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () {}, // Link to open/download invoice link
-                    icon: const HugeIcon(icon: HugeIcons.strokeRoundedDownload01, size: 18, color: Color(0xFF374151)),
-                    label: const Text('Download'),
+                    onPressed: widget.invoice.invoiceLink.isNotEmpty
+                        ? () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => PdfViewerScreen(
+                                  pdfUrl: widget.invoice.invoiceLink,
+                                  documentTitle: 'Invoice ${widget.invoice.serial}',
+                                  documentSerial: widget.invoice.serial,
+                                ),
+                              ),
+                            );
+                          }
+                        : null,
+                    icon: HugeIcon(
+                      icon: HugeIcons.strokeRoundedFileView,
+                      size: 18,
+                      color: widget.invoice.invoiceLink.isNotEmpty
+                          ? const Color(0xFF374151)
+                          : const Color(0xFF9CA3AF),
+                    ),
+                    label: Text(
+                      widget.invoice.invoiceLink.isNotEmpty ? 'View PDF' : 'PDF Not Available',
+                      style: TextStyle(
+                        color: widget.invoice.invoiceLink.isNotEmpty
+                            ? const Color(0xFF374151)
+                            : const Color(0xFF9CA3AF),
+                      ),
+                    ),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      side: const BorderSide(color: Color(0xFFD1D5DB)),
+                      side: BorderSide(
+                        color: widget.invoice.invoiceLink.isNotEmpty
+                            ? const Color(0xFFD1D5DB)
+                            : const Color(0xFFE5E7EB),
+                      ),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
                   ),

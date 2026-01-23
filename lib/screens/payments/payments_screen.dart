@@ -1,5 +1,6 @@
 import 'package:bdcomputing/core/styles.dart';
 import 'package:bdcomputing/models/payments/payment.dart';
+import 'package:bdcomputing/screens/common/pdf_viewer_screen.dart';
 import 'package:bdcomputing/screens/payments/payments_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -427,16 +428,26 @@ class PaymentDetailSheet extends StatelessWidget {
             ),
           ),
           
-          if (payment.receiptLink != null)
+          if (payment.receiptLink != null && payment.receiptLink!.isNotEmpty)
             Padding(
               padding: const EdgeInsets.all(24),
               child: SizedBox(
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton.icon(
-                  onPressed: () {}, // Link to open receipt
-                  icon: const HugeIcon(icon: HugeIcons.strokeRoundedDownload01, color: Colors.white, size: 20),
-                  label: const Text('Download Receipt', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => PdfViewerScreen(
+                          pdfUrl: payment.receiptLink!,
+                          documentTitle: 'Receipt ${payment.receiptNumber}',
+                          documentSerial: payment.receiptNumber,
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const HugeIcon(icon: HugeIcons.strokeRoundedFileView, color: Colors.white, size: 20),
+                  label: const Text('View Receipt', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
