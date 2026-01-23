@@ -50,6 +50,7 @@ flutter:
     - assets/images/
     - assets/icon/
     - assets/icons/
+    - assets/payments/
     - assets/images/general/
     - assets/images/onboarding/
     - assets/images/auth/
