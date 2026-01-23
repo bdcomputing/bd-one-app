@@ -199,49 +199,65 @@ class _HomeTabState extends ConsumerState<HomeTab>
         borderRadius: BorderRadius.circular(24),
         child: Stack(
           children: [
-            // Animated background pattern 1
+            // Animated background pattern 1 (Top Right)
             Positioned(
-              top: -50,
-              right: -50,
+              top: -100,
+              right: -100,
               child: AnimatedBuilder(
                 animation: _controller,
                 builder: (context, child) {
-                  return Transform.rotate(
-                    angle: _controller.value * 2 * 3.14159,
-                    child: child,
+                  // Pulse scale between 1.0 and 1.1
+                  final pulse = 1.0 + 0.05 * (1 - (2 * _controller.value - 1).abs());
+
+                  return Transform.scale(
+                    scale: pulse,
+                    child: Transform.rotate(
+                      angle: _controller.value * 2 * 3.14159,
+                      child: child,
+                    ),
                   );
                 },
                 child: Container(
-                  height: 200,
+                  width: 300,
+                  height: 300,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      width: 40,
+                    gradient: RadialGradient(
+                      colors: [
+                        Colors.white.withValues(alpha: 0.1),
+                        Colors.white.withValues(alpha: 0.0),
+                      ],
                     ),
                   ),
                 ),
               ),
             ),
-            // Animated background pattern 2
+            // Animated background pattern 2 (Bottom Left)
             Positioned(
-              bottom: -60,
-              left: -20,
+              bottom: -80,
+              left: -40,
               child: AnimatedBuilder(
                 animation: _controller,
                 builder: (context, child) {
-                  return Transform.rotate(
-                    angle: -_controller.value * 2 * 3.14159,
-                    child: child,
+                   final pulse = 1.0 + 0.08 * (1 - (2 * ((_controller.value + 0.5) % 1.0) - 1).abs());
+                  return Transform.scale(
+                    scale: pulse,
+                    child: Transform.rotate(
+                      angle: -_controller.value * 2 * 3.14159,
+                      child: child,
+                    ),
                   );
                 },
                 child: Container(
-                  height: 150,
+                  width: 200,
+                  height: 200,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.03),
-                      width: 30,
+                    gradient: RadialGradient(
+                      colors: [
+                        Colors.white.withValues(alpha: 0.08),
+                        Colors.white.withValues(alpha: 0.0),
+                      ],
                     ),
                   ),
                 ),
@@ -262,12 +278,14 @@ class _HomeTabState extends ConsumerState<HomeTab>
                     fit: BoxFit.contain,
                     colorFilter: ColorFilter.mode(
                       AppColors.primary.withValues(alpha: 0.3),
-                      BlendMode.dstATop, // More visible
+                      BlendMode.dstATop,
                     ),
                   ),
                 ),
               ),
             ),
+
+
             Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
