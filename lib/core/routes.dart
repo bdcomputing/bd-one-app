@@ -12,11 +12,11 @@ import 'package:bdcomputing/screens/auth/presentation/update_password.dart';
 import 'package:bdcomputing/screens/contact/get_help_screen.dart';
 import 'package:bdcomputing/screens/onboarding_screen.dart';
 import 'package:bdcomputing/screens/payments/mpesa_payment_status.dart';
-import 'package:bdcomputing/screens/payments/payment_screen.dart';
+import 'package:bdcomputing/screens/payments/initiate_payment_screen.dart';
 import 'package:bdcomputing/screens/payments/paybill_screen.dart';
-import 'package:bdcomputing/screens/privacy_policy/privacy_policy_screen.dart';
+import 'package:bdcomputing/screens/help/privacy_policy_screen.dart';
 import 'package:bdcomputing/screens/wrapper.dart';
-import 'package:bdcomputing/screens/terms/terms_screen.dart';
+import 'package:bdcomputing/screens/help/terms_screen.dart';
 import 'package:bdcomputing/screens/no_internet.dart';
 
 class AppRoutes {
@@ -88,7 +88,7 @@ class AppRoutes {
         final args = settings.arguments as Map<String, dynamic>?;
         final invoiceId = args?['invoiceId'] as String? ?? '';
         return AdaptivePageRoute(
-          builder: (_) => PaymentScreen(invoiceId: invoiceId),
+          builder: (_) => InitiatePaymentScreen(invoiceId: invoiceId),
         );
       case paybill:
         final args = settings.arguments as Map<String, dynamic>?;

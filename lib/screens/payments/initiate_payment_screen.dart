@@ -15,15 +15,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bdcomputing/providers/providers.dart';
 import 'package:bdcomputing/providers/currencies/currency_list_provider.dart';
 
-class PaymentScreen extends ConsumerStatefulWidget {
+class InitiatePaymentScreen extends ConsumerStatefulWidget {
   final String invoiceId;
-  const PaymentScreen({super.key, required this.invoiceId});
+  const InitiatePaymentScreen({super.key, required this.invoiceId});
 
   @override
-  ConsumerState<PaymentScreen> createState() => _PaymentScreenState();
+  ConsumerState<InitiatePaymentScreen> createState() => _InitiatePaymentScreenState();
 }
 
-class _PaymentScreenState extends ConsumerState<PaymentScreen> {
+class _InitiatePaymentScreenState extends ConsumerState<InitiatePaymentScreen> {
   String _selectedPaymentMethod = '';
   final TextEditingController _phoneController = TextEditingController();
   late String invoiceId;
