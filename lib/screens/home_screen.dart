@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:bdcomputing/core/styles.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:bdcomputing/screens/auth/auth_provider.dart';
+import 'package:intl/intl.dart';
 
-class HomeTab extends StatelessWidget {
+class HomeTab extends ConsumerWidget {
   const HomeTab({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+    final user = authState is Authenticated ? authState.user : null;
+    final formatter = NumberFormat("#,##0.00", "en_US");
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -17,9 +24,9 @@ class HomeTab extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildHeader(),
+                    _buildHeader(user),
                     const SizedBox(height: 1),
-                    _buildBalanceCard(),
+                    _buildBalanceCard(user, formatter),
                     const SizedBox(height: 24),
                     _buildQuickActions(),
                     const SizedBox(height: 28),
@@ -35,7 +42,7 @@ class HomeTab extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(User? user) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
@@ -43,20 +50,21 @@ class HomeTab extends StatelessWidget {
           Container(
             width: 44,
             height: 44,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: AppColors.sage100,
               image: DecorationImage(
-                image: NetworkImage('https://i.pravatar.cc/150?img=14'),
+                image: NetworkImage(
+                    user?.profileImage ?? 'https://i.pravatar.cc/150?img=14'),
                 fit: BoxFit.contain,
               ),
             ),
           ),
           const SizedBox(width: 12),
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Hello,',
                 style: TextStyle(
                   fontSize: 14,
@@ -65,8 +73,8 @@ class HomeTab extends StatelessWidget {
                 ),
               ),
               Text(
-                'Sanusi Olamide',
-                style: TextStyle(
+                user?.name ?? 'Sanusi Olamide',
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
@@ -109,7 +117,7 @@ class HomeTab extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: const BoxDecoration(
-              gradient: const LinearGradient(
+              gradient: LinearGradient(
                 colors: [AppColors.primary, AppColors.primary700],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -129,13 +137,28 @@ class HomeTab extends StatelessWidget {
     );
   }
 
-  Widget _buildBalanceCard() {
+  Widget _buildBalanceCard(User? user, NumberFormat formatter) {
+    var balance = user?.client?.currentBalance ?? 0.0;
+    // ensure the balance is positive
+    if (balance < 0) {
+      balance = balance * -1;
+    }
+    final balanceString = formatter.format(balance);
+    // Split integral and decimal parts for styling
+    final parts = balanceString.split('.');
+    final integral = parts[0];
+    final decimal = parts.length > 1 ? parts[1] : '00';
+
+    // Default account number fallback
+    final accountNumber =
+        user?.client?.accountNumber ?? user?.client?.serial ?? 'CL-2024-0536';
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       height: 180,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(
+        gradient:  const LinearGradient(
           colors: [AppColors.primary, AppColors.primary],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
@@ -148,132 +171,136 @@ class HomeTab extends StatelessWidget {
           ),
         ],
       ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -20,
-            top: -20,
-            bottom: -20,
-            child: Container(
-              width: 200,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage('https://i.pravatar.cc/400?img=27'),
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(
-                    AppColors.primary,
-                    BlendMode.darken,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Stack(
+          children: [
+            Positioned(
+              right: -20,
+              top: -20,
+              bottom: -20,
+              child: Container(
+                width: 200,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage('https://i.pravatar.cc/400?img=27'),
+                    fit: BoxFit.cover,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.primary,
+                      BlendMode.darken,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Text(
-                      'CL-2024-0536',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1,
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        accountNumber,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(8),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const HugeIcon(
+                          icon: HugeIcons.strokeRoundedCopy01,
+                          size: 14,
+                          color: Colors.white,
+                        ),
                       ),
-                      child: const HugeIcon(
-                        icon: HugeIcons.strokeRoundedCopy01,
-                        size: 14,
-                        color: Colors.white,
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const HugeIcon(
+                          icon: HugeIcons.strokeRoundedArrowUpRight01,
+                          size: 18,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(10),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  const Row(
+                    children: [
+                      Text(
+                        'Client Balance',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
-                      child: const HugeIcon(
-                        icon: HugeIcons.strokeRoundedArrowUpRight01,
+                      SizedBox(width: 8),
+                      HugeIcon(
+                        icon: HugeIcons.strokeRoundedView,
                         size: 18,
                         color: Colors.white,
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                const Row(
-                  children: [
-                    Text(
-                      'Client Balance',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    HugeIcon(
-                      icon: HugeIcons.strokeRoundedView,
-                      size: 18,
-                      color: Colors.white,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'KES ',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          '869,699',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 36,
-                            fontWeight: FontWeight.w700,
-                            height: 1,
-                          ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'KES ',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
                         ),
-                        Text(
-                          '.06',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            integral,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 36,
+                              fontWeight: FontWeight.w700,
+                              height: 1,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+                          Text(
+                            '.$decimal',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+
 
   Widget _buildQuickActions() {
     return Column(
