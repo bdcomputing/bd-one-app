@@ -114,3 +114,9 @@ final invoiceMetricsProvider = Provider<Map<String, double>>((ref) {
     'totalPaid': totalPaid,
   };
 });
+
+/// Provider that counts invoices with outstanding balance (amountDue > 0)
+final unpaidInvoicesCountProvider = Provider<int>((ref) {
+  final invoices = ref.watch(invoicesProvider).invoices;
+  return invoices.where((invoice) => invoice.amountDue > 0).length;
+});

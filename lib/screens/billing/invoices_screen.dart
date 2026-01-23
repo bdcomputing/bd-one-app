@@ -66,12 +66,12 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Metrics Summary
                   _buildMetricsSummary(metrics),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Search & Filter
                   Row(
                     children: [
@@ -103,7 +103,9 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
                                     border: InputBorder.none,
                                   ),
                                   onSubmitted: (val) {
-                                    ref.read(invoicesProvider.notifier).setKeyword(val);
+                                    ref
+                                        .read(invoicesProvider.notifier)
+                                        .setKeyword(val);
                                   },
                                 ),
                               ),
@@ -116,38 +118,46 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
                 ],
               ),
             ),
-            
+
             // Invoice List
             Expanded(
               child: state.isLoading && state.invoices.isEmpty
                   ? const Center(child: CircularProgressIndicator())
                   : state.error != null && state.invoices.isEmpty
-                      ? Center(child: Text(state.error!))
-                      : RefreshIndicator(
-                          onRefresh: () => ref.read(invoicesProvider.notifier).refresh(),
-                          child: state.invoices.isEmpty
-                              ? _buildEmptyState()
-                              : ListView.builder(
-                                  padding: EdgeInsets.zero,
-                                  itemCount: state.invoices.length + (state.page <= state.totalPages ? 1 : 0),
-                                  itemBuilder: (context, index) {
-                                    if (index == state.invoices.length) {
-                                      ref.read(invoicesProvider.notifier).fetchInvoices();
-                                      return const Center(child: Padding(
-                                        padding: EdgeInsets.all(16.0),
-                                        child: CircularProgressIndicator(),
-                                      ));
-                                    }
-                                    final invoice = state.invoices[index];
-                                    return InvoiceCard(
-                                      invoice: invoice,
-                                      isExpanded: _expandedItems[invoice.id] ?? false,
-                                      onToggle: () => _toggleExpand(invoice.id),
-                                      onTap: () => _showInvoiceDetail(invoice),
-                                    );
-                                  },
-                                ),
-                        ),
+                  ? Center(child: Text(state.error!))
+                  : RefreshIndicator(
+                      onRefresh: () =>
+                          ref.read(invoicesProvider.notifier).refresh(),
+                      child: state.invoices.isEmpty
+                          ? _buildEmptyState()
+                          : ListView.builder(
+                              padding: EdgeInsets.zero,
+                              itemCount:
+                                  state.invoices.length +
+                                  (state.page <= state.totalPages ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (index == state.invoices.length) {
+                                  ref
+                                      .read(invoicesProvider.notifier)
+                                      .fetchInvoices();
+                                  return const Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(16.0),
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+                                }
+                                final invoice = state.invoices[index];
+                                return InvoiceCard(
+                                  invoice: invoice,
+                                  isExpanded:
+                                      _expandedItems[invoice.id] ?? false,
+                                  onToggle: () => _toggleExpand(invoice.id),
+                                  onTap: () => _showInvoiceDetail(invoice),
+                                );
+                              },
+                            ),
+                    ),
             ),
           ],
         ),
@@ -160,7 +170,11 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const HugeIcon(icon: HugeIcons.strokeRoundedInvoice01, size: 64, color: Color(0xFFE5E7EB)),
+          const HugeIcon(
+            icon: HugeIcons.strokeRoundedInvoice01,
+            size: 64,
+            color: Color(0xFFE5E7EB),
+          ),
           const SizedBox(height: 16),
           Text(
             'No invoices found',
@@ -262,9 +276,7 @@ class InvoiceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Color(0xFFE5E5E5), width: 1),
-        ),
+        border: Border(bottom: BorderSide(color: Color(0xFFE5E5E5), width: 1)),
       ),
       child: Column(
         children: [
@@ -281,7 +293,9 @@ class InvoiceCard extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              NumberFormat.currency(symbol: 'KES ').format(invoice.totalAmount),
+                              NumberFormat.currency(
+                                symbol: 'KES ',
+                              ).format(invoice.totalAmount),
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -289,7 +303,10 @@ class InvoiceCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: _getStatusColor(invoice.status),
                                 borderRadius: BorderRadius.circular(4),
@@ -316,6 +333,7 @@ class InvoiceCard extends StatelessWidget {
                       ],
                     ),
                   ),
+
                   const HugeIcon(
                     icon: HugeIcons.strokeRoundedMoreVertical,
                     size: 20,
@@ -338,14 +356,26 @@ class InvoiceCard extends StatelessWidget {
           if (isExpanded)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildDetailRow('DUE DATE', DateFormat('MMM dd, yyyy').format(invoice.dueDate)),
-                  const SizedBox(height: 12),
-                  _buildDetailRow('AMOUNT DUE', NumberFormat.currency(symbol: 'KES ').format(invoice.amountDue)),
-                  const SizedBox(height: 12),
-                  _buildDetailRow('CREATED AT', DateFormat('MMM dd, yyyy').format(invoice.createdAt)),
+                  _buildDetailRow(
+                    'DUE DATE',
+                    DateFormat('MMM dd, yyyy').format(invoice.dueDate),
+                  ),
+                  const SizedBox(width: 12),
+                  _buildDetailRow(
+                    'AMOUNT DUE',
+                    NumberFormat.currency(
+                      symbol: 'KES ',
+                    ).format(invoice.amountDue),
+                  ),
+                  const SizedBox(width: 12),
+                  _buildDetailRow(
+                    'CREATED AT',
+                    DateFormat('MMM dd, yyyy').format(invoice.createdAt),
+                  ),
                 ],
               ),
             ),
@@ -368,10 +398,7 @@ class InvoiceCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 13, color: Colors.black),
-        ),
+        Text(value, style: const TextStyle(fontSize: 13, color: Colors.black)),
       ],
     );
   }
@@ -412,7 +439,11 @@ class _InvoiceDetailSheetState extends State<InvoiceDetailSheet> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
-                  icon: const HugeIcon(icon: HugeIcons.strokeRoundedCancel01, size: 20, color: Colors.black),
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedCancel01,
+                    size: 20,
+                    color: Colors.black,
+                  ),
                   onPressed: widget.onClose,
                 ),
               ],
@@ -432,32 +463,68 @@ class _InvoiceDetailSheetState extends State<InvoiceDetailSheet> {
                       color: const Color(0xFF2563EB).withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: const HugeIcon(icon: HugeIcons.strokeRoundedInvoice01, color: Color(0xFF2563EB), size: 32),
+                    child: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedInvoice01,
+                      color: Color(0xFF2563EB),
+                      size: 32,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    NumberFormat.currency(symbol: 'KES ').format(widget.invoice.totalAmount),
-                    style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    NumberFormat.currency(
+                      symbol: 'KES ',
+                    ).format(widget.invoice.totalAmount),
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'No. ${widget.invoice.serial}',
-                    style: const TextStyle(color: Color(0xFF666666), fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                      color: Color(0xFF666666),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   const SizedBox(height: 32),
-                  
+
                   // Summary Cards
-                  _buildInfoSection('Status', widget.invoice.status.toUpperCase()),
-                  _buildInfoSection('Due Date', DateFormat('MMM dd, yyyy').format(widget.invoice.dueDate)),
-                  _buildInfoSection('Total Amount', NumberFormat.currency(symbol: 'KES ').format(widget.invoice.totalAmount)),
-                  _buildInfoSection('Amount Paid', NumberFormat.currency(symbol: 'KES ').format(widget.invoice.amountPaid)),
-                  _buildInfoSection('Amount Due', NumberFormat.currency(symbol: 'KES ').format(widget.invoice.amountDue)),
-                  
+                  _buildInfoSection(
+                    'Status',
+                    widget.invoice.status.toUpperCase(),
+                  ),
+                  _buildInfoSection(
+                    'Due Date',
+                    DateFormat('MMM dd, yyyy').format(widget.invoice.dueDate),
+                  ),
+                  _buildInfoSection(
+                    'Total Amount',
+                    NumberFormat.currency(
+                      symbol: 'KES ',
+                    ).format(widget.invoice.totalAmount),
+                  ),
+                  _buildInfoSection(
+                    'Amount Paid',
+                    NumberFormat.currency(
+                      symbol: 'KES ',
+                    ).format(widget.invoice.amountPaid),
+                  ),
+                  _buildInfoSection(
+                    'Amount Due',
+                    NumberFormat.currency(
+                      symbol: 'KES ',
+                    ).format(widget.invoice.amountDue),
+                  ),
+
                   if (widget.invoice.notes.isNotEmpty) ...[
                     const SizedBox(height: 24),
                     const Align(
                       alignment: Alignment.centerLeft,
-                      child: Text('Notes', style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: Text(
+                        'Notes',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Container(
@@ -469,7 +536,10 @@ class _InvoiceDetailSheetState extends State<InvoiceDetailSheet> {
                       ),
                       child: Text(
                         widget.invoice.notes,
-                        style: const TextStyle(color: Color(0xFF666666), height: 1.5),
+                        style: const TextStyle(
+                          color: Color(0xFF666666),
+                          height: 1.5,
+                        ),
                       ),
                     ),
                   ],
@@ -491,7 +561,8 @@ class _InvoiceDetailSheetState extends State<InvoiceDetailSheet> {
                               MaterialPageRoute(
                                 builder: (context) => PdfViewerScreen(
                                   pdfUrl: widget.invoice.invoiceLink,
-                                  documentTitle: 'Invoice ${widget.invoice.serial}',
+                                  documentTitle:
+                                      'Invoice ${widget.invoice.serial}',
                                   documentSerial: widget.invoice.serial,
                                 ),
                               ),
@@ -506,7 +577,9 @@ class _InvoiceDetailSheetState extends State<InvoiceDetailSheet> {
                           : const Color(0xFF9CA3AF),
                     ),
                     label: Text(
-                      widget.invoice.invoiceLink.isNotEmpty ? 'View PDF' : 'PDF Not Available',
+                      widget.invoice.invoiceLink.isNotEmpty
+                          ? 'View PDF'
+                          : 'PDF Not Available',
                       style: TextStyle(
                         color: widget.invoice.invoiceLink.isNotEmpty
                             ? const Color(0xFF374151)
@@ -520,22 +593,34 @@ class _InvoiceDetailSheetState extends State<InvoiceDetailSheet> {
                             ? const Color(0xFFD1D5DB)
                             : const Color(0xFFE5E7EB),
                       ),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: widget.invoice.amountDue > 0 ? () {
-                      Navigator.of(context).pushNamed('/payment', arguments: {'invoiceId': widget.invoice.id});
-                    } : null,
+                    onPressed: widget.invoice.amountDue > 0
+                        ? () {
+                            Navigator.of(context).pushNamed(
+                              '/payment',
+                              arguments: {'invoiceId': widget.invoice.id},
+                            );
+                          }
+                        : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                    child: const Text('Pay Now', style: TextStyle(color: Colors.white)),
+                    child: const Text(
+                      'Pay Now',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
               ],

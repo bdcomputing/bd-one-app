@@ -1,4 +1,5 @@
 import 'package:bdcomputing/screens/billing/invoices_screen.dart';
+import 'package:bdcomputing/screens/billing/invoices_provider.dart';
 import 'package:bdcomputing/screens/payments/payments_screen.dart';
 import 'package:bdcomputing/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ class _HomeWrapperState extends State<HomeWrapper> {
         body: IndexedStack(index: _currentIndex, children: _screens),
         bottomNavigationBar: Consumer(
           builder: (context, ref, _) {
-            const itemCount = 10;
+            final unpaidCount = ref.watch(unpaidInvoicesCountProvider);
             return BottomNavigationBar(
               backgroundColor: Colors.white,
               currentIndex: _currentIndex,
@@ -64,7 +65,7 @@ class _HomeWrapperState extends State<HomeWrapper> {
                         icon: HugeIcons.strokeRoundedInvoice01,
                         size: 30,
                       ),
-                      if (itemCount > 0)
+                      if (unpaidCount > 0)
                         Positioned(
                           top: -6,
                           right: -12,
@@ -78,10 +79,10 @@ class _HomeWrapperState extends State<HomeWrapper> {
                               minWidth: 18,
                               minHeight: 18,
                             ),
-                            child: const Center(
+                            child: Center(
                               child: Text(
-                                '$itemCount',
-                                style: TextStyle(
+                                '$unpaidCount',
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,

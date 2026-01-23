@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:bdcomputing/services/pdf_service.dart';
-import 'package:flutter/foundation.dart';
 
 class PdfViewerScreen extends StatefulWidget {
   final String pdfUrl;
