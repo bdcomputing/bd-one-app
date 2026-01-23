@@ -3,11 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:bdcomputing/screens/auth/presentation/auth_guard.dart';
 import 'package:bdcomputing/core/styles.dart';
-import 'package:bdcomputing/screens/retail-fuel-prices/retail-fuel-prices.dart';
-import 'package:bdcomputing/screens/orders/orders_screen.dart';
-import 'package:bdcomputing/screens/products/products.dart';
 import 'package:bdcomputing/screens/home_screen.dart';
-import 'package:bdcomputing/screens/store-setup/store_setup.dart';
 
 class HomeWrapper extends StatefulWidget {
   const HomeWrapper({super.key});
@@ -21,10 +17,10 @@ class _HomeWrapperState extends State<HomeWrapper> {
 
   final List<Widget> _screens = const [
     HomeTab(),
-    ProductsScreen(),
-    RetailFuelPricesScreen(),
-    OrdersScreen(),
-    StoreSetupScreen(),
+    HomeTab(),
+    HomeTab(),
+    HomeTab(),
+
   ];
 
   @override

@@ -8,7 +8,6 @@ import 'package:bdcomputing/core/utils/api_client.dart';
 import 'package:bdcomputing/core/utils/jwt_helper.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:bdcomputing/screens/auth/data/auth_service.dart';
-import 'package:bdcomputing/services/vendor_service.dart';
 
 class AuthRepository {
   static const _keyAccessToken = 'accessToken';
@@ -67,7 +66,7 @@ class AuthRepository {
     var user = User.fromJson(userJson);
     
     // Ensure we have full vendor data including country
-    user = await _ensureVendorData(user, userJson);
+    user = await _ensureCustomerData(user, userJson);
     
     await _saveSession(result.accessToken, result.refreshToken, user.toJson());
     return Authenticated(user);
@@ -83,7 +82,7 @@ class AuthRepository {
     var user = User.fromJson(userJson);
     
     // Ensure we have full vendor data including country
-    user = await _ensureVendorData(user, userJson);
+    user = await _ensureCustomerData(user, userJson);
     
     await _saveSession(result.accessToken, result.refreshToken, user.toJson());
     return Authenticated(user);
@@ -196,7 +195,7 @@ class AuthRepository {
     var user = User.fromJson(userBody);
     
     // Ensure we have full vendor data including country
-    user = await _ensureVendorData(user, userBody);
+    user = await _ensureCustomerData(user, userBody);
     
     await _saveUser(user.toJson());
     
@@ -204,7 +203,7 @@ class AuthRepository {
   }
 
   // Ensure user has complete vendor data (fetched if necessary)
-  Future<User> _ensureVendorData(User user, Map<String, dynamic> userJson) async {
+  Future<User> _ensureCustomerData(User user, Map<String, dynamic> userJson) async {
     // If user has a vendorId but vendor object or country is missing, fetch it
     if (user.vendorId != null && (user.vendor == null || user.vendor?.country == null)) {
       try {

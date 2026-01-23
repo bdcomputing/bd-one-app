@@ -21,9 +21,7 @@ dependencies:
   fluttertoast:
   fl_chart:
   geocoding: ^4.0.0
-  geolocator: ^14.0.2
   google_fonts: ^6.3.3
-  google_maps_flutter: ^2.13.1
   http: ^1.5.0
   hugeicons: ^1.0.0
   intl: ^0.20.2

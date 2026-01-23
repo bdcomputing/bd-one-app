@@ -1,3 +1,4 @@
+import 'package:bdcomputing/screens/store-setup/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:bdcomputing/core/navigation/adaptive_page_route.dart';
 import 'package:bdcomputing/screens/auth/presentation/auth_guard.dart';
@@ -8,16 +9,10 @@ import 'package:bdcomputing/screens/auth/presentation/signup_screen.dart';
 import 'package:bdcomputing/screens/auth/presentation/update_password.dart';
 import 'package:bdcomputing/screens/contact/get_help_screen.dart';
 import 'package:bdcomputing/screens/onboarding_screen.dart';
-import 'package:bdcomputing/screens/orders/fuel_order_details_screen.dart';
 import 'package:bdcomputing/screens/payments/mpesa_payment_status.dart';
 import 'package:bdcomputing/screens/payments/payment_screen.dart';
 import 'package:bdcomputing/screens/payments/paybill_screen.dart';
 import 'package:bdcomputing/screens/privacy_policy/privacy_policy_screen.dart';
-import 'package:bdcomputing/screens/products/manage-product.dart';
-import 'package:bdcomputing/screens/products/view-product.dart';
-import 'package:bdcomputing/screens/retail-fuel-prices/add_edit_retail_fuel_price_screen.dart';
-import 'package:bdcomputing/screens/store-setup/profile_screen.dart';
-import 'package:bdcomputing/screens/store-setup/store_setup.dart';
 import 'package:bdcomputing/screens/wrapper.dart';
 import 'package:bdcomputing/screens/terms/terms_screen.dart';
 import 'package:bdcomputing/screens/no_internet.dart';
@@ -37,20 +32,6 @@ class AppRoutes {
   static const String forgotPassword = '/forgot-password';
   static const String updatePassword = '/update-password';
 
-  // Product-specific routes
-  static const String products = '/products';
-  static const String viewProduct = '/view-product';
-  static const String newProduct = '/new-product';
-
-  // Fuel-specific routes
-  static const String newFuelPrice = '/new-fuel-price';
-
-  //Orders
-  static const String myProductOrders = '/my-product-orders';
-  static const String myFuelOrders = '/my-fuel-orders';
-  static const String terms = '/terms';
-  static const String productOrderDetails = '/product-order-details';
-  static const String fuelOrderDetails = '/fuel-order-details';
 
   // Payment
   static const String payment = '/payment';
@@ -63,6 +44,8 @@ class AppRoutes {
 
   // Support
   static const String privacyPolicy = '/privacy-policy';
+  static const String terms = '/terms';
+  
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -122,64 +105,6 @@ class AppRoutes {
       case getHelp:
         return AdaptivePageRoute(builder: (_) => const GetHelpScreen());
 
-// Products
-      case newProduct:
-        final args = settings.arguments as Map<String, dynamic>?;
-        final productId = args?['productId'] as String?;
-        return AdaptivePageRoute(
-          builder: (_) => ManageProductScreen(productId: productId),
-        );
-
-      case viewProduct:
-        final args = settings.arguments as Map<String, dynamic>?;
-        final productId = args?['productId'];
-        if (productId == null) {
-          return AdaptivePageRoute(
-            builder: (_) =>
-                const Scaffold(body: Center(child: Text('Product ID not found'))),
-          );
-        }
-        return AdaptivePageRoute(
-            builder: (_) => ViewProductScreen(productId: productId));
-
-      case newFuelPrice:
-        return AdaptivePageRoute(
-          builder: (_) => const AddEditRetailFuelPriceScreen(),
-        );
-
-      case storeSetup:
-        return AdaptivePageRoute(
-          builder: (_) => const AuthGuard(child: StoreSetupScreen()),
-        );
-
-      case productOrderDetails:
-        final args = settings.arguments as Map<String, dynamic>?;
-        final orderId = args?['orderId'] as String?;
-
-        if (orderId == null) {
-          return AdaptivePageRoute(
-            builder: (_) => const Scaffold(
-              body: Center(child: Text('Order ID is required')),
-            ),
-          );
-        }
-
-      case fuelOrderDetails:
-        final args = settings.arguments as Map<String, dynamic>?;
-        final orderId = args?['orderId'] as String?;
-
-        if (orderId == null) {
-          return AdaptivePageRoute(
-            builder: (_) => const Scaffold(
-              body: Center(child: Text('Order ID is required')),
-            ),
-          );
-        }
-
-        return AdaptivePageRoute(
-          builder: (_) =>
-              AuthGuard(child: FuelOrderDetailsScreen(orderId: orderId)),
-        );
 
       /// Fallback
       default:

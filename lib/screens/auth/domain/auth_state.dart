@@ -3,7 +3,7 @@ import 'package:bdcomputing/screens/auth/domain/user_model.dart';
 sealed class AuthState {
   const AuthState();
 
-  get user => null;
+  User get user => throw UnimplementedError();
 }
 
 class AuthLoading extends AuthState {
@@ -15,6 +15,7 @@ class Unauthenticated extends AuthState {
 }
 
 class Authenticated extends AuthState {
+  @override
   final User user;
   const Authenticated(this.user);
 }
