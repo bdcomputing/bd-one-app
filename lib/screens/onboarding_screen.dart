@@ -1,3 +1,4 @@
+import 'package:bdcomputing/core/styles.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -120,8 +121,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with Ticker
                               curve: Curves.elasticOut,
                             ),
                           ),
-                          child: Image.network(
-                            'https://bdcomputing.co.ke/assets/images/logos/dark.png',
+                          child: Image.asset(
+                            'assets/images/brand/dark.png',
                             height: 28,
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
@@ -549,7 +550,7 @@ class _AnimatedPageIndicatorState extends State<_AnimatedPageIndicator>
       width: widget.isActive ? 24 : 8,
       height: 8,
       decoration: BoxDecoration(
-        color: widget.isActive ? const Color(0xFF1E3A8A) : Colors.grey[300],
+        color: widget.isActive ? AppColors.primary : Colors.grey[300],
         borderRadius: BorderRadius.circular(4),
       ),
     );
@@ -658,13 +659,13 @@ class _AnimatedButtonState extends State<_AnimatedButton>
               width: double.infinity,
               height: 56,
               decoration: BoxDecoration(
-                color: const Color(0xFF1E3A8A),
+                color: AppColors.primary,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: _isPressed
                     ? []
                     : [
                         BoxShadow(
-                          color: const Color(0xFF1E3A8A).withOpacity(0.3),
+                          color: AppColors.primary.withOpacity(0.3),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),

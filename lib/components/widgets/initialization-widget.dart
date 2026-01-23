@@ -8,15 +8,15 @@ class InitializationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFEDD00), // Yellow background
+      backgroundColor: AppColors.primary,
       body: SafeArea(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Logo
-              Image.network(
-                'https://bdcomputing.co.ke/assets/images/logos/favicon.png',
+              Image.asset(
+                'assets/images/brand/light.png',
                 width: 120,
                 height: 120,
                 fit: BoxFit.contain,
@@ -44,7 +44,7 @@ class InitializationWidget extends StatelessWidget {
                 child: CircularProgressIndicator(
                   strokeWidth: 3,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    Color(0xFFD4B000), // Darker yellow for contrast
+                    Colors.white,
                   ),
                 ),
               ),
