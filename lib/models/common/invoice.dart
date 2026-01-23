@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
-import 'package:bdcomputing/models/common/customer.dart';
+import 'package:bdcomputing/models/common/client.dart';
 
 class Invoice extends Equatable {
   final String id;
-  final String customerId;
+  final String clientId;
   final String currencyId;
   final String orderId;
   final String serial;
@@ -12,7 +12,7 @@ class Invoice extends Equatable {
   final DateTime dueDate;
   final String paymentTerms;
   final String notes;
-  final Customer customer;
+  final Client client;
   final double taxAmount;
   final double taxRate;
   final double totalAmount;
@@ -25,7 +25,7 @@ class Invoice extends Equatable {
 
   const Invoice({
     required this.id,
-    required this.customerId,
+    required this.clientId,
     required this.currencyId,
     required this.orderId,
     required this.serial,
@@ -43,13 +43,13 @@ class Invoice extends Equatable {
     required this.createdBy,
     required this.createdAt,
     required this.invoiceLink, 
-    required this.customer,
+    required this.client,
   });
 
   factory Invoice.fromJson(Map<String, dynamic> json) {
     return Invoice(
       id: json['_id'] ?? '',
-      customerId: json['customerId'] ?? '',
+      clientId: json['clientId'] ?? '',
       currencyId: json['currencyId'] ?? '',
       orderId: json['orderId'] ?? '',
       serial: json['serial'] ?? '',
@@ -58,7 +58,7 @@ class Invoice extends Equatable {
       dueDate: DateTime.parse(json['dueDate']),
       paymentTerms: json['paymentTerms'] ?? '',
       notes: json['notes'] ?? '',
-      customer: Customer.fromJson(json['customer'] ?? {}),
+      client: Client.fromJson(json['client'] ?? {}),
       taxAmount: (json['taxAmount'] ?? 0).toDouble(),
       taxRate: (json['taxRate'] ?? 0).toDouble(),
       totalAmount: (json['totalAmount'] ?? 0).toDouble(),
@@ -74,7 +74,7 @@ class Invoice extends Equatable {
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'customerId': customerId,
+      'clientId': clientId,
       'currencyId': currencyId,
       'orderId': orderId,
       'serial': serial,
@@ -83,7 +83,7 @@ class Invoice extends Equatable {
       'dueDate': dueDate.toIso8601String(),
       'paymentTerms': paymentTerms,
       'notes': notes,
-      'customer': customer.toJson(),
+      'client': client.toJson(),
       'taxAmount': taxAmount,
       'taxRate': taxRate,
       'totalAmount': totalAmount,
@@ -98,7 +98,7 @@ class Invoice extends Equatable {
 
   Invoice copyWith({
     String? id,
-    String? customerId,
+    String? clientId,
     String? currencyId,
     String? orderId,
     String? serial,
@@ -107,7 +107,7 @@ class Invoice extends Equatable {
     DateTime? dueDate,
     String? paymentTerms,
     String? notes,
-    Customer? customer,
+    Client? client,
     double? taxAmount,
     double? taxRate,
     double? totalAmount,
@@ -121,7 +121,7 @@ class Invoice extends Equatable {
   }) {
     return Invoice(
       id: id ?? this.id,
-      customerId: customerId ?? this.customerId,
+      clientId: clientId ?? this.clientId,
       currencyId: currencyId ?? this.currencyId,
       orderId: orderId ?? this.orderId,
       serial: serial ?? this.serial,
@@ -130,7 +130,7 @@ class Invoice extends Equatable {
       dueDate: dueDate ?? this.dueDate,
       paymentTerms: paymentTerms ?? this.paymentTerms,
       notes: notes ?? this.notes,
-      customer: customer ?? this.customer,
+      client: client ?? this.client,
       taxAmount: taxAmount ?? this.taxAmount,
       taxRate: taxRate ?? this.taxRate,
       totalAmount: totalAmount ?? this.totalAmount,
@@ -146,7 +146,7 @@ class Invoice extends Equatable {
   @override
   List<Object?> get props => [
         id,
-        customerId,
+        clientId,
         currencyId,
         orderId,
         serial,
@@ -155,7 +155,7 @@ class Invoice extends Equatable {
         dueDate,
         paymentTerms,
         notes,
-        customer,
+        client,
         taxAmount,
         taxRate,
         totalAmount,

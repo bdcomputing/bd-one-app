@@ -1,4 +1,4 @@
-import 'package:bdcomputing/models/common/vendor.dart';
+import 'package:bdcomputing/models/common/client.dart';
 
 class User {
   final String id;
@@ -10,7 +10,7 @@ class User {
   final bool phoneVerified;
   final bool verified;
   final String? customerId;
-  final String? vendorId;
+  final String? clientId;
   final String? profileImage;
   final String? defaultAddress;
   final String? passwordResetCode;
@@ -23,7 +23,7 @@ class User {
   final DateTime? lastPasswordChange;
   final String? userId;
   final RoleModel? role;
-  final Vendor? vendor;
+  final Client? client;
 
   const User({
     required this.id,
@@ -35,7 +35,7 @@ class User {
     required this.phoneVerified,
     required this.verified,
     this.customerId,
-    this.vendorId,
+    this.clientId,
     this.profileImage,
     this.defaultAddress,
     this.passwordResetCode,
@@ -48,7 +48,7 @@ class User {
     this.lastPasswordChange,
     this.userId,
     this.role,
-    this.vendor,
+    this.client,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -62,7 +62,7 @@ class User {
       phoneVerified: json['phoneVerified'] ?? false,
       verified: json['verified'] ?? false,
       customerId: json['customerId']?.toString(),
-      vendorId: json['vendorId']?.toString(),
+      clientId: json['clientId']?.toString(),
       profileImage: json['profileImage']?.toString(),
       defaultAddress: json['defaultAddress']?.toString(),
       passwordResetCode: json['passwordResetCode']?.toString(),
@@ -77,8 +77,8 @@ class User {
       lastPasswordChange: json['lastPasswordChange'] != null ? DateTime.tryParse(json['lastPasswordChange']) : null,
       userId: json['userId']?.toString(),
       role: json['role'] != null ? RoleModel.fromJson(json['role'] as Map<String, dynamic>) : null,
-      vendor: json['vendor'] != null
-          ? Vendor.fromJson(json['vendor'] as Map<String, dynamic>)
+      client: json['client'] != null
+          ? Client.fromJson(json['client'] as Map<String, dynamic>)
           : null,
     );
   }
@@ -94,7 +94,7 @@ class User {
         'phoneVerified': phoneVerified,
         'verified': verified,
         'customerId': customerId,
-        'vendorId': vendorId,
+        'clientId': clientId,
         'profileImage': profileImage,
         'defaultAddress': defaultAddress,
         'passwordResetCode': passwordResetCode,
@@ -107,30 +107,9 @@ class User {
         'lastPasswordChange': lastPasswordChange?.toIso8601String(),
         'userId': userId,
         'role': role?.toJson(),
-        'vendor': vendor?.toJson(),
+        'client': client?.toJson(),
       };
 
-  /// Checks if the user has at least one approved vendor account
-  bool hasApprovedVendorAccount() {
-    if (vendor == null) return false;
-    return vendor!.isFuelVendorApproved || vendor!.isProductVendorApproved;
-  }
-
-  /// Checks if the product vendor account is approved
-  bool isProductVendorApproved() {
-    return vendor?.isProductVendorApproved ?? false;
-  }
-
-  /// Checks if the fuel vendor account is approved
-  bool isFuelVendorApproved() {
-    return vendor?.isFuelVendorApproved ?? false;
-  }
-
-  /// Checks if the user has any vendor account (approved or not)
-  bool hasVendorAccount() {
-    if (vendor == null) return false;
-    return vendor!.isFuelVendor || vendor!.isProductVendor;
-  }
 }
 
 class NotificationSetting {

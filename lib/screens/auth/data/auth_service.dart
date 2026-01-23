@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:bdcomputing/screens/auth/domain/password_model.dart';
 import 'package:bdcomputing/screens/auth/domain/user_model.dart';
 import 'package:bdcomputing/core/endpoints.dart';
-import 'package:bdcomputing/models/common/vendor.dart';
 import 'package:bdcomputing/core/utils/api_client.dart';
 import 'package:bdcomputing/core/utils/api_exception.dart';
 
@@ -27,13 +26,13 @@ class AuthService {
       
       // Include vendor data if present in the response
       final userMap = userBody as Map<String, dynamic>;
-      if (payload['vendor'] != null) {
-        userMap['vendor'] = payload['vendor'];
+      if (payload['client'] != null) {
+        userMap['client'] = payload['client'];
       }
       
       final user = User.fromJson(userMap);
-      if (user.vendorId == null) {
-        throw ApiException(message: 'User is not a vendor');
+      if (user.clientId == null) {
+        throw ApiException(message: 'User is not a client');
       }
 
       return (
@@ -66,8 +65,8 @@ class AuthService {
         throw ApiException(message: 'User data not found in response');
       }
       final user = User.fromJson(userBody as Map<String, dynamic>);
-      if (user.customerId == null) {
-        throw ApiException(message: 'User is not a customer');
+      if (user.clientId == null) {
+        throw ApiException(message: 'User is not a client');
       }
       return (
         accessToken:
@@ -138,11 +137,11 @@ class AuthService {
     throw Exception('Failed to refresh token');
   }
 
-  Future<void> signup(VendorRegister vendor) async {
+  Future<void> signup(ClientRegister client) async {
     try {
       await _apiClient.post(
         ApiEndpoints.registerEndpoint,
-        data: vendor.toJson(),
+        data: client.toJson(),
       );
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);

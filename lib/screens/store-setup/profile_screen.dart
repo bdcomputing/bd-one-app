@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bdcomputing/screens/auth/domain/auth_state.dart' show Authenticated;
-import 'package:bdcomputing/screens/auth/domain/user_model.dart';
 import 'package:bdcomputing/screens/auth/presentation/auth_guard.dart';
 import 'package:bdcomputing/screens/auth/providers.dart';
 import 'package:bdcomputing/components/shared/header.dart';
@@ -81,10 +80,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                             //       ),
                             //     ),
                             //   ),
-                            const SizedBox(height: 12),
-
-                            // Vendor Account Status Card
-                            if (user.vendor != null) _buildVendorStatusCard(user),
 
                             const SizedBox(height: 12),
 
@@ -319,129 +314,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                   ],
                 ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildVendorStatusCard(User user) {
-    final vendor = user.vendor;
-    final isProductApproved = user.isProductVendorApproved();
-    final isFuelApproved = user.isFuelVendorApproved();
-    final hasApproved = user.hasApprovedVendorAccount();
-    final isProductVendor = vendor?.isProductVendor ?? false;
-    final isFuelVendor = vendor?.isFuelVendor ?? false;
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: hasApproved ? Colors.green.withOpacity(0.3) : Colors.orange.withOpacity(0.3),
-          width: 1.5,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: hasApproved
-                      ? Colors.green.withOpacity(0.1)
-                      : Colors.orange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  hasApproved
-                      ? Icons.verified_outlined
-                      : Icons.pending_outlined,
-                  color: hasApproved ? Colors.green[700] : Colors.orange[700],
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      hasApproved ? 'Account Approved' : 'Account Pending',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: hasApproved
-                            ? Colors.green[700]
-                            : Colors.orange[700],
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      hasApproved
-                          ? 'Your vendor account is active'
-                          : 'Your account is awaiting approval',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          if (!hasApproved) ...[
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_outline,
-                    color: Colors.orange[700],
-                    size: 18,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Please complete your profile and submit required documents for approval.',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.orange[900],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-          if ((isProductVendor || isFuelVendor) && hasApproved) ...[
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                if (isProductVendor)
-                  _buildStatusBadge(
-                    'Product Vendor',
-                    isProductApproved,
-                  ),
-                if (isFuelVendor)
-                  _buildStatusBadge(
-                    'Fuel Vendor',
-                    isFuelApproved,
-                  ),
-              ],
-            ),
-          ],
-        ],
       ),
     );
   }

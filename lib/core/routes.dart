@@ -113,6 +113,5 @@ class AppRoutes {
               const Scaffold(body: Center(child: Text('Page not found'))),
         );
     }
-    return null;
   }
 }

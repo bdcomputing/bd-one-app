@@ -1,7 +1,7 @@
-// lib/models/customer.dart
+// lib/models/Client.dart
 import 'package:equatable/equatable.dart';
 
-class Customer extends Equatable {
+class Client extends Equatable {
   final String id;
   final String name;
   final String email;
@@ -17,7 +17,7 @@ class Customer extends Equatable {
   final DateTime? updatedAt;
   final String? updatedBy;
 
-  const Customer({
+  const Client({
     required this.id,
     required this.name,
     required this.email,
@@ -34,8 +34,8 @@ class Customer extends Equatable {
     this.updatedBy,
   });
 
-  factory Customer.fromJson(Map<String, dynamic> json) {
-    return Customer(
+  factory Client.fromJson(Map<String, dynamic> json) {
+    return Client(
       id: json['_id'] ?? '',
       name: json['name'] ?? '',
       email: json['email'] ?? '',
@@ -72,7 +72,7 @@ class Customer extends Equatable {
     };
   }
 
-  Customer copyWith({
+  Client copyWith({
     String? id,
     String? name,
     String? email,
@@ -88,7 +88,7 @@ class Customer extends Equatable {
     DateTime? updatedAt,
     String? updatedBy,
   }) {
-    return Customer(
+    return Client(
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,

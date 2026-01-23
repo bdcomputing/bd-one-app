@@ -61,13 +61,13 @@ class AuthRepository {
       email: email,
       password: password,
     );
-    
+
     var userJson = result.user;
     var user = User.fromJson(userJson);
-    
-    // Ensure we have full vendor data including country
-    user = await _ensureCustomerData(user, userJson);
-    
+
+    // Ensure we have full client data including country
+    user = await _ensureClientData(user, userJson);
+
     await _saveSession(result.accessToken, result.refreshToken, user.toJson());
     return Authenticated(user);
   }
@@ -77,13 +77,13 @@ class AuthRepository {
       phone: phone,
       password: password,
     );
-    
+
     var userJson = result.user;
     var user = User.fromJson(userJson);
-    
-    // Ensure we have full vendor data including country
-    user = await _ensureCustomerData(user, userJson);
-    
+
+    // Ensure we have full client data including country
+    user = await _ensureClientData(user, userJson);
+
     await _saveSession(result.accessToken, result.refreshToken, user.toJson());
     return Authenticated(user);
   }
@@ -92,7 +92,9 @@ class AuthRepository {
     return await _service.forgotPassword(email);
   }
 
-  Future<Map<String, dynamic>> updatePassword(UpdatePasswordModel password) async {
+  Future<Map<String, dynamic>> updatePassword(
+    UpdatePasswordModel password,
+  ) async {
     return await _service.updatePassword(password);
   }
 
@@ -184,39 +186,29 @@ class AuthRepository {
     final res = await _apiClient.get(ApiEndpoints.getProfile);
     final root = res.data as Map<String, dynamic>;
     final responsePayload = (root['data'] ?? root) as Map<String, dynamic>;
-    
+
     final userBody = responsePayload['user'] as Map<String, dynamic>;
-    
-    // Include vendor data if present in the response
-    if (responsePayload['vendor'] != null) {
-      userBody['vendor'] = responsePayload['vendor'];
+
+    // Include client data if present in the response
+    if (responsePayload['client'] != null) {
+      userBody['client'] = responsePayload['client'];
     }
-    
+
     var user = User.fromJson(userBody);
-    
-    // Ensure we have full vendor data including country
-    user = await _ensureCustomerData(user, userBody);
-    
+
+    // Ensure we have full client data including country
+    user = await _ensureClientData(user, userBody);
+
     await _saveUser(user.toJson());
-    
+
     return user;
   }
 
-  // Ensure user has complete vendor data (fetched if necessary)
-  Future<User> _ensureCustomerData(User user, Map<String, dynamic> userJson) async {
-    // If user has a vendorId but vendor object or country is missing, fetch it
-    if (user.vendorId != null && (user.vendor == null || user.vendor?.country == null)) {
-      try {
-        final vendorService = VendorService(apiClient: _apiClient);
-        final vendor = await vendorService.getMyVendor();
-        if (vendor != null) {
-          userJson['vendor'] = vendor.toJson();
-          return User.fromJson(userJson);
-        }
-      } catch (e) {
-        _logger.w('Failed to fetch full vendor data: $e');
-      }
-    }
+  // Ensure user has complete client data (fetched if necessary)
+  Future<User> _ensureClientData(
+    User user,
+    Map<String, dynamic> userJson,
+  ) async {
     return user;
   }
 
