@@ -5,14 +5,37 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bdcomputing/screens/auth/auth_provider.dart';
 import 'package:intl/intl.dart';
 
-class HomeTab extends ConsumerWidget {
+class HomeTab extends ConsumerStatefulWidget {
   const HomeTab({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeTab> createState() => _HomeTabState();
+}
+
+class _HomeTabState extends ConsumerState<HomeTab>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 20),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final user = authState is Authenticated ? authState.user : null;
-    final formatter = NumberFormat("#,##0.00", "en_US");
+    final formatter = NumberFormat('#,##0.00', 'en_US');
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -48,7 +71,6 @@ class HomeTab extends ConsumerWidget {
       child: Row(
         children: [
           Container(
-            width: 44,
             height: 44,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -85,7 +107,6 @@ class HomeTab extends ConsumerWidget {
           ),
           const Spacer(),
           Container(
-            width: 40,
             height: 40,
             decoration: BoxDecoration(
               color: AppColors.surface,
@@ -100,7 +121,6 @@ class HomeTab extends ConsumerWidget {
           ),
           const SizedBox(width: 12),
           Container(
-            width: 40,
             height: 40,
             decoration: BoxDecoration(
               color: AppColors.surface,
@@ -115,7 +135,6 @@ class HomeTab extends ConsumerWidget {
           ),
           const SizedBox(width: 12),
           Container(
-            width: 32,
             height: 32,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -162,8 +181,8 @@ class HomeTab extends ConsumerWidget {
         gradient: const LinearGradient(
           colors: [
             AppColors.primary900,
-            AppColors.secondary800,
-            AppColors.secondary,
+            AppColors.primary800,
+            AppColors.accent,
           ],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
@@ -180,6 +199,55 @@ class HomeTab extends ConsumerWidget {
         borderRadius: BorderRadius.circular(24),
         child: Stack(
           children: [
+            // Animated background pattern 1
+            Positioned(
+              top: -50,
+              right: -50,
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return Transform.rotate(
+                    angle: _controller.value * 2 * 3.14159,
+                    child: child,
+                  );
+                },
+                child: Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      width: 40,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // Animated background pattern 2
+            Positioned(
+              bottom: -60,
+              left: -20,
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return Transform.rotate(
+                    angle: -_controller.value * 2 * 3.14159,
+                    child: child,
+                  );
+                },
+                child: Container(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.03),
+                      width: 30,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // Main Image
             Positioned(
               right: -20,
               top: -20,
@@ -193,8 +261,8 @@ class HomeTab extends ConsumerWidget {
                     ),
                     fit: BoxFit.contain,
                     colorFilter: ColorFilter.mode(
-                      Colors.black.withValues(alpha: 0.1),
-                      BlendMode.darken,
+                      AppColors.primary.withValues(alpha: 0.3),
+                      BlendMode.dstATop, // More visible
                     ),
                   ),
                 ),
