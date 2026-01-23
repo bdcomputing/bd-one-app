@@ -23,15 +23,12 @@ class HomeTab extends StatelessWidget {
                     const SizedBox(height: 24),
                     _buildQuickActions(),
                     const SizedBox(height: 28),
-                    _buildRecentClients(),
-                    const SizedBox(height: 28),
                     _buildRecentTransactions(context),
                     const SizedBox(height: 20),
                   ],
                 ),
               ),
             ),
-            _buildBottomNavigation(),
           ],
         ),
       ),
@@ -51,7 +48,7 @@ class HomeTab extends StatelessWidget {
               color: AppColors.sage100,
               image: DecorationImage(
                 image: NetworkImage('https://i.pravatar.cc/150?img=14'),
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
               ),
             ),
           ),
@@ -287,33 +284,41 @@ class HomeTab extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildActionItem(HugeIcons.strokeRoundedInvoice, 'New Invoice'),
+              _buildActionItem(
+                HugeIcons.strokeRoundedNote01,
+                'Quotes',
+                AppColors.accent,
+                AppColors.primary,
+              ),
+              _buildActionItem(
+                HugeIcons.strokeRoundedMail01,
+                'Messages',
+                AppColors.secondary800,
+                AppColors.sage100,
+              ),
+
               _buildActionItem(
                 HugeIcons.strokeRoundedPaymentSuccess01,
                 'Payments',
+                AppColors.sage100,
+                AppColors.primary,
               ),
-              _buildActionItem(HugeIcons.strokeRoundedUserMultiple, 'Clients'),
               _buildActionItem(
-                HugeIcons.strokeRoundedChartHistogram,
-                'Reports',
+                HugeIcons.strokeRoundedInvoice04,
+                'Invoices',
+                AppColors.primary,
+                AppColors.surface,
               ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 12),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildActionItem(HugeIcons.strokeRoundedNote01, 'Quotes'),
-              _buildActionItem(HugeIcons.strokeRoundedCalendar03, 'Schedule'),
-              _buildActionItem(HugeIcons.strokeRoundedMail01, 'Messages'),
-              _buildActionItem(HugeIcons.strokeRoundedMoreHorizontal, 'More'),
+              _buildActionItem(
+                HugeIcons.strokeRoundedCustomerSupport,
+                'Support',
+                AppColors.primary700,
+                AppColors.accent,
+              ),
             ],
           ),
         ),
@@ -321,7 +326,12 @@ class HomeTab extends StatelessWidget {
     );
   }
 
-  Widget _buildActionItem(dynamic icon, String label) {
+  Widget _buildActionItem(
+    dynamic icon,
+    String label,
+    dynamic backgroundColor,
+    dynamic iconColor,
+  ) {
     return SizedBox(
       width: 80,
       child: Column(
@@ -330,17 +340,14 @@ class HomeTab extends StatelessWidget {
             width: 64,
             height: 64,
             decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                const BoxShadow(
-                  color: AppColors.textPrimary,
-                  blurRadius: 10,
-                  offset: Offset(0, 2),
-                ),
-              ],
+              color: backgroundColor,
+              border: Border.all(color: backgroundColor),
+              borderRadius: BorderRadius.circular(100),
             ),
-            child: HugeIcon(icon: icon, size: 24, color: AppColors.primary),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: HugeIcon(icon: icon, size: 24, color: iconColor),
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -356,131 +363,6 @@ class HomeTab extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildRecentClients() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            children: [
-              Text(
-                'Recent clients',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(width: 8),
-              const HugeIcon(
-                icon: HugeIcons.strokeRoundedUserGroup,
-                size: 18,
-                color: AppColors.primary,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                '- Quick access',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 100,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            children: [
-              _buildClientCard(
-                'https://i.pravatar.cc/150?img=33',
-                'Shulami...',
-                AppColors.warning,
-              ),
-              const SizedBox(width: 16),
-              _buildClientCard(
-                'https://i.pravatar.cc/150?img=12',
-                'Olumid...',
-                AppColors.secondary,
-              ),
-              const SizedBox(width: 16),
-              _buildClientCard(
-                'https://i.pravatar.cc/150?img=56',
-                'Dada Ol...',
-                AppColors.primary,
-              ),
-              const SizedBox(width: 16),
-              _buildClientCard(
-                'https://i.pravatar.cc/150?img=68',
-                'Ajibola...',
-                AppColors.primary700,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildClientCard(String imageUrl, String name, Color badgeColor) {
-    return Column(
-      children: [
-        Stack(
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: NetworkImage(imageUrl),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: Container(
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: badgeColor,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.background, width: 2),
-                ),
-                child: Center(
-                  child: Text(
-                    name[0].toUpperCase(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(
-          name,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textPrimary,
-          ),
-        ),
-      ],
     );
   }
 
@@ -585,7 +467,7 @@ class HomeTab extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textPrimary.withOpacity(0.04),
+            color: AppColors.textPrimary.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -669,61 +551,6 @@ class HomeTab extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildBottomNavigation() {
-    return Container(
-      height: 80,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textPrimary.withOpacity(0.06),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(HugeIcons.strokeRoundedHome01, 'Home', true),
-          _buildNavItem(HugeIcons.strokeRoundedInvoice, 'Invoices', false),
-          _buildNavItem(
-            HugeIcons.strokeRoundedPaymentSuccess01,
-            'Payments',
-            false,
-          ),
-          _buildNavItem(HugeIcons.strokeRoundedUser, 'Profile', false),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(dynamic icon, String label, bool isActive) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        HugeIcon(
-          icon: icon,
-          size: 24,
-          color: isActive ? AppColors.primary : AppColors.textSecondary,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: isActive ? AppColors.primary : AppColors.textSecondary,
-          ),
-        ),
-      ],
     );
   }
 }
