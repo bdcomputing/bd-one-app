@@ -389,7 +389,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                                           child: Text('Corporate'),
                                         ),
                                       ],
-                                      value: _isCorporate,
+                                      initialValue: _isCorporate,
                                       onChanged: isLoading
                                           ? null
                                           : (value) {

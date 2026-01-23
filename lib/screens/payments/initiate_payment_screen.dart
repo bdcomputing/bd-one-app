@@ -38,7 +38,7 @@ class _InitiatePaymentScreenState extends ConsumerState<InitiatePaymentScreen> {
   String? _mpesaErrorMessage;
 
   bool _processingPesapal = false;
-  String? _pesapalErrorMessage = null;
+  String? _pesapalErrorMessage;
 
   bool _payInFull = true;
   final TextEditingController _amountController = TextEditingController();
@@ -777,7 +777,7 @@ class _InitiatePaymentScreenState extends ConsumerState<InitiatePaymentScreen> {
                         decoration: InputDecoration(
                           prefixIcon: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
+                            child: const Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
@@ -785,7 +785,7 @@ class _InitiatePaymentScreenState extends ConsumerState<InitiatePaymentScreen> {
                                   color: AppColors.secondary,
                                   size: 20,
                                 ),
-                                const SizedBox(width: 4),
+                                SizedBox(width: 4),
                                 Text(
                                   '+254',
                                   style: TextStyle(
@@ -849,7 +849,7 @@ class _InitiatePaymentScreenState extends ConsumerState<InitiatePaymentScreen> {
                           padding: const EdgeInsets.only(top: 4.0),
                           child: Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.error,
                                 color: AppColors.error,
                                 size: 18,
