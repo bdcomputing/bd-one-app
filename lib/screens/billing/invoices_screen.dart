@@ -56,15 +56,6 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const HugeIcon(icon: HugeIcons.strokeRoundedArrowLeft01, size: 24, color: Colors.black),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
                   const Text(
                     'Invoices',
                     style: TextStyle(

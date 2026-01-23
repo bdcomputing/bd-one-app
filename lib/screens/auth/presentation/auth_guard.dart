@@ -1,3 +1,4 @@
+import 'package:bdcomputing/core/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bdcomputing/screens/auth/domain/auth_state.dart';
@@ -114,13 +115,14 @@ class _TokenValidatorState extends ConsumerState<_TokenValidator> {
   Widget build(BuildContext context) {
     if (_isValidating) {
       return Scaffold(
+        backgroundColor: AppColors.primary,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const CircularProgressIndicator(),
+              const CircularProgressIndicator(color: Colors.white),
               const SizedBox(height: 16),
-              const Text('Validating session...'),
+              const Text('Validating session...', style: TextStyle(color: Colors.white),),
               if (_errorMessage != null) ...[
                 const SizedBox(height: 8),
                 Text(
