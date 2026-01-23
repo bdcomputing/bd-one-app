@@ -15,7 +15,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.example.fulfillmentpartner"
+    namespace = "com.example.otg"
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
@@ -29,7 +29,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.bdcomputing.fulfillmentpartner"
+        applicationId = "com.bdcomputing.otg"
         minSdk = flutter.minSdkVersion
         targetSdk = 36
         versionCode = flutter.versionCode
