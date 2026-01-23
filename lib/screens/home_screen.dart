@@ -120,13 +120,10 @@ class HomeTab extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: const Center(
-              child: Text(
-                'Δ',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: HugeIcon(
+                icon: HugeIcons.strokeRoundedAnalytics01,
+                color: Colors.white,
+                size: 18,
               ),
             ),
           ),
@@ -166,10 +163,7 @@ class HomeTab extends StatelessWidget {
                 image: DecorationImage(
                   image: NetworkImage('https://i.pravatar.cc/400?img=27'),
                   fit: BoxFit.cover,
-                  colorFilter: const ColorFilter.mode(
-                    AppColors.textPrimary,
-                    BlendMode.darken,
-                  ),
+                  colorFilter: ColorFilter.mode(Colors.black, BlendMode.darken),
                 ),
               ),
             ),
@@ -298,9 +292,15 @@ class HomeTab extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _buildActionItem(HugeIcons.strokeRoundedInvoice, 'New Invoice'),
-              _buildActionItem(HugeIcons.strokeRoundedPaymentSuccess01, 'Payments'),
+              _buildActionItem(
+                HugeIcons.strokeRoundedPaymentSuccess01,
+                'Payments',
+              ),
               _buildActionItem(HugeIcons.strokeRoundedUserMultiple, 'Clients'),
-              _buildActionItem(HugeIcons.strokeRoundedChartHistogram, 'Reports'),
+              _buildActionItem(
+                HugeIcons.strokeRoundedChartHistogram,
+                'Reports',
+              ),
             ],
           ),
         ),
@@ -310,10 +310,10 @@ class HomeTab extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildActionItem(HugeIcons.strokeRoundedNote, 'Quotes'),
+              _buildActionItem(HugeIcons.strokeRoundedNote01, 'Quotes'),
               _buildActionItem(HugeIcons.strokeRoundedCalendar03, 'Schedule'),
               _buildActionItem(HugeIcons.strokeRoundedMail01, 'Messages'),
-              _buildActionItem(HugeIcons.strokeRoundedMoreVertical, 'More'),
+              _buildActionItem(HugeIcons.strokeRoundedMoreHorizontal, 'More'),
             ],
           ),
         ),
@@ -321,7 +321,7 @@ class HomeTab extends StatelessWidget {
     );
   }
 
-  Widget _buildActionItem(HugeIcons icon, String label) {
+  Widget _buildActionItem(dynamic icon, String label) {
     return SizedBox(
       width: 80,
       child: Column(
@@ -333,18 +333,14 @@ class HomeTab extends StatelessWidget {
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
-                BoxShadow(
-                  color: AppColors.textPrimary.withOpacity(0.04),
+                const BoxShadow(
+                  color: AppColors.textPrimary,
                   blurRadius: 10,
-                  offset: const Offset(0, 2),
+                  offset: Offset(0, 2),
                 ),
               ],
             ),
-            child: HugeIcon(
-              icon: icon,
-              size: 24,
-              color: AppColors.primary,
-            ),
+            child: HugeIcon(icon: icon, size: 24, color: AppColors.primary),
           ),
           const SizedBox(height: 8),
           Text(
@@ -379,7 +375,13 @@ class HomeTab extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
-              SizedBox(width: 6),
+              const SizedBox(width: 8),
+              const HugeIcon(
+                icon: HugeIcons.strokeRoundedUserGroup,
+                size: 18,
+                color: AppColors.primary,
+              ),
+              const SizedBox(width: 6),
               Text(
                 '- Quick access',
                 style: TextStyle(
@@ -398,13 +400,29 @@ class HomeTab extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             children: [
-              _buildClientCard('https://i.pravatar.cc/150?img=33', 'Shulami...', const Color(0xFFE67E22)),
+              _buildClientCard(
+                'https://i.pravatar.cc/150?img=33',
+                'Shulami...',
+                AppColors.warning,
+              ),
               const SizedBox(width: 16),
-              _buildClientCard('https://i.pravatar.cc/150?img=12', 'Olumid...', const Color(0xFF27AE60)),
+              _buildClientCard(
+                'https://i.pravatar.cc/150?img=12',
+                'Olumid...',
+                AppColors.secondary,
+              ),
               const SizedBox(width: 16),
-              _buildClientCard('https://i.pravatar.cc/150?img=56', 'Dada Ol...', const Color(0xFFF39C12)),
+              _buildClientCard(
+                'https://i.pravatar.cc/150?img=56',
+                'Dada Ol...',
+                AppColors.primary,
+              ),
               const SizedBox(width: 16),
-              _buildClientCard('https://i.pravatar.cc/150?img=68', 'Ajibola...', const Color(0xFF8E44AD)),
+              _buildClientCard(
+                'https://i.pravatar.cc/150?img=68',
+                'Ajibola...',
+                AppColors.primary700,
+              ),
             ],
           ),
         ),
@@ -551,7 +569,7 @@ class HomeTab extends StatelessWidget {
 
   Widget _buildTransactionItem(
     BuildContext context,
-    HugeIcons icon,
+    dynamic icon,
     String title,
     String subtitle,
     String date,
@@ -582,11 +600,7 @@ class HomeTab extends StatelessWidget {
               color: iconColor,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: HugeIcon(
-              icon: icon,
-              size: 24,
-              color: Colors.white,
-            ),
+            child: HugeIcon(icon: icon, size: 24, color: Colors.white),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -637,8 +651,8 @@ class HomeTab extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: isInvoice 
-                      ? AppColors.warning.withOpacity(0.1) 
+                  color: isInvoice
+                      ? AppColors.warning.withOpacity(0.1)
                       : AppColors.secondary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
@@ -680,21 +694,25 @@ class HomeTab extends StatelessWidget {
         children: [
           _buildNavItem(HugeIcons.strokeRoundedHome01, 'Home', true),
           _buildNavItem(HugeIcons.strokeRoundedInvoice, 'Invoices', false),
-          _buildNavItem(HugeIcons.strokeRoundedPaymentSuccess01, 'Payments', false),
+          _buildNavItem(
+            HugeIcons.strokeRoundedPaymentSuccess01,
+            'Payments',
+            false,
+          ),
           _buildNavItem(HugeIcons.strokeRoundedUser, 'Profile', false),
         ],
       ),
     );
   }
 
-  Widget _buildNavItem(HugeIcons icon, String label, bool isActive) {
+  Widget _buildNavItem(dynamic icon, String label, bool isActive) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         HugeIcon(
           icon: icon,
           size: 24,
-          color: isActive ? AppColors.primary : AppColors.border,
+          color: isActive ? AppColors.primary : AppColors.textSecondary,
         ),
         const SizedBox(height: 4),
         Text(
@@ -702,7 +720,7 @@ class HomeTab extends StatelessWidget {
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
-            color: isActive ? AppColors.primary : AppColors.border,
+            color: isActive ? AppColors.primary : AppColors.textSecondary,
           ),
         ),
       ],
