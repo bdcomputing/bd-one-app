@@ -1,7 +1,7 @@
 name: bdcomputing
 description: "This is the Official BD Computing On-The-Go Mobile App. We commit to offering high quality services that ultimately build up your company reputation."
 publish_to: "none"
-version: 2.0.0+32
+version: 1.0.0+0
 
 environment:
   sdk: ^3.9.2
