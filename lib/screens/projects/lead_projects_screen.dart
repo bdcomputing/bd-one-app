@@ -1,4 +1,8 @@
+import 'package:bdcomputing/core/styles.dart';
 import 'package:bdcomputing/models/common/lead_project.dart';
+import 'package:bdcomputing/models/dtos/create_lead_project_dto.dart';
+import 'package:bdcomputing/models/enums/lead_source.dart';
+import 'package:bdcomputing/models/enums/project_type.dart';
 import 'package:bdcomputing/providers/providers.dart';
 import 'package:bdcomputing/screens/auth/providers.dart';
 import 'package:bdcomputing/screens/projects/lead_projects_provider.dart';
@@ -102,7 +106,9 @@ class _LeadProjectsScreenState extends ConsumerState<LeadProjectsScreen> {
                               border: InputBorder.none,
                             ),
                             onSubmitted: (val) {
-                              ref.read(leadProjectsProvider.notifier).setKeyword(val);
+                              ref
+                                  .read(leadProjectsProvider.notifier)
+                                  .setKeyword(val);
                             },
                           ),
                         ),
@@ -118,33 +124,36 @@ class _LeadProjectsScreenState extends ConsumerState<LeadProjectsScreen> {
               child: state.isLoading && state.leadProjects.isEmpty
                   ? const Center(child: CircularProgressIndicator())
                   : state.error != null && state.leadProjects.isEmpty
-                      ? Center(child: Text(state.error!))
-                      : RefreshIndicator(
-                          onRefresh: () =>
-                              ref.read(leadProjectsProvider.notifier).refresh(),
-                          child: state.leadProjects.isEmpty
-                              ? _buildEmptyState()
-                              : ListView.builder(
-                                  padding: EdgeInsets.zero,
-                                  itemCount: state.leadProjects.length +
-                                      (state.page <= state.totalPages ? 1 : 0),
-                                  itemBuilder: (context, index) {
-                                    if (index == state.leadProjects.length) {
-                                      ref
-                                          .read(leadProjectsProvider.notifier)
-                                          .fetchLeadProjects();
-                                      return const Center(
-                                        child: Padding(
-                                          padding: EdgeInsets.all(16.0),
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                      );
-                                    }
-                                    final leadProject = state.leadProjects[index];
-                                    return LeadProjectCard(leadProject: leadProject);
-                                  },
-                                ),
-                        ),
+                  ? Center(child: Text(state.error!))
+                  : RefreshIndicator(
+                      onRefresh: () =>
+                          ref.read(leadProjectsProvider.notifier).refresh(),
+                      child: state.leadProjects.isEmpty
+                          ? _buildEmptyState()
+                          : ListView.builder(
+                              padding: EdgeInsets.zero,
+                              itemCount:
+                                  state.leadProjects.length +
+                                  (state.page <= state.totalPages ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (index == state.leadProjects.length) {
+                                  ref
+                                      .read(leadProjectsProvider.notifier)
+                                      .fetchLeadProjects();
+                                  return const Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(16.0),
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+                                }
+                                final leadProject = state.leadProjects[index];
+                                return LeadProjectCard(
+                                  leadProject: leadProject,
+                                );
+                              },
+                            ),
+                    ),
             ),
           ],
         ),
@@ -170,10 +179,7 @@ class _LeadProjectsScreenState extends ConsumerState<LeadProjectsScreen> {
           const SizedBox(height: 8),
           TextButton.icon(
             onPressed: _showCreateLeadProjectDialog,
-            icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedAdd01,
-              size: 18,
-            ),
+            icon: const HugeIcon(icon: HugeIcons.strokeRoundedAdd01, size: 18),
             label: const Text('Request a Quote'),
           ),
         ],
@@ -196,7 +202,7 @@ class LeadProjectCard extends ConsumerWidget {
         clientId: leadProject.clientId,
         limit: 100,
       );
-      
+
       final quote = quotesResult.data?.firstWhere(
         (q) => q.leadProjectId == leadProject.id,
         orElse: () => throw Exception('Quote not found'),
@@ -204,15 +210,15 @@ class LeadProjectCard extends ConsumerWidget {
 
       if (context.mounted && quote != null) {
         // TODO: Navigate to quote detail screen
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Quote ${quote.serial} found!')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Quote ${quote.serial} found!')));
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading quote: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error loading quote: $e')));
       }
     }
   }
@@ -220,7 +226,7 @@ class LeadProjectCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final hasQuote = leadProject.projectId != null;
-    
+
     return Container(
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: Color(0xFFE5E5E5), width: 1)),
@@ -317,21 +323,27 @@ class CreateLeadProjectSheet extends ConsumerStatefulWidget {
   const CreateLeadProjectSheet({super.key, required this.onSuccess});
 
   @override
-  ConsumerState<CreateLeadProjectSheet> createState() => _CreateLeadProjectSheetState();
+  ConsumerState<CreateLeadProjectSheet> createState() =>
+      _CreateLeadProjectSheetState();
 }
 
-class _CreateLeadProjectSheetState extends ConsumerState<CreateLeadProjectSheet> {
+class _CreateLeadProjectSheetState
+    extends ConsumerState<CreateLeadProjectSheet> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _durationController = TextEditingController();
+  final _featuresController = TextEditingController();
   bool _isSubmitting = false;
+  String _selectedProjectType = 'service'; // Default to service
+  String _selectedSource = 'website'; // Default to website
 
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
     _durationController.dispose();
+    _featuresController.dispose();
     super.dispose();
   }
 
@@ -346,38 +358,67 @@ class _CreateLeadProjectSheetState extends ConsumerState<CreateLeadProjectSheet>
       final user = await ref.read(authProvider.notifier).getCurrentUser();
       final service = ref.read(leadProjectServiceProvider);
 
-      // Match the CRM pattern exactly
-      final payload = {
-        'title': _titleController.text,
-        'description': _descriptionController.text,
-        'duration': _durationController.text.isNotEmpty ? _durationController.text : null,
-        'source': 'MOBILE_APP', // LeadSourceEnum value
-        'projectType': 'SERVICE', // Default to SERVICE, can be made selectable
-        'leadId': user?.leadId,
-        'clientId': user?.clientId,
-        'features': [], // Can be extended to allow feature input
-      };
+      // Parse features from comma-separated input
+      List<String>? features;
+      if (_featuresController.text.trim().isNotEmpty) {
+        features = _featuresController.text
+            .split(',')
+            .map((f) => f.trim())
+            .where((f) => f.isNotEmpty)
+            .toList();
+      }
 
+      // Create DTO matching TypeScript CreateLeadProject interface
+      final dto = CreateLeadProjectDto(
+        title: _titleController.text.trim(),
+        description: _descriptionController.text.trim(),
+        source: LeadSourceEnum.fromString(_selectedSource),
+        projectType: ProjectTypeEnum.fromString(_selectedProjectType),
+        duration: _durationController.text.trim().isNotEmpty
+            ? _durationController.text.trim()
+            : null,
+        leadId: user?.leadId,
+        clientId: user?.clientId,
+        features: features,
+      );
+
+      final payload = dto.toJson();
       print('Submitting lead project with payload: $payload'); // Debug log
 
-      await service.createLeadProject(payload);
+      final result = await service.createLeadProject(payload);
+
+      print('Lead project created successfully: ${result.id}'); // Debug log
 
       if (mounted) {
         Navigator.pop(context);
         widget.onSuccess();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Quote request submitted successfully! Our team will review it shortly.'),
+            content: Text(
+              'Quote request submitted successfully! Our team will review it shortly.',
+            ),
             duration: Duration(seconds: 3),
+            backgroundColor: Colors.green,
           ),
         );
       }
     } catch (e) {
       print('Error creating lead project: $e'); // Debug log
+
+      // Extract more detailed error info
+      String errorMessage = 'Failed to submit quote request';
+      if (e.toString().contains('400')) {
+        errorMessage = 'Invalid request data. Please check all fields.';
+      } else if (e.toString().contains('401')) {
+        errorMessage = 'Authentication error. Please log in again.';
+      } else if (e.toString().contains('403')) {
+        errorMessage = 'You don\'t have permission to create quote requests.';
+      }
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text(errorMessage),
             duration: const Duration(seconds: 5),
             backgroundColor: Colors.red,
           ),
@@ -407,10 +448,27 @@ class _CreateLeadProjectSheetState extends ConsumerState<CreateLeadProjectSheet>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Request a Quote',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Request a Quote',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'Request for a quote by filling in the details below',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
+
                 IconButton(
                   icon: const HugeIcon(
                     icon: HugeIcons.strokeRoundedCancel01,
@@ -424,7 +482,7 @@ class _CreateLeadProjectSheetState extends ConsumerState<CreateLeadProjectSheet>
           ),
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -459,13 +517,55 @@ class _CreateLeadProjectSheetState extends ConsumerState<CreateLeadProjectSheet>
                       },
                     ),
                     const SizedBox(height: 16),
+
+                    // Project Type Selector
+                    DropdownButtonFormField<String>(
+                      value: _selectedProjectType,
+                      decoration: const InputDecoration(
+                        labelText: 'Project Type',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: const [
+                        DropdownMenuItem(
+                          value: 'service',
+                          child: Text('Service'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'product',
+                          child: Text('Product'),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() {
+                            _selectedProjectType = value;
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
                     TextFormField(
                       controller: _durationController,
                       decoration: const InputDecoration(
-                        labelText: 'Estimated Duration',
+                        labelText: 'Estimated Duration (Optional)',
                         hintText: 'e.g., 2 weeks, 1 month',
                         border: OutlineInputBorder(),
                       ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Features Input
+                    TextFormField(
+                      controller: _featuresController,
+                      decoration: const InputDecoration(
+                        labelText: 'Features (Optional)',
+                        hintText: 'Enter features separated by commas',
+                        helperText:
+                            'e.g., User authentication, Dashboard, Reports',
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 3,
                     ),
                     const SizedBox(height: 24),
                     ElevatedButton(
