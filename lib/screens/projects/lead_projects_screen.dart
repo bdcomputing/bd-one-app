@@ -346,14 +346,16 @@ class _CreateLeadProjectSheetState extends ConsumerState<CreateLeadProjectSheet>
       final user = await ref.read(authProvider.notifier).getCurrentUser();
       final service = ref.read(leadProjectServiceProvider);
 
+      // Match the CRM pattern exactly
       final payload = {
         'title': _titleController.text,
         'description': _descriptionController.text,
-        'duration': _durationController.text,
-        'source': 'MOBILE_APP',
-        'projectType': 'SERVICE', // Default, can be made selectable
-        'clientId': user?.clientId,
+        'duration': _durationController.text.isNotEmpty ? _durationController.text : null,
+        'source': 'MOBILE_APP', // LeadSourceEnum value
+        'projectType': 'SERVICE', // Default to SERVICE, can be made selectable
         'leadId': user?.leadId,
+        'clientId': user?.clientId,
+        'features': [], // Can be extended to allow feature input
       };
 
       await service.createLeadProject(payload);
@@ -362,7 +364,10 @@ class _CreateLeadProjectSheetState extends ConsumerState<CreateLeadProjectSheet>
         Navigator.pop(context);
         widget.onSuccess();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Quote request submitted successfully!')),
+          const SnackBar(
+            content: Text('Quote request submitted successfully! Our team will review it shortly.'),
+            duration: Duration(seconds: 3),
+          ),
         );
       }
     } catch (e) {

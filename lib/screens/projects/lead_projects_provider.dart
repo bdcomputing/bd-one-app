@@ -92,3 +92,9 @@ class LeadProjectsNotifier extends StateNotifier<LeadProjectsState> {
 final leadProjectsProvider = StateNotifierProvider<LeadProjectsNotifier, LeadProjectsState>((ref) {
   return LeadProjectsNotifier(ref);
 });
+
+/// Provider that counts lead projects without quotes (pending requests)
+final pendingQuoteRequestsCountProvider = Provider<int>((ref) {
+  final leadProjects = ref.watch(leadProjectsProvider).leadProjects;
+  return leadProjects.where((lp) => lp.projectId == null).length;
+});

@@ -3,6 +3,7 @@ import 'package:bdcomputing/screens/billing/invoices_provider.dart';
 import 'package:bdcomputing/screens/payments/payments_screen.dart';
 import 'package:bdcomputing/screens/profile/profile_screen.dart';
 import 'package:bdcomputing/screens/projects/lead_projects_screen.dart';
+import 'package:bdcomputing/screens/projects/lead_projects_provider.dart';
 import 'package:bdcomputing/screens/projects/projects_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,6 +39,7 @@ class _HomeWrapperState extends State<HomeWrapper> {
         bottomNavigationBar: Consumer(
           builder: (context, ref, _) {
             final unpaidCount = ref.watch(unpaidInvoicesCountProvider);
+            final pendingRequestsCount = ref.watch(pendingQuoteRequestsCountProvider);
             return BottomNavigationBar(
               backgroundColor: Colors.white,
               currentIndex: _currentIndex,
@@ -53,10 +55,41 @@ class _HomeWrapperState extends State<HomeWrapper> {
                   icon: HugeIcon(icon: HugeIcons.strokeRoundedHome01, size: 30),
                   label: 'Home',
                 ),
-                const BottomNavigationBarItem(
-                  icon: HugeIcon(
-                    icon: HugeIcons.strokeRoundedFileValidation,
-                    size: 30,
+                BottomNavigationBarItem(
+                  icon: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      const HugeIcon(
+                        icon: HugeIcons.strokeRoundedFileValidation,
+                        size: 30,
+                      ),
+                      if (pendingRequestsCount > 0)
+                        Positioned(
+                          top: -6,
+                          right: -12,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: const BoxDecoration(
+                              color: AppColors.secondary,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 18,
+                              minHeight: 18,
+                            ),
+                            child: Center(
+                              child: Text(
+                                '$pendingRequestsCount',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   label: 'Requests',
                 ),
