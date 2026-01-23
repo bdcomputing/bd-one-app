@@ -21,8 +21,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
       title: 'Stay ahead\nof the tech curve',
       illustration: 'assets/onboarding1.png',
       gradientColors: [
-        Color(0xFF4ADE80),
-        Color(0xFF22D3EE),
+        const Color(0xFF4ADE80),
+        const Color(0xFF22D3EE),
       ],
       iconData: Icons.videogame_asset_outlined,
     ),
@@ -31,8 +31,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
       title: 'Much more than\nlive chat',
       illustration: 'assets/onboarding2.png',
       gradientColors: [
-        Color(0xFFFBBF24),
-        Color(0xFF84CC16),
+        const Color(0xFFFBBF24),
+        const Color(0xFF84CC16),
       ],
       iconData: Icons.chat_bubble_outline,
     ),
@@ -41,8 +41,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
       title: 'Spotlight\nnew features',
       illustration: 'assets/onboarding3.png',
       gradientColors: [
-        Color(0xFFF472B6),
-        Color(0xFFFB923C),
+        const Color(0xFFF472B6),
+        const Color(0xFFFB923C),
       ],
       iconData: Icons.auto_awesome_outlined,
     ),

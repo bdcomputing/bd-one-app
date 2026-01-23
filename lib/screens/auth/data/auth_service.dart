@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:bdcomputing/screens/auth/domain/password_model.dart';
 import 'package:bdcomputing/screens/auth/domain/user_model.dart';
+import 'package:bdcomputing/screens/auth/domain/client_registration_model.dart';
 import 'package:bdcomputing/core/endpoints.dart';
 import 'package:bdcomputing/core/utils/api_client.dart';
 import 'package:bdcomputing/core/utils/api_exception.dart';
@@ -137,7 +138,7 @@ class AuthService {
     throw Exception('Failed to refresh token');
   }
 
-  Future<void> signup(ClientRegister client) async {
+  Future<void> signup(ClientRegistration client) async {
     try {
       await _apiClient.post(
         ApiEndpoints.registerEndpoint,
