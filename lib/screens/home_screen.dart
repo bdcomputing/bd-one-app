@@ -291,32 +291,32 @@ class HomeTab extends StatelessWidget {
               _buildActionItem(
                 HugeIcons.strokeRoundedNote01,
                 'Quotes',
-                AppColors.accent,
                 AppColors.primary,
+                AppColors.accent,
               ),
               _buildActionItem(
                 HugeIcons.strokeRoundedMail01,
                 'Messages',
-                AppColors.secondary800,
-                AppColors.sage100,
+                AppColors.primary,
+                AppColors.accent,
               ),
 
               _buildActionItem(
                 HugeIcons.strokeRoundedPaymentSuccess01,
                 'Payments',
-                AppColors.sage100,
                 AppColors.primary,
+                AppColors.accent,
               ),
               _buildActionItem(
                 HugeIcons.strokeRoundedInvoice04,
                 'Invoices',
                 AppColors.primary,
-                AppColors.surface,
+                AppColors.accent,
               ),
               _buildActionItem(
                 HugeIcons.strokeRoundedCustomerSupport,
                 'Support',
-                AppColors.primary700,
+                AppColors.primary,
                 AppColors.accent,
               ),
             ],
