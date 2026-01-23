@@ -8,6 +8,7 @@ import 'package:bdcomputing/screens/auth/auth_provider.dart';
 import 'package:bdcomputing/core/styles.dart';
 import 'package:bdcomputing/components/shared/custom_text_field.dart';
 import 'package:bdcomputing/components/shared/custom_button.dart';
+import 'package:bdcomputing/screens/auth/domain/mfa_models.dart';
 
 class LoginWithEmailScreen extends ConsumerStatefulWidget {
   const LoginWithEmailScreen({super.key});
@@ -42,14 +43,24 @@ class _LoginWithEmailScreenState extends ConsumerState<LoginWithEmailScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _submitting = true);
     try {
-      await ref
+      final result = await ref
           .read(authProvider.notifier)
           .loginWithEmail(_emailCtrl.text.trim(), _passwordCtrl.text);
       if (mounted) {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          AppRoutes.home,
-          (route) => false,
-        );
+        if (result is MfaRequired) {
+          Navigator.of(context).pushNamed(
+            AppRoutes.mfaVerification,
+            arguments: {
+              'mfaToken': result.mfaToken,
+              'methods': result.mfaMethods,
+            },
+          );
+        } else {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            AppRoutes.home,
+            (route) => false,
+          );
+        }
       }
     } catch (e) {
       if (!mounted) return;

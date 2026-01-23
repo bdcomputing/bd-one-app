@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:bdcomputing/screens/auth/domain/auth_state.dart';
+import 'package:bdcomputing/screens/auth/domain/password_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:bdcomputing/core/endpoints.dart';
@@ -8,9 +10,8 @@ import 'package:bdcomputing/core/utils/jwt_helper.dart';
 import 'package:bdcomputing/components/logger_config.dart';
 import 'package:bdcomputing/screens/auth/data/auth_repository.dart';
 import 'package:bdcomputing/screens/auth/data/auth_service.dart';
-import 'package:bdcomputing/screens/auth/domain/auth_state.dart';
-import 'package:bdcomputing/screens/auth/domain/password_model.dart';
 import 'package:bdcomputing/screens/auth/domain/user_model.dart';
+import 'package:bdcomputing/screens/auth/domain/mfa_models.dart';
 
 final baseUrlProvider = Provider<String>((ref) => ApiEndpoints.baseUrl);
 
@@ -71,24 +72,34 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  Future<void> loginWithEmail(String email, String password) async {
+  Future<LoginResult> loginWithEmail(String email, String password) async {
     state = const AuthLoading();
     try {
-      final newState = await _repo.loginWithEmail(email, password);
-      state = newState;
-      _scheduleTokenRefresh();
+      final result = await _repo.loginWithEmail(email, password);
+      if (result is LoginSuccess) {
+        state = Authenticated(User.fromJson(result.user));
+        _scheduleTokenRefresh();
+      } else {
+        state = const Unauthenticated();
+      }
+      return result;
     } catch (e) {
       state = const Unauthenticated();
       rethrow;
     }
   }
 
-  Future<void> loginWithPhone(String phone, String password) async {
+  Future<LoginResult> loginWithPhone(String phone, String password) async {
     state = const AuthLoading();
     try {
-      final newState = await _repo.loginWithPhone(phone, password);
-      state = newState;
-      _scheduleTokenRefresh();
+      final result = await _repo.loginWithPhone(phone, password);
+      if (result is LoginSuccess) {
+        state = Authenticated(User.fromJson(result.user));
+        _scheduleTokenRefresh();
+      } else {
+        state = const Unauthenticated();
+      }
+      return result;
     } catch (e) {
       state = const Unauthenticated();
       rethrow;
@@ -123,6 +134,47 @@ class AuthNotifier extends StateNotifier<AuthState> {
     await _repo.logout();
     _cancelRefreshTimer();
     state = const Unauthenticated();
+  }
+
+  Future<void> completeLogin({
+    required String accessToken,
+    required String refreshToken,
+    required Map<String, dynamic> user,
+  }) async {
+    await _repo.saveSession(
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      user: user,
+    );
+
+    final userObj = User.fromJson(user);
+    state = Authenticated(userObj);
+
+    _scheduleTokenRefresh();
+  }
+
+  Future<LoginSuccess> verifyMfa({
+    required String mfaToken,
+    required String code,
+  }) async {
+    state = const AuthLoading();
+    try {
+      final result = await _repo.service.verifyMfa(
+        mfaToken: mfaToken,
+        code: code,
+      );
+
+      await completeLogin(
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+        user: result.user,
+      );
+
+      return result;
+    } catch (e) {
+      state = const Unauthenticated();
+      rethrow;
+    }
   }
 
   Future<void> refreshProfile() async {

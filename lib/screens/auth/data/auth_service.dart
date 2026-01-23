@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:bdcomputing/screens/auth/domain/password_model.dart';
 import 'package:bdcomputing/screens/auth/domain/user_model.dart';
 import 'package:bdcomputing/screens/auth/domain/client_registration_model.dart';
+import 'package:bdcomputing/screens/auth/domain/mfa_models.dart';
 import 'package:bdcomputing/core/endpoints.dart';
 import 'package:bdcomputing/core/utils/api_client.dart';
 import 'package:bdcomputing/core/utils/api_exception.dart';
@@ -10,8 +11,7 @@ class AuthService {
   final ApiClient _apiClient;
   AuthService({required ApiClient apiClient}) : _apiClient = apiClient;
 
-  Future<({String accessToken, String refreshToken, Map<String, dynamic> user})>
-  loginWithEmail({required String email, required String password}) async {
+  Future<LoginResult> loginWithEmail({required String email, required String password}) async {
     try {
       final res = await _apiClient.post(
         ApiEndpoints.loginWithEmailEndpoint,
@@ -20,6 +20,18 @@ class AuthService {
 
       final root = res.data as Map<String, dynamic>;
       final payload = (root['data'] ?? root) as Map<String, dynamic>;
+
+      // Handle MFA required
+      if (payload['mfaToken'] != null) {
+        return MfaRequired(
+          mfaToken: payload['mfaToken'] as String,
+          mfaMethods: (payload['mfaMethods'] as List?)
+                  ?.map((e) => MfaMethod.fromString(e.toString()))
+                  .toList() ??
+              [],
+        );
+      }
+
       final userBody = payload['user'];
       if (userBody == null) {
         throw ApiException(message: 'User data not found in response');
@@ -36,7 +48,7 @@ class AuthService {
         throw ApiException(message: 'User is not a client');
       }
 
-      return (
+      return LoginSuccess(
         accessToken:
             (payload['access_token'] ?? payload['accessToken'] ?? '') as String,
         refreshToken:
@@ -51,8 +63,7 @@ class AuthService {
     }
   }
 
-  Future<({String accessToken, String refreshToken, Map<String, dynamic> user})>
-  loginWithPhone({required String phone, required String password}) async {
+  Future<LoginResult> loginWithPhone({required String phone, required String password}) async {
     try {
       final res = await _apiClient.post(
         ApiEndpoints.loginWithPhoneEndpoint,
@@ -61,6 +72,18 @@ class AuthService {
 
       final root = res.data as Map<String, dynamic>;
       final payload = (root['data'] ?? root) as Map<String, dynamic>;
+
+      // Handle MFA required
+      if (payload['mfaToken'] != null) {
+        return MfaRequired(
+          mfaToken: payload['mfaToken'] as String,
+          mfaMethods: (payload['mfaMethods'] as List?)
+                  ?.map((e) => MfaMethod.fromString(e.toString()))
+                  .toList() ??
+              [],
+        );
+      }
+
       final userBody = payload['user'];
       if (userBody == null) {
         throw ApiException(message: 'User data not found in response');
@@ -69,7 +92,7 @@ class AuthService {
       if (user.clientId == null) {
         throw ApiException(message: 'User is not a client');
       }
-      return (
+      return LoginSuccess(
         accessToken:
             (payload['access_token'] ?? payload['accessToken'] ?? '') as String,
         refreshToken:
@@ -143,6 +166,57 @@ class AuthService {
       await _apiClient.post(
         ApiEndpoints.registerEndpoint,
         data: client.toJson(),
+      );
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    } catch (e) {
+      throw ApiException(message: e.toString());
+    }
+  }
+
+  Future<LoginSuccess> verifyMfa({
+    required String mfaToken,
+    required String code,
+  }) async {
+    try {
+      final res = await _apiClient.post(
+        ApiEndpoints.mfaVerifyEndpoint,
+        data: {'mfaToken': mfaToken, 'code': code},
+      );
+
+      final root = res.data as Map<String, dynamic>;
+      final payload = (root['data'] ?? root) as Map<String, dynamic>;
+
+      final userBody = payload['user'];
+      if (userBody == null) {
+        throw ApiException(message: 'User data not found in response');
+      }
+
+      final user = User.fromJson(userBody as Map<String, dynamic>);
+      if (user.clientId == null) {
+        throw ApiException(message: 'User is not a client');
+      }
+
+      return LoginSuccess(
+        accessToken:
+            (payload['access_token'] ?? payload['accessToken'] ?? '') as String,
+        refreshToken:
+            (payload['refresh_token'] ?? payload['refreshToken'] ?? '')
+                as String,
+        user: user.toJson(),
+      );
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    } catch (e) {
+      throw ApiException(message: e.toString());
+    }
+  }
+
+  Future<void> resendMfa(String mfaToken) async {
+    try {
+      await _apiClient.post(
+        ApiEndpoints.mfaResendEndpoint,
+        data: {'mfaToken': mfaToken},
       );
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);

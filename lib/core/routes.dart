@@ -5,7 +5,9 @@ import 'package:bdcomputing/screens/auth/presentation/auth_guard.dart';
 import 'package:bdcomputing/screens/auth/presentation/auth_switch.dart';
 import 'package:bdcomputing/screens/auth/presentation/login_screen_email.dart';
 import 'package:bdcomputing/screens/auth/presentation/login_screen_phone.dart';
+import 'package:bdcomputing/screens/auth/presentation/mfa_verification_screen.dart';
 import 'package:bdcomputing/screens/auth/presentation/signup_screen.dart';
+import 'package:bdcomputing/screens/auth/domain/mfa_models.dart';
 import 'package:bdcomputing/screens/auth/presentation/update_password.dart';
 import 'package:bdcomputing/screens/contact/get_help_screen.dart';
 import 'package:bdcomputing/screens/onboarding_screen.dart';
@@ -31,6 +33,7 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String forgotPassword = '/forgot-password';
   static const String updatePassword = '/update-password';
+  static const String mfaVerification = '/mfa-verification';
 
 
   // Payment
@@ -67,6 +70,14 @@ class AppRoutes {
 
       case updatePassword:
         return AdaptivePageRoute(builder: (_) => const UpdatePasswordScreen());
+      case mfaVerification:
+        final args = settings.arguments as Map<String, dynamic>?;
+        return AdaptivePageRoute(
+          builder: (_) => MfaVerificationScreen(
+            mfaToken: args?['mfaToken'] as String? ?? '',
+            methods: args?['methods'] as List<MfaMethod>? ?? [],
+          ),
+        );
 
       case profile:
         return AdaptivePageRoute(

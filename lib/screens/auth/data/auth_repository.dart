@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bdcomputing/screens/auth/domain/mfa_models.dart';
 import 'package:logger/logger.dart';
 import 'package:bdcomputing/screens/auth/domain/auth_state.dart';
 import 'package:bdcomputing/screens/auth/domain/password_model.dart';
@@ -21,6 +22,8 @@ class AuthRepository {
   AuthRepository({required AuthService service, required ApiClient apiClient})
     : _service = service,
       _apiClient = apiClient;
+
+  AuthService get service => _service;
 
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
@@ -56,36 +59,58 @@ class AuthRepository {
     }
   }
 
-  Future<AuthState> loginWithEmail(String email, String password) async {
+  Future<LoginResult> loginWithEmail(String email, String password) async {
     final result = await _service.loginWithEmail(
       email: email,
       password: password,
     );
 
-    var userJson = result.user;
-    var user = User.fromJson(userJson);
+    if (result is LoginSuccess) {
+      var userJson = result.user;
+      var user = User.fromJson(userJson);
 
-    // Ensure we have full client data including country
-    user = await _ensureClientData(user, userJson);
+      // Ensure we have full client data including country
+      user = await _ensureClientData(user, userJson);
 
-    await _saveSession(result.accessToken, result.refreshToken, user.toJson());
-    return Authenticated(user);
+      await saveSession(
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+        user: user.toJson(),
+      );
+    }
+    
+    return result;
   }
 
-  Future<AuthState> loginWithPhone(String phone, String password) async {
+  Future<LoginResult> loginWithPhone(String phone, String password) async {
     final result = await _service.loginWithPhone(
       phone: phone,
       password: password,
     );
 
-    var userJson = result.user;
-    var user = User.fromJson(userJson);
+    if (result is LoginSuccess) {
+      var userJson = result.user;
+      var user = User.fromJson(userJson);
 
-    // Ensure we have full client data including country
-    user = await _ensureClientData(user, userJson);
+      // Ensure we have full client data including country
+      user = await _ensureClientData(user, userJson);
 
-    await _saveSession(result.accessToken, result.refreshToken, user.toJson());
-    return Authenticated(user);
+      await saveSession(
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+        user: user.toJson(),
+      );
+    }
+    
+    return result;
+  }
+
+  Future<void> saveSession({
+    required String accessToken,
+    required String refreshToken,
+    required Map<String, dynamic> user,
+  }) async {
+    await _saveSession(accessToken, refreshToken, user);
   }
 
   Future<Map<String, dynamic>> forgotPassword(String email) async {

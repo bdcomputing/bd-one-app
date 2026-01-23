@@ -10,6 +10,8 @@ class ApiEndpoints {
   static const String loginWithPhoneEndpoint = '$baseUrl/auth/sign-in/phone';
   static const String refreshTokenEndpoint = '$baseUrl/auth/refresh-token';
   static const String registerEndpoint = '$baseUrl/auth/register';
+  static const String mfaVerifyEndpoint = '$baseUrl/auth/mfa-verify';
+  static const String mfaResendEndpoint = '$baseUrl/auth/mfa-resend';
   static const String addresses = '$baseUrl/addresses';
   static const String resetPasswordEndpoint = '$baseUrl/auth/password/reset';
   static const String updatePasswordWithOTPEndpoint =
