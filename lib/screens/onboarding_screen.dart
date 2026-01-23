@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:bdcomputing/screens/auth/auth_provider.dart';
+import 'package:bdcomputing/core/routes.dart';
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> with TickerProviderStateMixin {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with TickerProviderStateMixin {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   late AnimationController _fadeController;
@@ -186,14 +189,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                       _AnimatedButton(
                         currentPage: _currentPage,
                         totalPages: _pages.length,
-                        onPressed: () {
+                        onPressed: () async {
                           if (_currentPage < _pages.length - 1) {
                             _pageController.nextPage(
                               duration: const Duration(milliseconds: 400),
                               curve: Curves.easeInOut,
                             );
                           } else {
-                            // Navigate to main app
+                            // Mark onboarding as complete
+                            await ref.read(onboardingProvider.notifier).complete();
+                            
+                            // Navigate to login screen
+                            if (mounted) {
+                              Navigator.of(context).pushReplacementNamed(
+                                AppRoutes.home,
+                              );
+                            }
                           }
                         },
                       ),
