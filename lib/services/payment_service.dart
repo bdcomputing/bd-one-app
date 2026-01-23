@@ -67,4 +67,15 @@ class PaymentService {
     }
     throw Exception('Failed to fetch payments: ${response.statusCode}');
   }
+
+  /// Generates receipt PDF for a payment
+  Future<Payment> generateReceiptPdf(String paymentId) async {
+    final url = '${ApiEndpoints.payments}/$paymentId/regenerate-pdf';
+    final response = await _apiClient.post(url);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Payment.fromJson(response.data['data']);
+    }
+    throw Exception('Failed to generate receipt PDF: ${response.statusCode}');
+  }
 }

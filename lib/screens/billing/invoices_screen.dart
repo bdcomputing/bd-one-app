@@ -1,4 +1,5 @@
 import 'package:bdcomputing/models/common/invoice.dart';
+import 'package:bdcomputing/providers/providers.dart';
 import 'package:bdcomputing/screens/billing/invoices_provider.dart';
 import 'package:bdcomputing/screens/common/pdf_viewer_screen.dart';
 import 'package:flutter/material.dart';
@@ -404,7 +405,7 @@ class InvoiceCard extends StatelessWidget {
   }
 }
 
-class InvoiceDetailSheet extends StatefulWidget {
+class InvoiceDetailSheet extends ConsumerStatefulWidget {
   final Invoice invoice;
   final VoidCallback onClose;
 
@@ -415,10 +416,47 @@ class InvoiceDetailSheet extends StatefulWidget {
   });
 
   @override
-  State<InvoiceDetailSheet> createState() => _InvoiceDetailSheetState();
+  ConsumerState<InvoiceDetailSheet> createState() => _InvoiceDetailSheetState();
 }
 
-class _InvoiceDetailSheetState extends State<InvoiceDetailSheet> {
+class _InvoiceDetailSheetState extends ConsumerState<InvoiceDetailSheet> {
+  bool _isGeneratingPdf = false;
+  Invoice? _updatedInvoice;
+
+  Invoice get currentInvoice => _updatedInvoice ?? widget.invoice;
+
+  Future<void> _generatePdf() async {
+    setState(() {
+      _isGeneratingPdf = true;
+    });
+
+    try {
+      final invoiceService = ref.read(invoiceServiceProvider);
+      final updatedInvoice = await invoiceService.generateInvoicePdf(widget.invoice.id);
+      
+      setState(() {
+        _updatedInvoice = updatedInvoice;
+        _isGeneratingPdf = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('PDF generated successfully!')),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _isGeneratingPdf = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to generate PDF: $e')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -555,43 +593,52 @@ class _InvoiceDetailSheetState extends State<InvoiceDetailSheet> {
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: widget.invoice.invoiceLink.isNotEmpty
-                        ? () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => PdfViewerScreen(
-                                  pdfUrl: widget.invoice.invoiceLink,
-                                  documentTitle:
-                                      'Invoice ${widget.invoice.serial}',
-                                  documentSerial: widget.invoice.serial,
-                                ),
-                              ),
-                            );
-                          }
-                        : null,
-                    icon: HugeIcon(
-                      icon: HugeIcons.strokeRoundedFileView,
-                      size: 18,
-                      color: widget.invoice.invoiceLink.isNotEmpty
-                          ? const Color(0xFF374151)
-                          : const Color(0xFF9CA3AF),
-                    ),
+                    onPressed: _isGeneratingPdf
+                        ? null
+                        : (currentInvoice.invoiceLink.isNotEmpty
+                            ? () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => PdfViewerScreen(
+                                      pdfUrl: currentInvoice.invoiceLink,
+                                      documentTitle: 'Invoice ${currentInvoice.serial}',
+                                      documentSerial: currentInvoice.serial,
+                                    ),
+                                  ),
+                                );
+                              }
+                            : _generatePdf),
+                    icon: _isGeneratingPdf
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : HugeIcon(
+                            icon: currentInvoice.invoiceLink.isNotEmpty
+                                ? HugeIcons.strokeRoundedFileView
+                                : HugeIcons.strokeRoundedFileAdd,
+                            size: 18,
+                            color: _isGeneratingPdf
+                                ? const Color(0xFF9CA3AF)
+                                : const Color(0xFF374151),
+                          ),
                     label: Text(
-                      widget.invoice.invoiceLink.isNotEmpty
-                          ? 'View PDF'
-                          : 'PDF Not Available',
+                      _isGeneratingPdf
+                          ? 'Generating...'
+                          : (currentInvoice.invoiceLink.isNotEmpty ? 'View PDF' : 'Generate PDF'),
                       style: TextStyle(
-                        color: widget.invoice.invoiceLink.isNotEmpty
-                            ? const Color(0xFF374151)
-                            : const Color(0xFF9CA3AF),
+                        color: _isGeneratingPdf
+                            ? const Color(0xFF9CA3AF)
+                            : const Color(0xFF374151),
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       side: BorderSide(
-                        color: widget.invoice.invoiceLink.isNotEmpty
-                            ? const Color(0xFFD1D5DB)
-                            : const Color(0xFFE5E7EB),
+                        color: _isGeneratingPdf
+                            ? const Color(0xFFE5E7EB)
+                            : const Color(0xFFD1D5DB),
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -602,11 +649,11 @@ class _InvoiceDetailSheetState extends State<InvoiceDetailSheet> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: widget.invoice.amountDue > 0
+                    onPressed: currentInvoice.amountDue > 0
                         ? () {
                             Navigator.of(context).pushNamed(
                               '/payment',
-                              arguments: {'invoiceId': widget.invoice.id},
+                              arguments: {'invoiceId': currentInvoice.id},
                             );
                           }
                         : null,

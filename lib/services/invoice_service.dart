@@ -47,4 +47,15 @@ class InvoiceService {
     }
     throw Exception('Failed to fetch invoices: ${response.statusCode}');
   }
+
+  /// Generates PDF for an invoice
+  Future<Invoice> generateInvoicePdf(String invoiceId) async {
+    final url = '${ApiEndpoints.invoices}/$invoiceId/regenerate-pdf';
+    final response = await _apiClient.post(url);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Invoice.fromJson(response.data['data']);
+    }
+    throw Exception('Failed to generate invoice PDF: ${response.statusCode}');
+  }
 }

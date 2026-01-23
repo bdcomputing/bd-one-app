@@ -1,5 +1,6 @@
 import 'package:bdcomputing/core/styles.dart';
 import 'package:bdcomputing/models/payments/payment.dart';
+import 'package:bdcomputing/providers/providers.dart';
 import 'package:bdcomputing/screens/common/pdf_viewer_screen.dart';
 import 'package:bdcomputing/screens/payments/payments_provider.dart';
 import 'package:flutter/material.dart';
@@ -68,12 +69,12 @@ class _PaymentsScreenState extends ConsumerState<PaymentsScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Overview Metrics (simplified from invoices_screen)
                   _buildMetricsOverview(metrics),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Search
                   Row(
                     children: [
@@ -105,7 +106,9 @@ class _PaymentsScreenState extends ConsumerState<PaymentsScreen> {
                                     border: InputBorder.none,
                                   ),
                                   onSubmitted: (val) {
-                                    ref.read(paymentsProvider.notifier).setKeyword(val);
+                                    ref
+                                        .read(paymentsProvider.notifier)
+                                        .setKeyword(val);
                                   },
                                 ),
                               ),
@@ -118,40 +121,46 @@ class _PaymentsScreenState extends ConsumerState<PaymentsScreen> {
                 ],
               ),
             ),
-            
+
             // Payment List
             Expanded(
               child: state.isLoading && state.payments.isEmpty
                   ? const Center(child: CircularProgressIndicator())
                   : state.error != null && state.payments.isEmpty
-                      ? Center(child: Text(state.error!))
-                      : RefreshIndicator(
-                          onRefresh: () => ref.read(paymentsProvider.notifier).refresh(),
-                          child: state.payments.isEmpty
-                              ? _buildEmptyState()
-                              : ListView.builder(
-                                  padding: EdgeInsets.zero,
-                                  itemCount: state.payments.length + (state.page <= state.totalPages ? 1 : 0),
-                                  itemBuilder: (context, index) {
-                                    if (index == state.payments.length) {
-                                      ref.read(paymentsProvider.notifier).fetchPayments();
-                                      return const Center(
-                                        child: Padding(
-                                          padding: EdgeInsets.all(16.0),
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                      );
-                                    }
-                                    final payment = state.payments[index];
-                                    return PaymentCard(
-                                      payment: payment,
-                                      isExpanded: _expandedItems[payment.id] ?? false,
-                                      onToggle: () => _toggleExpand(payment.id),
-                                      onTap: () => _showPaymentDetail(payment),
-                                    );
-                                  },
-                                ),
-                        ),
+                  ? Center(child: Text(state.error!))
+                  : RefreshIndicator(
+                      onRefresh: () =>
+                          ref.read(paymentsProvider.notifier).refresh(),
+                      child: state.payments.isEmpty
+                          ? _buildEmptyState()
+                          : ListView.builder(
+                              padding: EdgeInsets.zero,
+                              itemCount:
+                                  state.payments.length +
+                                  (state.page <= state.totalPages ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (index == state.payments.length) {
+                                  ref
+                                      .read(paymentsProvider.notifier)
+                                      .fetchPayments();
+                                  return const Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(16.0),
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+                                }
+                                final payment = state.payments[index];
+                                return PaymentCard(
+                                  payment: payment,
+                                  isExpanded:
+                                      _expandedItems[payment.id] ?? false,
+                                  onToggle: () => _toggleExpand(payment.id),
+                                  onTap: () => _showPaymentDetail(payment),
+                                );
+                              },
+                            ),
+                    ),
             ),
           ],
         ),
@@ -164,7 +173,11 @@ class _PaymentsScreenState extends ConsumerState<PaymentsScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const HugeIcon(icon: HugeIcons.strokeRoundedCreditCardPos, size: 64, color: Color(0xFFE5E7EB)),
+          const HugeIcon(
+            icon: HugeIcons.strokeRoundedCreditCardPos,
+            size: 64,
+            color: Color(0xFFE5E7EB),
+          ),
           const SizedBox(height: 16),
           Text(
             'No payments found',
@@ -236,13 +249,35 @@ class PaymentCard extends StatelessWidget {
     required this.onTap,
   });
 
+  String _getPaymentIcon(String channel) {
+    switch (channel.toLowerCase()) {
+      case 'mpesa':
+        return 'assets/payments/mpesa.png';
+      case 'pesapal':
+        return 'assets/payments/pesapal.png';
+      case 'cash':
+        return 'assets/payments/cash.jpg';
+      case 'cheque':
+        return 'assets/payments/cheque.png';
+      case 'bank_transfer':
+      case 'bank transfer':
+        return 'assets/payments/bank-transfer.png';
+      case 'bank_deposit':
+      case 'bank deposit':
+        return 'assets/payments/direct-deposit.png';
+      case 'airtel_money':
+      case 'airtel money':
+        return 'assets/payments/airtel-money.png';
+      default:
+        return 'assets/payments/cash.jpg';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Color(0xFFE5E5E5), width: 1),
-        ),
+        border: Border(bottom: BorderSide(color: Color(0xFFE5E5E5), width: 1)),
       ),
       child: Column(
         children: [
@@ -252,6 +287,22 @@ class PaymentCard extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
+                  // Payment icon
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: const Color(0xFFE5E5E5)),
+                    ),
+                    padding: const EdgeInsets.all(6),
+                    child: Image.asset(
+                      _getPaymentIcon(payment.paymentChannel),
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,7 +310,9 @@ class PaymentCard extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              NumberFormat.currency(symbol: 'KES ').format(payment.amountPaid),
+                              NumberFormat.currency(
+                                symbol: 'KES ',
+                              ).format(payment.amountPaid),
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -267,7 +320,10 @@ class PaymentCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFD1FAE5),
                                 borderRadius: BorderRadius.circular(4),
@@ -285,8 +341,13 @@ class PaymentCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          DateFormat('MMM dd, yyyy • hh:mm a').format(payment.paymentDate),
-                          style: const TextStyle(fontSize: 12, color: Color(0xFF666666)),
+                          DateFormat(
+                            'MMM dd, yyyy • hh:mm a',
+                          ).format(payment.paymentDate),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF666666),
+                          ),
                         ),
                       ],
                     ),
@@ -308,16 +369,23 @@ class PaymentCard extends StatelessWidget {
           if (isExpanded)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildDetailRow('REFERENCE NO', payment.reference),
-                  const SizedBox(height: 12),
-                  _buildDetailRow('RECEIPT NO', payment.receiptNumber),
-                  const SizedBox(height: 12),
-                  _buildDetailRow('SERIAL', payment.serial),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildDetailRow('REFERENCE NO', payment.reference),
+                      const SizedBox(width: 12),
+                      _buildDetailRow('RECEIPT NO', payment.receiptNumber),
+                      const SizedBox(width: 12),
+                      _buildDetailRow('SERIAL', payment.serial),
+                    ],
+                  ),
                   if (payment.notes != null && payment.notes!.isNotEmpty) ...[
-                    const SizedBox(height: 12),
+                    const SizedBox(width: 12),
                     _buildDetailRow('NOTES', payment.notes!),
                   ],
                 ],
@@ -342,16 +410,13 @@ class PaymentCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 13, color: Colors.black),
-        ),
+        Text(value, style: const TextStyle(fontSize: 13, color: Colors.black)),
       ],
     );
   }
 }
 
-class PaymentDetailSheet extends StatelessWidget {
+class PaymentDetailSheet extends ConsumerStatefulWidget {
   final Payment payment;
   final VoidCallback onClose;
 
@@ -362,7 +427,49 @@ class PaymentDetailSheet extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  ConsumerState<PaymentDetailSheet> createState() => _PaymentDetailSheetState();
+}
+
+class _PaymentDetailSheetState extends ConsumerState<PaymentDetailSheet> {
+  bool _isGeneratingPdf = false;
+  Payment? _updatedPayment;
+
+  Payment get currentPayment => _updatedPayment ?? widget.payment;
+
+  Future<void> _generatePdf() async {
+    setState(() {
+      _isGeneratingPdf = true;
+    });
+
+    try {
+      final paymentService = ref.read(paymentServiceProvider);
+      final updatedPayment = await paymentService.generateReceiptPdf(widget.payment.id);
+      
+      setState(() {
+        _updatedPayment = updatedPayment;
+        _isGeneratingPdf = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Receipt generated successfully!')),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _isGeneratingPdf = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to generate receipt: $e')),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context ) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
       decoration: const BoxDecoration(
@@ -381,13 +488,17 @@ class PaymentDetailSheet extends StatelessWidget {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
-                  icon: const HugeIcon(icon: HugeIcons.strokeRoundedCancel01, size: 20, color: Colors.black),
-                  onPressed: onClose,
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedCancel01,
+                    size: 20,
+                    color: Colors.black,
+                  ),
+                  onPressed: widget.onClose,
                 ),
               ],
             ),
           ),
-          
+
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
@@ -401,60 +512,117 @@ class PaymentDetailSheet extends StatelessWidget {
                       color: const Color(0xFF059669).withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: const HugeIcon(icon: HugeIcons.strokeRoundedCheckmarkCircle01, color: Color(0xFF059669), size: 32),
+                    child: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedCheckmarkCircle01,
+                      color: Color(0xFF059669),
+                      size: 32,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    NumberFormat.currency(symbol: 'KES ').format(payment.amountPaid),
-                    style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    NumberFormat.currency(
+                      symbol: 'KES ',
+                    ).format(currentPayment.amountPaid),
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    payment.paymentChannel.toUpperCase(),
-                    style: const TextStyle(color: Color(0xFF666666), fontWeight: FontWeight.w500),
+                    currentPayment.paymentChannel.toUpperCase(),
+                    style: const TextStyle(
+                      color: Color(0xFF666666),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   const SizedBox(height: 32),
-                  _buildSheetRow('Transaction Date', DateFormat('MMM dd, yyyy hh:mm a').format(payment.paymentDate)),
+                  _buildSheetRow(
+                    'Transaction Date',
+                    DateFormat(
+                      'MMM dd, yyyy hh:mm a',
+                    ).format(currentPayment.paymentDate),
+                  ),
                   _buildDivider(),
-                  _buildSheetRow('Reference ID', payment.referenceId),
+                  _buildSheetRow('Reference ID', currentPayment.referenceId),
                   _buildDivider(),
-                  _buildSheetRow('Receipt Number', payment.receiptNumber),
+                  _buildSheetRow('Receipt Number', currentPayment.receiptNumber),
                   _buildDivider(),
-                  _buildSheetRow('Allocated', NumberFormat.currency(symbol: 'KES ').format(payment.allocatedAmount)),
+                  _buildSheetRow(
+                    'Allocated',
+                    NumberFormat.currency(
+                      symbol: 'KES ',
+                    ).format(currentPayment.allocatedAmount),
+                  ),
                   _buildDivider(),
-                  _buildSheetRow('Unallocated', NumberFormat.currency(symbol: 'KES ').format(payment.unAllocatedAmount)),
+                  _buildSheetRow(
+                    'Unallocated',
+                    NumberFormat.currency(
+                      symbol: 'KES ',
+                    ).format(currentPayment.unAllocatedAmount),
+                  ),
                 ],
               ),
             ),
           ),
-          
-          if (payment.receiptLink != null && payment.receiptLink!.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => PdfViewerScreen(
-                          pdfUrl: payment.receiptLink!,
-                          documentTitle: 'Receipt ${payment.receiptNumber}',
-                          documentSerial: payment.receiptNumber,
+
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton.icon(
+                onPressed: _isGeneratingPdf
+                    ? null
+                    : (currentPayment.receiptLink != null && currentPayment.receiptLink!.isNotEmpty
+                        ? () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => PdfViewerScreen(
+                                  pdfUrl: currentPayment.receiptLink!,
+                                  documentTitle: 'Receipt ${currentPayment.receiptNumber}',
+                                  documentSerial: currentPayment.receiptNumber,
+                                ),
+                              ),
+                            );
+                          }
+                        : _generatePdf),
+                icon: _isGeneratingPdf
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
                         ),
+                      )
+                    : HugeIcon(
+                        icon: currentPayment.receiptLink != null && currentPayment.receiptLink!.isNotEmpty
+                            ? HugeIcons.strokeRoundedFileView
+                            : HugeIcons.strokeRoundedFileAdd,
+                        color: Colors.white,
+                        size: 20,
                       ),
-                    );
-                  },
-                  icon: const HugeIcon(icon: HugeIcons.strokeRoundedFileView, color: Colors.white, size: 20),
-                  label: const Text('View Receipt', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                label: Text(
+                  _isGeneratingPdf
+                      ? 'Generating...'
+                      : (currentPayment.receiptLink != null && currentPayment.receiptLink!.isNotEmpty
+                          ? 'View Receipt'
+                          : 'Generate Receipt'),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _isGeneratingPdf ? Colors.grey : AppColors.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
               ),
             ),
+          ),
           SizedBox(height: MediaQuery.of(context).padding.bottom),
         ],
       ),
