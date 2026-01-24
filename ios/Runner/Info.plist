@@ -53,5 +53,18 @@
 	<string>We need access to your photo library to allow you to upload business documents for your bulk fuel account application.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to allow you to take photos of business documents for your bulk fuel account application.</string>
+	<key>GIDClientID</key>
+	<string>577111214604-p2vm5v7hhe67r28l5696p8v0s8fa6vqm.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.577111214604-p2vm5v7hhe67r28l5696p8v0s8fa6vqm</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

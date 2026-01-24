@@ -432,7 +432,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
+                        const Text(
                           'Already have an account? ',
                           style: TextStyle(
                             color: AppColors.textSecondary,
