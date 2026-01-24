@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bdcomputing/components/shared/header.dart';
-import 'package:bdcomputing/core/routes.dart';
 import 'package:bdcomputing/screens/auth/auth_provider.dart';
 import 'package:bdcomputing/core/styles.dart';
 import 'package:bdcomputing/components/shared/custom_text_field.dart';
 import 'package:bdcomputing/components/shared/custom_button.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -17,14 +16,8 @@ class ForgotPasswordScreen extends ConsumerStatefulWidget {
 
 class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _emailCtrl;
+  final _emailCtrl = TextEditingController();
   bool _submitting = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _emailCtrl = TextEditingController();
-  }
 
   @override
   void dispose() {
@@ -36,45 +29,32 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _submitting = true);
     try {
-      final result = await ref
+      await ref
           .read(authProvider.notifier)
           .forgotPassword(_emailCtrl.text.trim());
       if (!mounted) return;
-
-      if (result['statusCode'] == 200) {
-        Navigator.of(context).pushReplacementNamed(
-          AppRoutes.updatePassword,
-          arguments: {'email': _emailCtrl.text.trim()},
-        );
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'OTP sent. Please check your email to reset your password.',
-            ),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Password reset link sent! Please check your email.',
           ),
-        );
-      } else {
-        String errorMsg = (result['message'] != null)
-            ? result['message'].toString()
-            : 'Failed to send reset OTP. Please try again.';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMsg),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.md),
-            ),
+          backgroundColor: AppColors.success,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-        );
-      }
+        ),
+      );
+      Navigator.of(context).pop();
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.toString()),
+          backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.md),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       );
@@ -89,99 +69,122 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     final isLoading = _submitting || state is AuthLoading;
 
     return Scaffold(
-      appBar: const Header(
-        title: 'Forgot Password',
-        showBackButton: true,
-        showProfileIcon: false,
-        showCurrencyIcon: false,
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        leading: IconButton(
+          icon: const HugeIcon(
+            icon: HugeIcons.strokeRoundedArrowLeft01,
+            color: AppColors.textPrimary,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
-      backgroundColor: Colors.white,
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Title
-                const Text(
-                  'Restore Access',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 20),
+                  
+                  // Logo/Icon
+                  Center(
+                    child: Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Center(
+                        child: HugeIcon(
+                          icon: HugeIcons.strokeRoundedLockPassword,
+                          color: Colors.white,
+                          size: 32,
+                        ),
+                      ),
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Enter your email to reset your password.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
+                  const SizedBox(height: 32),
+                  
+                  // Title
+                  const Text(
+                    'Forgot Password?',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 40),
+                  const SizedBox(height: 8),
+                  
+                  // Subtitle
+                  Text(
+                    'Enter your email address and we\'ll send you\na link to reset your password',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textSecondary,
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 40),
+
+                  // Email Field
                   CustomTextField(
                     label: 'Email',
                     controller: _emailCtrl,
-                    hintText: 'Enter your email',
-                    prefixIcon: Icons.email_outlined,
+                    hintText: 'e.g., john@example.com',
+                    prefixIcon: HugeIcons.strokeRoundedMail01,
                     isRequired: true,
+                    keyboardType: TextInputType.emailAddress,
+                    variant: 'filled',
+                    showLabel: true,
                     validator: (v) =>
                         (v == null || v.isEmpty) ? 'Email is required' : null,
-                    keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 24),
+
+                  // Send Reset Link Button
                   CustomButton(
-                    text: 'Send Reset OTP',
+                    text: 'Send Reset Link',
                     onPressed: _submit,
                     isLoading: isLoading,
                   ),
                   const SizedBox(height: 24),
+
+                  // Back to Login
                   Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Remembered your password? ',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 14,
-                          ),
+                    child: TextButton(
+                      onPressed: isLoading
+                          ? null
+                          : () => Navigator.pop(context),
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppColors.primary,
+                      ),
+                      child: const Text(
+                        'Back to Login',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
                         ),
-                        TextButton(
-                          onPressed: isLoading
-                              ? null
-                              : () {
-                                  Navigator.of(context).pop();
-                                },
-                          style: TextButton.styleFrom(
-                            foregroundColor: AppColors.primary,
-                            padding: EdgeInsets.zero,
-                            minimumSize: const Size(0, 0),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          child: const Text(
-                            'Login',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
           ),
         ),
+      ),
     );
   }
 }

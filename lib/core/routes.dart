@@ -71,7 +71,7 @@ class AppRoutes {
         return AdaptivePageRoute(builder: (_) => const SignupScreen());
 
       case updatePassword:
-        return AdaptivePageRoute(builder: (_) => const UpdatePasswordScreen());
+        return AdaptivePageRoute(builder: (_) => const UpdatePasswordScreen(token: '',));
       case mfaVerification:
         final args = settings.arguments as Map<String, dynamic>?;
         return AdaptivePageRoute(

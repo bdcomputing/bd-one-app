@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bdcomputing/models/common/country.dart';
 import 'package:bdcomputing/models/enums/industry_enum.dart';
 import 'package:bdcomputing/screens/auth/domain/client_registration_model.dart';
-import 'package:bdcomputing/components/shared/section_card.dart';
 import 'package:bdcomputing/components/shared/custom_text_field.dart';
 import 'package:bdcomputing/components/shared/custom_button.dart';
 import 'package:bdcomputing/components/shared/country_picker_field.dart';
@@ -67,46 +67,18 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // Validate country selection
     if (_selectedCountry == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Please select your country'),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
+      _showError('Please select your country');
       return;
     }
 
-    // Validate industry selection
     if (_selectedIndustry == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Please select your industry'),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
+      _showError('Please select your industry');
       return;
     }
 
-    // Validate password match
     if (_passwordCtrl.text != _confirmPasswordCtrl.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Passwords do not match'),
-          backgroundColor: Colors.red[800],
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
+      _showError('Passwords do not match');
       return;
     }
 
@@ -135,6 +107,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
       await service.signup(registration);
       if (!mounted) return;
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Account created successfully! Please log in.'),
@@ -148,25 +121,33 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       Navigator.of(context).pop();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.error_outline, color: Colors.white),
-              const SizedBox(width: 12),
-              Expanded(child: Text(e.toString())),
-            ],
-          ),
-          backgroundColor: Colors.red[800],
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
+      _showError(e.toString());
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const HugeIcon(
+              icon: HugeIcons.strokeRoundedAlertCircle,
+              color: Colors.white,
+              size: 20,
+            ),
+            const SizedBox(width: 12),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: AppColors.error,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
   }
 
   @override
@@ -174,484 +155,384 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     final state = ref.watch(authProvider);
     final isLoading = _submitting || state is AuthLoading;
 
-    // Responsive: get screen width
-    final media = MediaQuery.of(context);
-    final width = media.size.width;
-    final isSmall = width < 400;
-
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const HugeIcon(
+                  icon: HugeIcons.strokeRoundedArrowLeft01,
+                  color: AppColors.textPrimary,
+                ),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
+        title: const Text(
+          'Create Account',
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Hero Header Section
-            Container(
-              width: double.infinity,
-              height: 250,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.primary,
-                    AppColors.primary600,
-                    AppColors.primary700,
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Logo/Icon
+                Center(
+                  child: Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Center(
+                      child: HugeIcon(
+                        icon: HugeIcons.strokeRoundedUserAdd01,
+                        color: Colors.white,
+                        size: 32,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                const Text(
+                  'Register to get started',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 32),
+
+                // Personal Information
+                _buildSectionTitle('Personal Information'),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  label: 'Full Name',
+                  controller: _nameCtrl,
+                  hintText: 'e.g., John Doe',
+                  prefixIcon: HugeIcons.strokeRoundedUser,
+                  isRequired: true,
+                  variant: 'filled',
+                  validator: (v) => (v == null || v.isEmpty)
+                      ? 'Full name is required'
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  label: 'Email Address',
+                  controller: _emailCtrl,
+                  hintText: 'e.g., john@example.com',
+                  prefixIcon: HugeIcons.strokeRoundedMail01,
+                  isRequired: true,
+                  keyboardType: TextInputType.emailAddress,
+                  variant: 'filled',
+                  validator: (v) {
+                    if (v == null || v.isEmpty) {
+                      return 'Email is required';
+                    }
+                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(v)) {
+                      return 'Enter a valid email';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  label: 'Phone Number',
+                  controller: _phoneCtrl,
+                  hintText: 'e.g., 0719155083',
+                  prefixIcon: HugeIcons.strokeRoundedSmartPhone01,
+                  isRequired: true,
+                  keyboardType: TextInputType.phone,
+                  variant: 'filled',
+                  validator: (v) => (v == null || v.isEmpty)
+                      ? 'Phone number is required'
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                
+                // Account Type
+                _buildDropdownLabel('Account Type', true),
+                const SizedBox(height: 8),
+                _buildFilledDropdown<bool>(
+                  value: _isCorporate,
+                  items: const [
+                    DropdownMenuItem(value: false, child: Text('Individual')),
+                    DropdownMenuItem(value: true, child: Text('Corporate')),
+                  ],
+                  onChanged: isLoading ? null : (value) {
+                    setState(() {
+                      _isCorporate = value ?? false;
+                      _idNumberCtrl.clear();
+                      _incorporationNumberCtrl.clear();
+                    });
+                  },
+                ),
+                const SizedBox(height: 32),
+
+                // Tax & Business Information
+                _buildSectionTitle('Tax & Business Information'),
+                const SizedBox(height: 16),
+
+                if (_isCorporate)
+                  CustomTextField(
+                    label: 'Incorporation Number',
+                    controller: _incorporationNumberCtrl,
+                    hintText: 'e.g., PVT-123456',
+                    prefixIcon: HugeIcons.strokeRoundedBuilding01,
+                    isRequired: false,
+                    variant: 'filled',
+                  )
+                else
+                  CustomTextField(
+                    label: 'ID Number',
+                    controller: _idNumberCtrl,
+                    hintText: 'e.g., 12345678',
+                    prefixIcon: HugeIcons.strokeRoundedAiCloud,
+                    isRequired: false,
+                    keyboardType: TextInputType.number,
+                    variant: 'filled',
+                  ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  label: 'KRA PIN',
+                  controller: _kraPINCtrl,
+                  hintText: 'e.g., A123456789X',
+                  prefixIcon: HugeIcons.strokeRoundedFileManagement,
+                  isRequired: false,
+                  variant: 'filled',
+                ),
+                const SizedBox(height: 16),
+                
+                _buildDropdownLabel('Industry', true),
+                const SizedBox(height: 8),
+                _buildFilledDropdown<Industry>(
+                  value: _selectedIndustry,
+                  hintText: 'Select Industry',
+                  items: Industry.values.map((industry) {
+                    return DropdownMenuItem(
+                      value: industry,
+                      child: Text(industry.displayName),
+                    );
+                  }).toList(),
+                  onChanged: isLoading ? null : (value) {
+                    setState(() => _selectedIndustry = value);
+                  },
+                ),
+                const SizedBox(height: 32),
+
+                // Address Information
+                _buildSectionTitle('Address Information'),
+                const SizedBox(height: 16),
+                CountryPickerField(
+                  selectedCountry: _selectedCountry,
+                  onSelected: (c) => setState(() => _selectedCountry = c),
+                  isRequired: true,
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  label: 'Street Address',
+                  controller: _streetCtrl,
+                  hintText: 'e.g., Ronald Ngala Street',
+                  prefixIcon: HugeIcons.strokeRoundedLocation01,
+                  isRequired: true,
+                  variant: 'filled',
+                  validator: (v) => (v == null || v.isEmpty)
+                      ? 'Street address is required'
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextField(
+                        label: 'City/County',
+                        controller: _cityCtrl,
+                        hintText: 'e.g., Eldoret',
+                        prefixIcon: HugeIcons.strokeRoundedLocation01,
+                        isRequired: true,
+                        variant: 'filled',
+                        validator: (v) => (v == null || v.isEmpty)
+                            ? 'City is required'
+                            : null,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: CustomTextField(
+                        label: 'State/Town',
+                        controller: _stateCtrl,
+                        hintText: 'e.g., Uasin Gishu',
+                        prefixIcon: HugeIcons.strokeRoundedMapsGlobal01,
+                        isRequired: true,
+                        variant: 'filled',
+                        validator: (v) => (v == null || v.isEmpty)
+                            ? 'State is required'
+                            : null,
+                      ),
+                    ),
                   ],
                 ),
-              ),
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: -20,
-                    left: -20,
-                    child: Container(
-                      width: 150,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withValues(alpha: 0.1),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: -30,
-                    right: -30,
-                    child: Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withValues(alpha: 0.05),
-                      ),
-                    ),
-                  ),
-                  SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (Navigator.canPop(context))
-                            IconButton(
-                              onPressed: () => Navigator.pop(context),
-                              icon: const Icon(Icons.arrow_back, color: Colors.white),
-                              style: IconButton.styleFrom(
-                                backgroundColor: Colors.white.withValues(alpha: 0.2),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          const Spacer(),
-                          const Text(
-                            'Client Registration',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Join BD Work OS and start managing your business today.',
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.9),
-                              fontSize: 15,
-                              height: 1.4,
-                            ),
-                          ),
-                          const SizedBox(height: 40),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Form Section
-            Transform.translate(
-              offset: const Offset(0, -30),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: isSmall ? 12.0 : 20.0,
+                const SizedBox(height: 16),
+                CustomTextField(
+                  label: 'Zip/Postal Code',
+                  controller: _zipCodeCtrl,
+                  hintText: 'e.g., 30100',
+                  prefixIcon: HugeIcons.strokeRoundedMail02,
+                  isRequired: true,
+                  variant: 'filled',
+                  validator: (v) => (v == null || v.isEmpty)
+                      ? 'Zip code is required'
+                      : null,
+                  keyboardType: TextInputType.number,
                 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 15,
-                        offset: const Offset(0, 5),
+                const SizedBox(height: 32),
+
+                // Security Information
+                _buildSectionTitle('Security Information'),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  label: 'Password',
+                  controller: _passwordCtrl,
+                  hintText: 'Create a strong password',
+                  prefixIcon: HugeIcons.strokeRoundedLockPassword,
+                  isPassword: true,
+                  isRequired: true,
+                  variant: 'filled',
+                  validator: (v) {
+                    if (v == null || v.isEmpty) return 'Password is required';
+                    if (v.length < 8) return 'Password must be at least 8 characters';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  label: 'Confirm Password',
+                  controller: _confirmPasswordCtrl,
+                  hintText: 'Re-enter your password',
+                  prefixIcon: HugeIcons.strokeRoundedLockPassword,
+                  isPassword: true,
+                  isRequired: true,
+                  variant: 'filled',
+                  validator: (v) {
+                    if (v == null || v.isEmpty) return 'Please confirm your password';
+                    if (v != _passwordCtrl.text) return 'Passwords do not match';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 32),
+
+                CustomButton(
+                  text: 'Create Account',
+                  onPressed: _submit,
+                  isLoading: isLoading,
+                ),
+
+                const SizedBox(height: 24),
+
+                Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Already have an account? ',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 13,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: isLoading ? null : () => Navigator.of(context).pop(),
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Personal Information
-                          SectionCard(
-                            title: 'Personal Information',
-                            children: [
-                              CustomTextField(
-                                label: 'Full Name',
-                                controller: _nameCtrl,
-                                hintText: 'e.g., John Doe',
-                                prefixIcon: Icons.person_outline,
-                                isRequired: true,
-                                validator: (v) => (v == null || v.isEmpty)
-                                    ? 'Full name is required'
-                                    : null,
-                              ),
-                              const SizedBox(height: 16),
-                              CustomTextField(
-                                label: 'Email Address',
-                                controller: _emailCtrl,
-                                hintText: 'e.g., john@example.com',
-                                prefixIcon: Icons.email_outlined,
-                                isRequired: true,
-                                keyboardType: TextInputType.emailAddress,
-                                validator: (v) {
-                                  if (v == null || v.isEmpty) {
-                                    return 'Email is required';
-                                  }
-                                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(v)) {
-                                    return 'Enter a valid email';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 16),
-                              CustomTextField(
-                                label: 'Phone Number',
-                                controller: _phoneCtrl,
-                                hintText: 'e.g., 0719155083',
-                                prefixIcon: Icons.phone_outlined,
-                                isRequired: true,
-                                keyboardType: TextInputType.phone,
-                                validator: (v) => (v == null || v.isEmpty)
-                                    ? 'Phone number is required'
-                                    : null,
-                              ),
-                              const SizedBox(height: 16),
-                              // Account Type
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Row(
-                                    children: [
-                                      Text(
-                                        'Account Type',
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textPrimary,
-                                        ),
-                                      ),
-                                      SizedBox(width: 4),
-                                      Text(
-                                        '*',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: AppColors.border),
-                                      borderRadius: BorderRadius.circular(AppRadius.md),
-                                    ),
-                                    child: DropdownButtonFormField<bool>(
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                        contentPadding: EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 8,
-                                        ),
-                                      ),
-                                      items: const [
-                                        DropdownMenuItem(
-                                          value: false,
-                                          child: Text('Individual'),
-                                        ),
-                                        DropdownMenuItem(
-                                          value: true,
-                                          child: Text('Corporate'),
-                                        ),
-                                      ],
-                                      initialValue: _isCorporate,
-                                      onChanged: isLoading
-                                          ? null
-                                          : (value) {
-                                              setState(() {
-                                                _isCorporate = value ?? false;
-                                                // Clear conditional fields when switching
-                                                _idNumberCtrl.clear();
-                                                _incorporationNumberCtrl.clear();
-                                              });
-                                            },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-
-                          // Tax & Business Information
-                          SectionCard(
-                            title: 'Tax & Business Information',
-                            children: [
-                              if (_isCorporate)
-                                CustomTextField(
-                                  label: 'Incorporation Number',
-                                  controller: _incorporationNumberCtrl,
-                                  hintText: 'e.g., PVT-123456',
-                                  prefixIcon: Icons.business_outlined,
-                                  isRequired: false,
-                                )
-                              else
-                                CustomTextField(
-                                  label: 'ID Number',
-                                  controller: _idNumberCtrl,
-                                  hintText: 'e.g., 12345678',
-                                  prefixIcon: Icons.badge_outlined,
-                                  isRequired: false,
-                                  keyboardType: TextInputType.number,
-                                ),
-                              const SizedBox(height: 16),
-                              CustomTextField(
-                                label: 'KRA PIN',
-                                controller: _kraPINCtrl,
-                                hintText: 'e.g., A123456789X',
-                                prefixIcon: Icons.receipt_long_outlined,
-                                isRequired: false,
-                              ),
-                              const SizedBox(height: 16),
-                              // Industry Dropdown
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Row(
-                                    children: [
-                                      Text(
-                                        'Industry',
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textPrimary,
-                                        ),
-                                      ),
-                                      SizedBox(width: 4),
-                                      Text(
-                                        '*',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: AppColors.border),
-                                      borderRadius: BorderRadius.circular(AppRadius.md),
-                                    ),
-                                    child: DropdownButtonFormField<Industry>(
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                        contentPadding: EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 8,
-                                        ),
-                                        hintText: 'Select Industry',
-                                      ),
-                                      items: Industry.values.map((industry) {
-                                        return DropdownMenuItem(
-                                          value: industry,
-                                          child: Text(industry.displayName),
-                                        );
-                                      }).toList(),
-                                      onChanged: isLoading
-                                          ? null
-                                          : (value) {
-                                              setState(() {
-                                                _selectedIndustry = value;
-                                              });
-                                            },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-
-                          // Address Information
-                          SectionCard(
-                            title: 'Address Information',
-                            children: [
-                              CountryPickerField(
-                                selectedCountry: _selectedCountry,
-                                onSelected: (c) =>
-                                    setState(() => _selectedCountry = c),
-                                isRequired: true,
-                              ),
-                              const SizedBox(height: 16),
-                              CustomTextField(
-                                label: 'Street Address',
-                                controller: _streetCtrl,
-                                hintText: 'e.g., Ronald Ngala Street',
-                                prefixIcon: Icons.location_on_outlined,
-                                isRequired: true,
-                                validator: (v) => (v == null || v.isEmpty)
-                                    ? 'Street address is required'
-                                    : null,
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: CustomTextField(
-                                      label: 'City/County',
-                                      controller: _cityCtrl,
-                                      hintText: 'e.g., Eldoret',
-                                      prefixIcon: Icons.location_city_outlined,
-                                      isRequired: true,
-                                      validator: (v) => (v == null || v.isEmpty)
-                                          ? 'City is required'
-                                          : null,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: CustomTextField(
-                                      label: 'State/Town',
-                                      controller: _stateCtrl,
-                                      hintText: 'e.g., Uasin Gishu',
-                                      prefixIcon: Icons.map_outlined,
-                                      isRequired: true,
-                                      validator: (v) => (v == null || v.isEmpty)
-                                          ? 'State is required'
-                                          : null,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              CustomTextField(
-                                label: 'Zip/Postal Code',
-                                controller: _zipCodeCtrl,
-                                hintText: 'e.g., 30100',
-                                prefixIcon: Icons.markunread_mailbox_outlined,
-                                isRequired: true,
-                                validator: (v) => (v == null || v.isEmpty)
-                                    ? 'Zip code is required'
-                                    : null,
-                                keyboardType: TextInputType.number,
-                              ),
-                            ],
-                          ),
-
-                          // Security Information
-                          SectionCard(
-                            title: 'Security Information',
-                            children: [
-                              CustomTextField(
-                                label: 'Password',
-                                controller: _passwordCtrl,
-                                hintText: 'Create a strong password',
-                                prefixIcon: Icons.lock_outline,
-                                isPassword: true,
-                                isRequired: true,
-                                validator: (v) {
-                                  if (v == null || v.isEmpty) {
-                                    return 'Password is required';
-                                  }
-                                  if (v.length < 8) {
-                                    return 'Password must be at least 8 characters';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 16),
-                              CustomTextField(
-                                label: 'Confirm Password',
-                                controller: _confirmPasswordCtrl,
-                                hintText: 'Re-enter your password',
-                                prefixIcon: Icons.lock_outline,
-                                isPassword: true,
-                                isRequired: true,
-                                validator: (v) {
-                                  if (v == null || v.isEmpty) {
-                                    return 'Please confirm your password';
-                                  }
-                                  if (v != _passwordCtrl.text) {
-                                    return 'Passwords do not match';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 12),
-
-                          CustomButton(
-                            text: 'Create Account',
-                            onPressed: _submit,
-                            isLoading: isLoading,
-                          ),
-
-                          const SizedBox(height: 24),
-
-                          // Login redirect
-                          Center(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'Already have an account? ',
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: isLoading
-                                      ? null
-                                      : () => Navigator.of(context).pop(),
-                                  child: const Text(
-                                    'Login',
-                                    style: TextStyle(
-                                      color: AppColors.primary,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                 ),
-              ),
+                const SizedBox(height: 40),
+              ],
             ),
-            const SizedBox(height: 20),
-          ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: AppColors.textPrimary,
+      ),
+    );
+  }
+
+  Widget _buildDropdownLabel(String label, bool isRequired) {
+    return RichText(
+      text: TextSpan(
+        text: label,
+        style: const TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+        ),
+        children: [
+          if (isRequired)
+            const TextSpan(
+              text: ' *',
+              style: TextStyle(color: AppColors.error),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilledDropdown<T>({
+    required T? value,
+    required List<DropdownMenuItem<T>> items,
+    required void Function(T?)? onChanged,
+    String? hintText,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F5F5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: DropdownButtonFormField<T>(
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
+          hintText: hintText,
+        ),
+        items: items,
+        value: value,
+        onChanged: onChanged,
       ),
     );
   }

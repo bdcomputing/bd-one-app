@@ -1,5 +1,7 @@
 import 'package:bdcomputing/core/styles.dart';
 import 'package:bdcomputing/models/common/lead_project.dart';
+import 'package:bdcomputing/models/common/product.dart';
+import 'package:bdcomputing/models/common/service.dart';
 import 'package:bdcomputing/models/dtos/create_lead_project_dto.dart';
 import 'package:bdcomputing/models/enums/lead_source.dart';
 import 'package:bdcomputing/models/enums/project_type.dart';
@@ -338,6 +340,50 @@ class _CreateLeadProjectSheetState
   String _selectedProjectType = 'service'; // Default to service
   String _selectedSource = 'website'; // Default to website
 
+  List<Product> _products = [];
+  List<ServiceModel> _services = [];
+  String? _selectedProductId;
+  String? _selectedServiceId;
+  bool _isLoadingItems = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch items based on default project type
+    _fetchItems();
+  }
+
+  Future<void> _fetchItems() async {
+    setState(() {
+      _isLoadingItems = true;
+      _selectedProductId = null;
+      _selectedServiceId = null;
+    });
+
+    try {
+      if (_selectedProjectType == 'product') {
+        final products = await ref.read(productServiceProvider).fetchProducts();
+        setState(() {
+          _products = products;
+        });
+      } else if (_selectedProjectType == 'service') {
+        final services = await ref.read(serviceServiceProvider).fetchServices();
+        setState(() {
+          _services = services;
+        });
+      }
+    } catch (e) {
+      print('Error fetching items: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoadingItems = false;
+        });
+      }
+    }
+  }
+
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -374,6 +420,8 @@ class _CreateLeadProjectSheetState
         description: _descriptionController.text.trim(),
         source: LeadSourceEnum.fromString(_selectedSource),
         projectType: ProjectTypeEnum.fromString(_selectedProjectType),
+        productId: _selectedProjectType == 'product' ? _selectedProductId : null,
+        serviceId: _selectedProjectType == 'service' ? _selectedServiceId : null,
         duration: _durationController.text.trim().isNotEmpty
             ? _durationController.text.trim()
             : null,
@@ -674,12 +722,147 @@ class _CreateLeadProjectSheetState
                               setState(() {
                                 _selectedProjectType = value;
                               });
+                              _fetchItems();
                             }
                           },
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
+
+                    if (_selectedProjectType == 'product') ...[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            text: const TextSpan(
+                              text: 'Choose Product',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: ' *',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          DropdownButtonFormField<String>(
+                            value: _selectedProductId,
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              hintText: _isLoadingItems
+                                  ? 'Loading products...'
+                                  : 'Select a product',
+                              suffixIcon: _isLoadingItems
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(12),
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            items: _products.map((p) {
+                              return DropdownMenuItem(
+                                value: p.id,
+                                child: Text(p.name),
+                              );
+                            }).toList(),
+                            validator: (value) {
+                              if (_selectedProjectType == 'product' &&
+                                  (value == null || value.isEmpty)) {
+                                return 'Please select a product';
+                              }
+                              return null;
+                            },
+                            onChanged: _isLoadingItems
+                                ? null
+                                : (value) {
+                                    setState(() {
+                                      _selectedProductId = value;
+                                    });
+                                  },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+
+                    if (_selectedProjectType == 'service') ...[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            text: const TextSpan(
+                              text: 'Choose Service',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: ' *',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          DropdownButtonFormField<String>(
+                            value: _selectedServiceId,
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              hintText: _isLoadingItems
+                                  ? 'Loading services...'
+                                  : 'Select a service',
+                              suffixIcon: _isLoadingItems
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(12),
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            items: _services.map((s) {
+                              return DropdownMenuItem(
+                                value: s.id,
+                                child: Text(s.title),
+                              );
+                            }).toList(),
+                            validator: (value) {
+                              if (_selectedProjectType == 'service' &&
+                                  (value == null || value.isEmpty)) {
+                                return 'Please select a service';
+                              }
+                              return null;
+                            },
+                            onChanged: _isLoadingItems
+                                ? null
+                                : (value) {
+                                    setState(() {
+                                      _selectedServiceId = value;
+                                    });
+                                  },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                    ],
 
                     // Duration (Optional)
                     TextFormField(

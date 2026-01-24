@@ -1,15 +1,19 @@
+import 'package:bdcomputing/screens/auth/domain/password_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bdcomputing/components/shared/header.dart';
-import 'package:bdcomputing/screens/auth/domain/password_model.dart';
-import 'package:bdcomputing/core/routes.dart';
 import 'package:bdcomputing/screens/auth/auth_provider.dart';
 import 'package:bdcomputing/core/styles.dart';
 import 'package:bdcomputing/components/shared/custom_text_field.dart';
 import 'package:bdcomputing/components/shared/custom_button.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class UpdatePasswordScreen extends ConsumerStatefulWidget {
-  const UpdatePasswordScreen({super.key});
+  final String token;
+
+  const UpdatePasswordScreen({
+    super.key,
+    required this.token,
+  });
 
   @override
   ConsumerState<UpdatePasswordScreen> createState() =>
@@ -18,22 +22,12 @@ class UpdatePasswordScreen extends ConsumerStatefulWidget {
 
 class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _codeCtrl;
-  late final TextEditingController _passwordCtrl;
-  late final TextEditingController _confirmPasswordCtrl;
+  final _passwordCtrl = TextEditingController();
+  final _confirmPasswordCtrl = TextEditingController();
   bool _submitting = false;
 
   @override
-  void initState() {
-    super.initState();
-    _codeCtrl = TextEditingController();
-    _passwordCtrl = TextEditingController();
-    _confirmPasswordCtrl = TextEditingController();
-  }
-
-  @override
   void dispose() {
-    _codeCtrl.dispose();
     _passwordCtrl.dispose();
     _confirmPasswordCtrl.dispose();
     super.dispose();
@@ -41,45 +35,50 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+
+    if (_passwordCtrl.text != _confirmPasswordCtrl.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Passwords do not match'),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+      return;
+    }
+
     setState(() => _submitting = true);
     try {
       final UpdatePasswordModel data = UpdatePasswordModel(
-        code: _codeCtrl.text.trim(),
+        code: widget.token,
         password: _passwordCtrl.text,
         confirmPassword: _confirmPasswordCtrl.text,
       );
-      final result = await ref.read(authProvider.notifier).updatePassword(data);
+      final _ = await ref.read(authProvider.notifier).updatePassword(data);
       if (!mounted) return;
-
-      if (result['statusCode'] == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Password updated successfully. Please login.'),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Password updated successfully!'),
+          backgroundColor: AppColors.success,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-        );
-        Navigator.of(context).pushReplacementNamed(AppRoutes.auth);
-      } else {
-        String errorMsg = (result['message'] != null)
-            ? result['message'].toString()
-            : 'Failed to update password. Please try again.';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMsg),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.md),
-            ),
-          ),
-        );
-      }
+        ),
+      );
+      Navigator.of(context).popUntil((route) => route.isFirst);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.toString()),
+          backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.md),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       );
@@ -94,59 +93,84 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
     final isLoading = _submitting || state is AuthLoading;
 
     return Scaffold(
-      appBar: const Header(
-        title: 'Update Password',
-        showBackButton: true,
-        showProfileIcon: false,
-        showCurrencyIcon: false,
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        leading: IconButton(
+          icon: const HugeIcon(
+            icon: HugeIcons.strokeRoundedArrowLeft01,
+            color: AppColors.textPrimary,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
-      backgroundColor: Colors.white,
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Title
-                const Text(
-                  'Set New Password',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 20),
+                  
+                  // Logo/Icon
+                  Center(
+                    child: Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Center(
+                        child: HugeIcon(
+                          icon: HugeIcons.strokeRoundedLockPassword,
+                          color: Colors.white,
+                          size: 32,
+                        ),
+                      ),
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Enter the OTP code sent to your email and set your new password.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
+                  const SizedBox(height: 32),
+                  
+                  // Title
+                  const Text(
+                    'Update Password',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 40),
-                  CustomTextField(
-                    label: 'OTP Code',
-                    controller: _codeCtrl,
-                    hintText: 'Enter OTP code',
-                    prefixIcon: Icons.vpn_key_outlined,
-                    isRequired: true,
-                    validator: (v) =>
-                        (v == null || v.isEmpty) ? 'OTP code is required' : null,
+                  const SizedBox(height: 8),
+                  
+                  // Subtitle
+                  const Text(
+                    'Enter your new password below',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textSecondary,
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 40),
+
+                  // New Password Field
                   CustomTextField(
                     label: 'New Password',
                     controller: _passwordCtrl,
-                    hintText: 'Enter new password',
-                    prefixIcon: Icons.lock_outline,
-                    isPassword: true,
+                    hintText: 'New Password',
+                    prefixIcon: HugeIcons.strokeRoundedLockPassword,
                     isRequired: true,
+                    isPassword: true,
+                    variant: 'filled',
+                    showLabel: true,
                     validator: (v) {
                       if (v == null || v.isEmpty) {
                         return 'Password is required';
@@ -158,13 +182,17 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
                     },
                   ),
                   const SizedBox(height: 16),
+
+                  // Confirm Password Field
                   CustomTextField(
                     label: 'Confirm Password',
                     controller: _confirmPasswordCtrl,
-                    hintText: 'Re-enter new password',
-                    prefixIcon: Icons.lock_reset,
-                    isPassword: true,
+                    hintText: 'Confirm Password',
+                    prefixIcon: HugeIcons.strokeRoundedLockPassword,
                     isRequired: true,
+                    isPassword: true,
+                    variant: 'filled',
+                    showLabel: true,
                     validator: (v) {
                       if (v == null || v.isEmpty) {
                         return 'Please confirm your password';
@@ -176,53 +204,20 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
                     },
                   ),
                   const SizedBox(height: 24),
+
+                  // Update Password Button
                   CustomButton(
                     text: 'Update Password',
                     onPressed: _submit,
                     isLoading: isLoading,
                   ),
-                  const SizedBox(height: 24),
-                  Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Remembered your password? ',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 14,
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: isLoading
-                              ? null
-                              : () {
-                                  Navigator.of(context)
-                                      .pushReplacementNamed('/login');
-                                },
-                          style: TextButton.styleFrom(
-                            foregroundColor: AppColors.primary,
-                            padding: EdgeInsets.zero,
-                            minimumSize: const Size(0, 0),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          child: const Text(
-                            'Login',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
           ),
         ),
+      ),
     );
   }
 }

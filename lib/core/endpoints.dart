@@ -60,4 +60,8 @@ class ApiEndpoints {
 
   // Lead Projects
   static const String leadProjects = '$baseUrl/lead-projects';
+
+  // Products and Services
+  static const String products = '$baseUrl/products';
+  static const String services = '$baseUrl/services';
 }

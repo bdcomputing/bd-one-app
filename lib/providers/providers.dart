@@ -9,6 +9,8 @@ import 'package:bdcomputing/services/payment_service.dart';
 import 'package:bdcomputing/services/quote_service.dart';
 import 'package:bdcomputing/services/project_service.dart';
 import 'package:bdcomputing/services/lead_project_service.dart';
+import 'package:bdcomputing/services/product_service.dart';
+import 'package:bdcomputing/services/service_service.dart';
 
 /// Global ApiClient provider
 final apiClientProvider = Provider<ApiClient>((ref) {
@@ -63,5 +65,16 @@ final leadProjectServiceProvider = Provider<LeadProjectService>((ref) {
   final client = ref.watch(apiClientProvider);
   return LeadProjectService(apiClient: client);
 });
+
+final productServiceProvider = Provider<ProductService>((ref) {
+  final client = ref.watch(apiClientProvider);
+  return ProductService(apiClient: client);
+});
+
+final serviceServiceProvider = Provider<ServiceService>((ref) {
+  final client = ref.watch(apiClientProvider);
+  return ServiceService(apiClient: client);
+});
+
 
 

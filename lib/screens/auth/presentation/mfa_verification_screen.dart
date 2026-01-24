@@ -5,6 +5,7 @@ import 'package:bdcomputing/core/routes.dart';
 import 'package:bdcomputing/core/styles.dart';
 import 'package:bdcomputing/screens/auth/domain/mfa_models.dart';
 import 'package:bdcomputing/screens/auth/providers.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class MfaVerificationScreen extends ConsumerStatefulWidget {
   final String mfaToken;
@@ -121,19 +122,21 @@ class _MfaVerificationScreenState extends ConsumerState<MfaVerificationScreen> {
                   end: Alignment.bottomRight,
                   colors: [
                     AppColors.primary,
-                    AppColors.primary.withValues(alpha: 0.8),
+                    AppColors.primary.withOpacity(0.8),
                     const Color(0xFF22D3EE),
                   ],
                 ),
               ),
               child: Stack(
                 children: [
-                   // Back Button
                   Positioned(
                     top: MediaQuery.of(context).padding.top + 10,
                     left: 10,
                     child: IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      icon: const HugeIcon(
+                        icon: HugeIcons.strokeRoundedArrowLeft01,
+                        color: Colors.white,
+                      ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ),
@@ -144,7 +147,7 @@ class _MfaVerificationScreenState extends ConsumerState<MfaVerificationScreen> {
                       width: 150,
                       height: 150,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.1),
+                        color: Colors.white.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -167,7 +170,7 @@ class _MfaVerificationScreenState extends ConsumerState<MfaVerificationScreen> {
                         Text(
                           'Enter the 6-digit code sent via ${widget.methods.map((m) => m.displayName).join(' or ')}',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.9),
+                            color: Colors.white.withOpacity(0.9),
                             fontSize: 16,
                           ),
                         ),

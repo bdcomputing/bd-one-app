@@ -35,16 +35,19 @@ class _HomeWrapperState extends State<HomeWrapper> {
   Widget build(BuildContext context) {
     return AuthGuard(
       child: Scaffold(
-        body: IndexedStack(index: _currentIndex, children: _screens),
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: IndexedStack(index: _currentIndex, children: _screens),
+        ),
         bottomNavigationBar: Consumer(
           builder: (context, ref, _) {
             final unpaidCount = ref.watch(unpaidInvoicesCountProvider);
             final pendingRequestsCount = ref.watch(pendingQuoteRequestsCountProvider);
             return BottomNavigationBar(
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.surface,
               currentIndex: _currentIndex,
               selectedItemColor: AppColors.primary,
-              unselectedItemColor: Colors.grey,
+              unselectedItemColor: AppColors.textSecondary,
               type: BottomNavigationBarType.fixed,
               selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
               unselectedLabelStyle: const TextStyle(
