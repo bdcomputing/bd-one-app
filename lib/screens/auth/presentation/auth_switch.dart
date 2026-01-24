@@ -105,7 +105,7 @@ class AuthSwitchScreen extends ConsumerWidget {
                   
                   // Subtitle
                   const Text(
-                    'Choose your preferred way to access\nthe BD BD One application',
+                    'Choose your preferred way to access\nthe BD One App®',
                     style: TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,
