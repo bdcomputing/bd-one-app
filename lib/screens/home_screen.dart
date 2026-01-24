@@ -1,8 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:bdcomputing/core/styles.dart';
+import 'package:bdcomputing/models/common/base_transaction.dart';
+import 'package:bdcomputing/models/common/invoice.dart';
+import 'package:bdcomputing/models/payments/payment.dart';
+import 'package:bdcomputing/screens/auth/domain/auth_state.dart';
+import 'package:bdcomputing/screens/auth/domain/user_model.dart';
+import 'package:bdcomputing/screens/auth/providers.dart';
+import 'package:bdcomputing/screens/billing/invoices_screen.dart';
+import 'package:bdcomputing/screens/home/home_provider.dart';
+import 'package:bdcomputing/screens/payments/payments_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bdcomputing/screens/auth/auth_provider.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 
 class HomeTab extends ConsumerStatefulWidget {
@@ -30,11 +38,11 @@ class _HomeTabState extends ConsumerState<HomeTab>
     _controller.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final user = authState is Authenticated ? authState.user : null;
+    final transactions = ref.watch(combinedTransactionsProvider);
     final formatter = NumberFormat('#,##0.00', 'en_US');
 
     return Column(
@@ -50,7 +58,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
                 const SizedBox(height: 24),
                 _buildQuickActions(),
                 const SizedBox(height: 28),
-                _buildRecentTransactions(context),
+                _buildRecentTransactions(context, transactions),
                 const SizedBox(height: 20),
               ],
             ),
@@ -186,7 +194,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
+            color: AppColors.primary.withValues(alpha:0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -221,8 +229,8 @@ class _HomeTabState extends ConsumerState<HomeTab>
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        Colors.white.withOpacity(0.1),
-                        Colors.white.withOpacity(0.0),
+                        Colors.white.withValues(alpha:0.1),
+                        Colors.white.withValues(alpha:0.0),
                       ],
                     ),
                   ),
@@ -252,8 +260,8 @@ class _HomeTabState extends ConsumerState<HomeTab>
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        Colors.white.withOpacity(0.08),
-                        Colors.white.withOpacity(0.0),
+                        Colors.white.withValues(alpha:0.08),
+                        Colors.white.withValues(alpha:0.0),
                       ],
                     ),
                   ),
@@ -274,7 +282,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
                     ),
                     fit: BoxFit.contain,
                     colorFilter: ColorFilter.mode(
-                      AppColors.primary.withOpacity(0.3),
+                      AppColors.primary.withValues(alpha: 0.3),
                       BlendMode.dstATop,
                     ),
                   ),
@@ -303,7 +311,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
                       Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const HugeIcon(
@@ -316,7 +324,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const HugeIcon(
@@ -490,16 +498,16 @@ class _HomeTabState extends ConsumerState<HomeTab>
     );
   }
 
-  Widget _buildRecentTransactions(BuildContext context) {
+  Widget _buildRecentTransactions(BuildContext context, List<BaseTransaction> transactions) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 'Recent transactions',
                 style: TextStyle(
                   fontSize: 18,
@@ -507,173 +515,167 @@ class _HomeTabState extends ConsumerState<HomeTab>
                   color: AppColors.textPrimary,
                 ),
               ),
-              Row(
-                children: [
-                  Text(
-                    'See all',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+              GestureDetector(
+                onTap: () {
+                  // TODO: Navigate to common transaction history
+                },
+                child: const Row(
+                  children: [
+                    Text(
+                      'See all',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    SizedBox(width: 4),
+                    HugeIcon(
+                      icon: HugeIcons.strokeRoundedArrowRight01,
+                      size: 16,
                       color: AppColors.primary,
                     ),
-                  ),
-                  SizedBox(width: 4),
-                  HugeIcon(
-                    icon: HugeIcons.strokeRoundedArrowRight01,
-                    size: 16,
-                    color: AppColors.primary,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
         ),
         const SizedBox(height: 16),
-        _buildTransactionItem(
-          context,
-          HugeIcons.strokeRoundedFile02,
-          'Invoice #INV-2024-0142',
-          'Acme Corporation',
-          'Jan 22, 2026',
-          'KES 125,000.00',
-          AppColors.warning,
-          true,
-        ),
-        _buildTransactionItem(
-          context,
-          HugeIcons.strokeRoundedWallet01,
-          'Payment received',
-          'TechStart Ltd',
-          'Jan 21, 2026',
-          'KES 89,500.00',
-          AppColors.secondary,
-          false,
-        ),
-        _buildTransactionItem(
-          context,
-          HugeIcons.strokeRoundedFile01,
-          'Invoice #INV-2024-0141',
-          'Global Solutions Inc',
-          'Jan 20, 2026',
-          'KES 245,000.00',
-          AppColors.warning,
-          true,
-        ),
-        _buildTransactionItem(
-          context,
-          HugeIcons.strokeRoundedWallet01,
-          'Payment received',
-          'Innovate Co',
-          'Jan 19, 2026',
-          'KES 67,800.00',
-          AppColors.secondary,
-          false,
-        ),
+        if (transactions.isEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Center(
+              child: Text(
+                'No recent transactions found',
+                style: TextStyle(color: AppColors.textSecondary),
+              ),
+            ),
+          )
+        else
+          ...transactions.map((t) => _buildTransactionItem(context, t)),
       ],
     );
   }
 
   Widget _buildTransactionItem(
     BuildContext context,
-    dynamic icon,
-    String title,
-    String subtitle,
-    String date,
-    String amount,
-    Color iconColor,
-    bool isInvoice,
+    BaseTransaction transaction,
   ) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textPrimary.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: iconColor,
-              borderRadius: BorderRadius.circular(12),
+    return InkWell(
+      onTap: () {
+        if (transaction.type == TransactionType.invoice) {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => InvoiceDetailSheet(
+              invoice: transaction.originalData as Invoice,
+              onClose: () => Navigator.pop(context),
             ),
-            child: HugeIcon(icon: icon, size: 24, color: Colors.white),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          );
+        } else {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => PaymentDetailSheet(
+              payment: transaction.originalData as Payment,
+              onClose: () => Navigator.pop(context),
+            ),
+          );
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.textPrimary.withValues(alpha:0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: transaction.statusColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: HugeIcon(icon: transaction.icon, size: 24, color: Colors.white),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    transaction.title,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    transaction.subtitle,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    DateFormat('MMM dd, yyyy').format(transaction.date),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textSecondary.withValues(alpha:0.7),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  title,
-                  style: const TextStyle(
+                  transaction.amount,
+                  style: TextStyle(
                     fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                    color: transaction.statusColor,
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.textSecondary,
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: transaction.statusColor.withValues(alpha:0.1),
+                    borderRadius: BorderRadius.circular(6),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  date,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.textSecondary.withOpacity(0.7),
+                  child: Text(
+                    transaction.status,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: transaction.statusColor,
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                amount,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: isInvoice ? AppColors.warning : AppColors.secondary,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: isInvoice
-                      ? AppColors.warning.withOpacity(0.1)
-                      : AppColors.secondary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  isInvoice ? 'Pending' : 'Paid',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: isInvoice ? AppColors.warning : AppColors.secondary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

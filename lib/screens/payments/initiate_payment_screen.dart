@@ -648,7 +648,7 @@ class _InitiatePaymentScreenState extends ConsumerState<InitiatePaymentScreen> {
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 8),
                                 decoration: BoxDecoration(
-                                  color: _payInFull ? Colors.green.withOpacity(0.1) : Colors.transparent,
+                                  color: _payInFull ? Colors.green.withValues(alpha:0.1) : Colors.transparent,
                                   border: Border.all(color: _payInFull ? Colors.green : Colors.grey[300]!),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -671,7 +671,7 @@ class _InitiatePaymentScreenState extends ConsumerState<InitiatePaymentScreen> {
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 8),
                                 decoration: BoxDecoration(
-                                  color: !_payInFull ? Colors.green.withOpacity(0.1) : Colors.transparent,
+                                  color: !_payInFull ? Colors.green.withValues(alpha:0.1) : Colors.transparent,
                                   border: Border.all(color: !_payInFull ? Colors.green : Colors.grey[300]!),
                                   borderRadius: BorderRadius.circular(8),
                                 ),

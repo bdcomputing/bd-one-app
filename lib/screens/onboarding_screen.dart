@@ -250,8 +250,8 @@ class AnimatedBackgroundArt extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    gradientColors[0].withOpacity(0.1),
-                    gradientColors[0].withOpacity(0.0),
+                    gradientColors[0].withValues(alpha:0.1),
+                    gradientColors[0].withValues(alpha:0.0),
                   ],
                 ),
               ),
@@ -270,8 +270,8 @@ class AnimatedBackgroundArt extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    gradientColors[1].withOpacity(0.15),
-                    gradientColors[1].withOpacity(0.0),
+                    gradientColors[1].withValues(alpha:0.15),
+                    gradientColors[1].withValues(alpha:0.0),
                   ],
                 ),
               ),
@@ -285,7 +285,7 @@ class AnimatedBackgroundArt extends StatelessWidget {
               left: 30.0 + (index * 70) % 300,
               child: _FloatingParticle(
                 delay: index * 200,
-                color: gradientColors[index % 2].withOpacity(0.1),
+                color: gradientColors[index % 2].withValues(alpha:0.1),
               ),
             );
           }),
@@ -444,7 +444,7 @@ class OnboardingPageWidget extends StatelessWidget {
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   colors: page.gradientColors
-                                      .map((c) => c.withOpacity(0.3))
+                                      .map((c) => c.withValues(alpha:0.3))
                                       .toList(),
                                 ),
                                 borderRadius: BorderRadius.circular(150),
@@ -467,7 +467,7 @@ class OnboardingPageWidget extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(100),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: page.gradientColors[0].withOpacity(0.2),
+                                    color: page.gradientColors[0].withValues(alpha:0.2),
                                     blurRadius: 30,
                                     offset: const Offset(0, 10),
                                   ),
@@ -665,7 +665,7 @@ class _AnimatedButtonState extends State<_AnimatedButton>
                     ? []
                     : [
                         BoxShadow(
-                          color: AppColors.primary.withOpacity(0.3),
+                          color: AppColors.primary.withValues(alpha:0.3),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),

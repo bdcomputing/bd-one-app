@@ -25,7 +25,7 @@ class InitializationWidget extends StatelessWidget {
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha:0.3),
                       borderRadius: BorderRadius.circular(60),
                     ),
                     child: const Icon(

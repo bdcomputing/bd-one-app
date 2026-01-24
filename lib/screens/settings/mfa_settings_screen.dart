@@ -154,7 +154,7 @@ class _MfaSettingsScreenState extends ConsumerState<MfaSettingsScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha:0.05),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -166,8 +166,8 @@ class _MfaSettingsScreenState extends ConsumerState<MfaSettingsScreen> {
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: user.mfaEnabled
-                              ? Colors.green.withOpacity(0.1)
-                              : Colors.red.withOpacity(0.1),
+                              ? Colors.green.withValues(alpha:0.1)
+                              : Colors.red.withValues(alpha:0.1),
                           shape: BoxShape.circle,
                         ),
                         child: HugeIcon(
@@ -214,7 +214,7 @@ class _MfaSettingsScreenState extends ConsumerState<MfaSettingsScreen> {
                   title: 'Email OTP',
                   subtitle: 'Verification codes sent to registered email.',
                   icon: HugeIcons.strokeRoundedMail01,
-                  iconBg: Colors.blue.withOpacity(0.1),
+                  iconBg: Colors.blue.withValues(alpha:0.1),
                   iconColor: Colors.blue,
                   isSelected: user.mfaMethods.contains(MfaMethod.email),
                   onChanged: (val) => _toggleMethod(MfaMethod.email, val),
@@ -227,7 +227,7 @@ class _MfaSettingsScreenState extends ConsumerState<MfaSettingsScreen> {
                       ? 'Official WhatsApp notifications.'
                       : 'Setup phone number first.',
                   icon: HugeIcons.strokeRoundedWhatsapp,
-                  iconBg: Colors.green.withOpacity(0.1),
+                  iconBg: Colors.green.withValues(alpha:0.1),
                   iconColor: Colors.green,
                   isSelected: user.mfaMethods.contains(MfaMethod.whatsapp),
                   enabled: user.phone != null,
@@ -244,7 +244,7 @@ class _MfaSettingsScreenState extends ConsumerState<MfaSettingsScreen> {
                   title: 'Authenticator App',
                   subtitle: 'Secure app-based codes (TOTP).',
                   icon: HugeIcons.strokeRoundedShield01,
-                  iconBg: Colors.purple.withOpacity(0.1),
+                  iconBg: Colors.purple.withValues(alpha:0.1),
                   iconColor: Colors.purple,
                   isSelected: user.mfaMethods.contains(MfaMethod.totp),
                   badge: !user.mfaMethods.contains(MfaMethod.totp)
@@ -279,13 +279,13 @@ class _MfaSettingsScreenState extends ConsumerState<MfaSettingsScreen> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isSelected
-              ? AppColors.primary.withOpacity(0.5)
+              ? AppColors.primary.withValues(alpha:0.5)
               : Colors.transparent,
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha:0.03),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
@@ -343,7 +343,7 @@ class _MfaSettingsScreenState extends ConsumerState<MfaSettingsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(100),
       ),
       child: Text(
