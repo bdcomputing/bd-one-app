@@ -17,6 +17,7 @@ class AuthSwitchScreen extends ConsumerWidget {
     try {
       final googleSignIn = GoogleSignIn(
         scopes: ['email', 'profile', 'openid'],
+        serverClientId: '577111214604-lhoiv29ndgkofdjkhk69ed0rv0dab76r.apps.googleusercontent.com',
       );
       
       final account = await googleSignIn.signIn();
