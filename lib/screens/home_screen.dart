@@ -99,55 +99,56 @@ class _HomeTabState extends ConsumerState<HomeTab>
             ],
           ),
           const Spacer(),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
-            ),
-            child: const HugeIcon(
-              icon: HugeIcons.strokeRoundedNotification02,
-              size: 20,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
-            ),
-            child: const HugeIcon(
-              icon: HugeIcons.strokeRoundedAiScan,
-              size: 20,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Container(
-            width: 32,
-            height: 32,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppColors.primary, AppColors.primary700],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: HugeIcon(
-                icon: HugeIcons.strokeRoundedAnalytics01,
-                color: Colors.white,
-                size: 18,
-              ),
-            ),
-          ),
+          // Container(
+          //   width: 40,
+          //   height: 40,
+          //   decoration: BoxDecoration(
+          //     color: AppColors.surface,
+          //     borderRadius: BorderRadius.circular(12),
+          //     border: Border.all(color: AppColors.border),
+          //   ),
+          //   child: const HugeIcon(
+          //     icon: HugeIcons.strokeRoundedNotification02,
+          //     size: 20,
+          //     color: AppColors.textPrimary,
+          //   ),
+          // ),
+          // const SizedBox(width: 12),
+          // Container(
+          //   width: 40,
+          //   height: 40,
+          //   decoration: BoxDecoration(
+          //     color: AppColors.surface,
+          //     borderRadius: BorderRadius.circular(12),
+          //     border: Border.all(color: AppColors.border),
+          //   ),
+          //   child: const HugeIcon(
+          //     icon: HugeIcons.strokeRoundedAiScan,
+          //     size: 20,
+          //     color: AppColors.textPrimary,
+          //   ),
+          // ),
+          // const SizedBox(width: 12),
+          // Container(
+          //   width: 32,
+          //   height: 32,
+          //   decoration: const BoxDecoration(
+          //     gradient: LinearGradient(
+          //       colors: [AppColors.primary, AppColors.primary700],
+          //       begin: Alignment.topLeft,
+          //       end: Alignment.bottomRight,
+          //     ),
+          //     shape: BoxShape.circle,
+          //   ),
+          //   child: const Center(
+          //     child: HugeIcon(
+          //       icon: HugeIcons.strokeRoundedAnalytics01,
+          //       color: Colors.white,
+          //       size: 18,
+          //     ),
+          //   ),
+          // ),
+        
         ],
       ),
     );

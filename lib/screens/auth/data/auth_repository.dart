@@ -288,35 +288,57 @@ class AuthRepository {
   }
 
   Future<Map<String, dynamic>> getMfaStatus() async {
-    return await _service.getMfaStatus();
+    final res = await _apiClient.post(ApiEndpoints.mfaStatusEndpoint, data: {});
+    final root = res.data as Map<String, dynamic>;
+    return (root['data'] ?? root) as Map<String, dynamic>;
   }
 
   Future<User> toggleMfaMethod(MfaMethod method, bool enabled) async {
-    var user = await _service.toggleMfaMethod(method, enabled);
-    user = await _ensureClientData(user, user.toJson());
+    final res = await _apiClient.post(
+      ApiEndpoints.mfaToggleMethodEndpoint,
+      data: {'method': method.name.toUpperCase(), 'enabled': enabled},
+    );
+    final root = res.data as Map<String, dynamic>;
+    final userData = (root['data'] ?? root) as Map<String, dynamic>;
+    var user = User.fromJson(userData);
+    user = await _ensureClientData(user, userData);
     await _saveUser(user.toJson());
     return user;
   }
 
   Future<User> disableTotp(String password) async {
-    var user = await _service.disableTotp(password);
-    user = await _ensureClientData(user, user.toJson());
+    final res = await _apiClient.post(
+      ApiEndpoints.mfaTotpDisableEndpoint,
+      data: {'password': password},
+    );
+    final root = res.data as Map<String, dynamic>;
+    final userData = (root['data'] ?? root) as Map<String, dynamic>;
+    var user = User.fromJson(userData);
+    user = await _ensureClientData(user, userData);
     await _saveUser(user.toJson());
     return user;
   }
 
   Future<Map<String, dynamic>> startTotpSetup() async {
-    return await _service.startTotpSetup();
+    final res = await _apiClient.post(ApiEndpoints.mfaStartTotpSetupEndpoint, data: {});
+    final root = res.data as Map<String, dynamic>;
+    return (root['data'] ?? root) as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> completeTotpSetup(String setupToken, String verificationCode) async {
-    final res = await _service.completeTotpSetup(setupToken, verificationCode);
-    if (res['success'] == true && res['user'] != null) {
-      var user = User.fromJson(res['user'] as Map<String, dynamic>);
+    final res = await _apiClient.post(
+      ApiEndpoints.mfaCompleteTotpSetupEndpoint,
+      data: {'setupToken': setupToken, 'verificationCode': verificationCode},
+    );
+    final root = res.data as Map<String, dynamic>;
+    final data = (root['data'] ?? root) as Map<String, dynamic>;
+
+    if ((data['success'] == true || root['statusCode'] == 200) && data['user'] != null) {
+      var user = User.fromJson(data['user'] as Map<String, dynamic>);
       user = await _ensureClientData(user, user.toJson());
       await _saveUser(user.toJson());
     }
-    return res;
+    return data;
   }
 
   ApiClient get client => _apiClient;
