@@ -1,4 +1,5 @@
 import 'package:bdoneapp/core/socket/socket_service.dart';
+import 'package:bdoneapp/services/support_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bdoneapp/screens/auth/providers.dart';
 import 'package:bdoneapp/core/utils/api_client.dart';
@@ -74,6 +75,11 @@ final productServiceProvider = Provider<ProductService>((ref) {
 final serviceServiceProvider = Provider<ServiceService>((ref) {
   final client = ref.watch(apiClientProvider);
   return ServiceService(apiClient: client);
+});
+
+final supportServiceProvider = Provider<SupportService>((ref) {
+  final client = ref.watch(apiClientProvider);
+  return SupportService(apiClient: client);
 });
 
 

@@ -10,6 +10,8 @@ import 'package:bdoneapp/screens/billing/invoices_screen.dart';
 import 'package:bdoneapp/screens/home/home_provider.dart';
 import 'package:bdoneapp/screens/payments/payments_provider.dart';
 import 'package:bdoneapp/screens/payments/payments_screen.dart';
+import 'package:bdoneapp/screens/projects/quotes_screen.dart';
+import 'package:bdoneapp/screens/help/support_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -441,12 +443,21 @@ class _HomeTabState extends ConsumerState<HomeTab>
                 'Quotes',
                 AppColors.primary,
                 AppColors.accent,
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const QuotesScreen()),
+                ),
               ),
               _buildActionItem(
                 HugeIcons.strokeRoundedMail01,
                 'Messages',
                 AppColors.primary,
                 AppColors.accent,
+                () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Messages coming soon!')),
+                  );
+                },
               ),
 
               _buildActionItem(
@@ -454,18 +465,30 @@ class _HomeTabState extends ConsumerState<HomeTab>
                 'Payments',
                 AppColors.primary,
                 AppColors.accent,
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PaymentsScreen()),
+                ),
               ),
               _buildActionItem(
                 HugeIcons.strokeRoundedFile01,
                 'Invoices',
                 AppColors.primary,
                 AppColors.accent,
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const BillingScreen()),
+                ),
               ),
               _buildActionItem(
                 HugeIcons.strokeRoundedHeadset,
                 'Support',
                 AppColors.primary,
                 AppColors.accent,
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SupportScreen()),
+                ),
               ),
             ],
           ),
@@ -479,37 +502,42 @@ class _HomeTabState extends ConsumerState<HomeTab>
     String label,
     dynamic backgroundColor,
     dynamic iconColor,
+    VoidCallback onTap,
   ) {
-    return SizedBox(
-      width: 80,
-      child: Column(
-        children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: backgroundColor,
-              border: Border.all(color: backgroundColor),
-              borderRadius: BorderRadius.circular(100),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(100),
+      child: SizedBox(
+        width: 80,
+        child: Column(
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                border: Border.all(color: backgroundColor),
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: HugeIcon(icon: icon, size: 24, color: iconColor),
+              ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: HugeIcon(icon: icon, size: 24, color: iconColor),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textPrimary,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textPrimary,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

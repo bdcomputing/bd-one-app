@@ -1,3 +1,4 @@
+import 'package:bdoneapp/components/shared/header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -131,16 +132,13 @@ class _MfaSettingsScreenState extends ConsumerState<MfaSettingsScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        title: const Text(
-          'MFA & Security',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        foregroundColor: AppColors.textPrimary,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        elevation: 0,
+      appBar: const Header(
+        title: 'MFA & Security',
+        showProfileIcon: true,
+        showCurrencyIcon: false,
+        actions: [],
       ),
+     
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
