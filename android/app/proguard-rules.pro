@@ -11,3 +11,7 @@
 -dontwarn com.google.android.gms.**
 -keep class com.google.common.** { *; }
 -dontwarn com.google.common.**
+
+# Google Play Core
+-keep class com.google.android.play.core.** { *; }
+-dontwarn com.google.android.play.core.**
