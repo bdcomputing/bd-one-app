@@ -1,3 +1,4 @@
+import 'package:bdcomputing/core/navigation/adaptive_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:bdcomputing/core/routes.dart';
 import 'package:bdcomputing/screens/auth/presentation/signup_screen.dart';
@@ -191,7 +192,7 @@ class _LoginWithPhoneScreenState extends ConsumerState<LoginWithPhoneScreen> {
                             ? null
                             : () {
                                 Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
+                                  AdaptivePageRoute(
                                     builder: (_) => const LoginWithEmailScreen(),
                                   ),
                                 );
@@ -230,7 +231,7 @@ class _LoginWithPhoneScreenState extends ConsumerState<LoginWithPhoneScreen> {
                             ? null
                             : () {
                                 Navigator.of(context).push(
-                                  MaterialPageRoute(
+                                  AdaptivePageRoute(
                                     builder: (_) => const SignupScreen(),
                                   ),
                                 );

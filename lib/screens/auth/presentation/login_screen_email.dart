@@ -1,3 +1,4 @@
+import 'package:bdcomputing/core/navigation/adaptive_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:bdcomputing/core/routes.dart';
 import 'package:bdcomputing/screens/auth/presentation/signup_screen.dart';
@@ -82,7 +83,7 @@ class _LoginWithEmailScreenState extends ConsumerState<LoginWithEmailScreen> {
 
   void _goToForgotPassword() {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
+      AdaptivePageRoute(builder: (_) => const ForgotPasswordScreen()),
     );
   }
 
@@ -228,7 +229,7 @@ class _LoginWithEmailScreenState extends ConsumerState<LoginWithEmailScreen> {
                             ? null
                             : () {
                                 Navigator.of(context).push(
-                                  MaterialPageRoute(
+                                  AdaptivePageRoute(
                                     builder: (_) => const SignupScreen(),
                                   ),
                                 );

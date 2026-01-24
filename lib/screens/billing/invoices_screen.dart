@@ -1,4 +1,5 @@
 import 'package:bdcomputing/components/shared/header.dart';
+import 'package:bdcomputing/core/navigation/adaptive_page_route.dart';
 import 'package:bdcomputing/models/common/invoice.dart';
 import 'package:bdcomputing/providers/providers.dart';
 import 'package:bdcomputing/screens/billing/invoices_provider.dart';
@@ -597,14 +598,14 @@ class _InvoiceDetailSheetState extends ConsumerState<InvoiceDetailSheet> {
                         : (currentInvoice.invoiceLink.isNotEmpty
                               ? () {
                                   Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => PdfViewerScreen(
-                                        pdfUrl: currentInvoice.invoiceLink,
-                                        documentTitle:
-                                            'Invoice ${currentInvoice.serial}',
-                                        documentSerial: currentInvoice.serial,
-                                      ),
+                                  AdaptivePageRoute(
+                                    builder: (context) => PdfViewerScreen(
+                                      pdfUrl: currentInvoice.invoiceLink,
+                                      documentTitle:
+                                          'Invoice ${currentInvoice.serial}',
+                                      documentSerial: currentInvoice.serial,
                                     ),
+                                  ),
                                   );
                                 }
                               : _generatePdf),

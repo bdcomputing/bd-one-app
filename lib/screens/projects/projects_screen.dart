@@ -1,5 +1,6 @@
 import 'package:bdcomputing/components/shared/header.dart';
 import 'package:bdcomputing/models/common/project.dart';
+import 'package:bdcomputing/core/navigation/adaptive_page_route.dart';
 import 'package:bdcomputing/screens/projects/projects_provider.dart';
 import 'package:bdcomputing/screens/projects/project_screen.dart';
 import 'package:flutter/material.dart';
@@ -187,9 +188,9 @@ class ProjectCard extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => ProjectDetailScreen(projectId: project.id),
-              ),
+            AdaptivePageRoute(
+              builder: (context) => ProjectDetailScreen(projectId: project.id),
+            ),
             );
           },
           child: Padding(

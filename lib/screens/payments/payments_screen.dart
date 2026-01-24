@@ -1,4 +1,5 @@
 import 'package:bdcomputing/components/shared/header.dart';
+import 'package:bdcomputing/core/navigation/adaptive_page_route.dart';
 import 'package:bdcomputing/core/styles.dart';
 import 'package:bdcomputing/models/payments/payment.dart';
 import 'package:bdcomputing/providers/providers.dart';
@@ -583,7 +584,7 @@ class _PaymentDetailSheetState extends ConsumerState<PaymentDetailSheet> {
                     : (currentPayment.receiptLink != null && currentPayment.receiptLink!.isNotEmpty
                         ? () {
                             Navigator.of(context).push(
-                              MaterialPageRoute(
+                              AdaptivePageRoute(
                                 builder: (context) => PdfViewerScreen(
                                   pdfUrl: currentPayment.receiptLink!,
                                   documentTitle: 'Receipt ${currentPayment.receiptNumber}',

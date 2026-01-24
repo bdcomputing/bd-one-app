@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bdcomputing/core/navigation/back_gesture_detector.dart';
 import 'package:flutter/cupertino.dart';
 
 /// Platform-adaptive page route that automatically uses:
@@ -48,12 +49,15 @@ class AdaptivePageRoute<T> extends PageRoute<T> {
     Widget child,
   ) {
     if (Platform.isIOS) {
-      // iOS-style slide transition with swipe-back support
-      return CupertinoPageTransition(
-        primaryRouteAnimation: animation,
-        secondaryRouteAnimation: secondaryAnimation,
-        linearTransition: false,
-        child: child,
+      // iOS-style slide transition with full-screen swipe-back support
+      return FullScreenBackGestureWrapper<T>(
+        route: this,
+        child: CupertinoPageTransition(
+          primaryRouteAnimation: animation,
+          secondaryRouteAnimation: secondaryAnimation,
+          linearTransition: false,
+          child: child,
+        ),
       );
     }
 
