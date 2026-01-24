@@ -1,8 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-/// A full-screen back gesture detector for iOS-like navigation.
-/// Allows swiping from anywhere on the screen to go back.
+/// A production-ready full-screen back gesture detector for iOS-like navigation.
+/// Allows swiping from anywhere on the screen to go back with premium physics.
 class FullScreenBackGestureDetector<T> extends StatefulWidget {
   const FullScreenBackGestureDetector({
     super.key,
@@ -46,19 +47,24 @@ class _FullScreenBackGestureDetectorState<T>
 
   void _handleDragStart(DragStartDetails details) {
     widget.onBackGestureStarted();
+    HapticFeedback.lightImpact(); // Tactile feedback on start
   }
 
   void _handleDragUpdate(DragUpdateDetails details) {
     // Normalize drag distance based on screen width
-    widget.onBackGestureUpdated(
-      details.primaryDelta! / MediaQuery.of(context).size.width,
-    );
+    final screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth > 0) {
+      widget.onBackGestureUpdated(details.primaryDelta! / screenWidth);
+    }
   }
 
   void _handleDragEnd(DragEndDetails details) {
-    widget.onBackGestureEnded(
-      details.velocity.pixelsPerSecond.dx / MediaQuery.of(context).size.width,
-    );
+    final screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth > 0) {
+      widget.onBackGestureEnded(
+        details.velocity.pixelsPerSecond.dx / screenWidth,
+      );
+    }
   }
 
   void _handleDragCancel() {
@@ -81,7 +87,7 @@ class _FullScreenBackGestureDetectorState<T>
   }
 }
 
-/// A wrapper that manages the back gesture animation controller.
+/// A premium wrapper that manages the back gesture animation controller with spring physics.
 class FullScreenBackGestureWrapper<T> extends StatelessWidget {
   const FullScreenBackGestureWrapper({
     super.key,
@@ -104,14 +110,16 @@ class FullScreenBackGestureWrapper<T> extends StatelessWidget {
   }
 
   static bool _isPopGestureEnabled<T>(PageRoute<T> route) {
-    // Disable if there is no previous route or it's being popped
-    if (route.isFirst || route.willHandlePopInternally) {
+    // Basic connectivity and state guards
+    if (route.navigator == null || route.isFirst || route.willHandlePopInternally) {
       return false;
     }
-    // Disable if the route specifically disallows it
-    if (route.popGestureInProgress) {
+    
+    // Disable if the gesture is already in progress or if the route is being disposed
+    if (route.popGestureInProgress || !route.isActive) {
       return false;
     }
+    
     return true;
   }
 
@@ -120,30 +128,43 @@ class FullScreenBackGestureWrapper<T> extends StatelessWidget {
   }
 
   static void _handleBackGestureUpdated<T>(PageRoute<T> route, double delta) {
-    // The animation controller for the route.
-    // We need to proxy the drag to the animation.
-    final controller = route.controller;
-    if (controller != null) {
-      controller.value -= delta;
+    final controller = (route as dynamic).controller as AnimationController?;
+    if (controller != null && controller.isAnimating == false) {
+      // Direct proxy of drag to animation value
+      controller.value = (controller.value - delta).clamp(0.0, 1.0);
     }
   }
 
   static void _handleBackGestureEnded<T>(PageRoute<T> route, double velocity) {
-    final controller = route.controller;
+    final controller = (route as dynamic).controller as AnimationController?;
     if (controller == null) return;
 
-    if (velocity > 1.0 || (velocity >= 0.0 && controller.value < 0.5)) {
-      // Complete the pop
-      controller.reverse().then((_) {
-        // Only pop if we actually reversed the animation to completion
-        if (controller.status == AnimationStatus.dismissed) {
+    // Premium snapping logic: 
+    // - If flipped fast enough (> 1.0 normalized velocity), always complete.
+    // - Otherwise, check if we've crossed the halfway mark.
+    final bool shouldPop = velocity > 1.0 || (velocity >= 0.0 && controller.value < 0.5);
+
+    if (shouldPop) {
+      // Crossing threshold haptic
+      if (controller.value > 0.1) {
+         HapticFeedback.mediumImpact();
+      }
+      
+      // Use fling for a natural "thrown" feeling if velocity is available
+      final TickerFuture future = velocity > 0.0 
+          ? controller.fling(velocity: -velocity) 
+          : controller.reverse();
+      
+      future.then((_) {
+        if (route.navigator != null && controller.status == AnimationStatus.dismissed) {
           route.navigator?.pop();
         }
       });
     } else {
-      // Cancel the pop, snap back to full screen
+      // Snap back to full screen
       controller.forward();
     }
+    
     route.navigator?.didStopUserGesture();
   }
 }
