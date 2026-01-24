@@ -40,15 +40,13 @@ class AppTheme {
       textTheme: _buildTextTheme(Brightness.light),
 
       // App Bar
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.textOnPrimary,
         elevation: 0,
         centerTitle: false,
-        systemOverlayStyle: SystemUiOverlayStyle.light.copyWith(
-        statusBarColor: AppColors.primary,
-      ),
-        iconTheme: const IconThemeData(
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        iconTheme: IconThemeData(
           color: AppColors.textOnPrimary,
           size: 24,
         ),

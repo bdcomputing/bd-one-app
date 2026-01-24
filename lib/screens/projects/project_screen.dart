@@ -1,3 +1,5 @@
+import 'package:bdcomputing/components/shared/header.dart';
+import 'package:bdcomputing/core/styles.dart';
 import 'package:bdcomputing/models/common/project.dart';
 import 'package:bdcomputing/providers/providers.dart';
 import 'package:bdcomputing/screens/billing/invoices_screen.dart';
@@ -15,22 +17,13 @@ class ProjectDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const HugeIcon(
-            icon: HugeIcons.strokeRoundedArrowLeft01,
-            size: 24,
-            color: Colors.black,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Project Details',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
+      appBar: const Header(
+        title: 'Project Details',
+        showProfileIcon: true,
+        showCurrencyIcon: false,
+        actions: [],
       ),
+
       body: FutureBuilder<Project>(
         future: ref.read(projectServiceProvider).fetchProjectById(projectId),
         builder: (context, snapshot) {
@@ -56,7 +49,10 @@ class ProjectDetailScreen extends ConsumerWidget {
                   const SizedBox(height: 8),
                   Text(
                     snapshot.error.toString(),
-                    style: const TextStyle(color: Color(0xFF999999), fontSize: 14),
+                    style: const TextStyle(
+                      color: Color(0xFF999999),
+                      fontSize: 14,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -124,12 +120,12 @@ class ProjectDetailContent extends StatelessWidget {
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2563EB).withValues(alpha: 0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: const HugeIcon(
                     icon: HugeIcons.strokeRoundedFolderFileStorage,
-                    color: Color(0xFF2563EB),
+                    color: AppColors.primary,
                     size: 32,
                   ),
                 ),
@@ -170,10 +166,7 @@ class ProjectDetailContent extends StatelessWidget {
           // Description
           const Text(
             'Description',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Container(
@@ -186,10 +179,7 @@ class ProjectDetailContent extends StatelessWidget {
             ),
             child: Text(
               project.description,
-              style: const TextStyle(
-                color: Color(0xFF666666),
-                height: 1.5,
-              ),
+              style: const TextStyle(color: Color(0xFF666666), height: 1.5),
             ),
           ),
 
@@ -211,10 +201,7 @@ class ProjectDetailContent extends StatelessWidget {
             const SizedBox(height: 24),
             const Text(
               'Technologies',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Wrap(
@@ -249,10 +236,7 @@ class ProjectDetailContent extends StatelessWidget {
             const SizedBox(height: 24),
             const Text(
               'Features',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             ...project.features!.map((feature) {
@@ -291,10 +275,7 @@ class ProjectDetailContent extends StatelessWidget {
             const SizedBox(height: 24),
             const Text(
               'Links',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             if (project.projectLink != null)
@@ -316,10 +297,7 @@ class ProjectDetailContent extends StatelessWidget {
             const SizedBox(height: 24),
             const Text(
               'Invoices',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             ...project.invoices!.map((invoice) {
@@ -363,8 +341,9 @@ class ProjectDetailContent extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              NumberFormat.currency(symbol: 'KES ')
-                                  .format(invoice.totalAmount),
+                              NumberFormat.currency(
+                                symbol: 'KES ',
+                              ).format(invoice.totalAmount),
                               style: const TextStyle(
                                 fontSize: 12,
                                 color: Color(0xFF666666),
@@ -399,17 +378,11 @@ class ProjectDetailContent extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              color: Color(0xFF666666),
-              fontSize: 14,
-            ),
+            style: const TextStyle(color: Color(0xFF666666), fontSize: 14),
           ),
           Text(
             value,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
           ),
         ],
       ),
@@ -423,21 +396,12 @@ class ProjectDetailContent extends StatelessWidget {
         onPressed: () {
           // TODO: Open URL in browser
         },
-        icon: HugeIcon(
-          icon: icon,
-          size: 18,
-          color: const Color(0xFF2563EB),
-        ),
-        label: Text(
-          label,
-          style: const TextStyle(color: Color(0xFF2563EB)),
-        ),
+        icon: HugeIcon(icon: icon, size: 18, color: const Color(0xFF2563EB)),
+        label: Text(label, style: const TextStyle(color: Color(0xFF2563EB))),
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           side: const BorderSide(color: Color(0xFF2563EB)),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
     );

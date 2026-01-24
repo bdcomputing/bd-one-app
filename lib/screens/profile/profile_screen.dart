@@ -39,9 +39,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
 
     return AuthGuard(
       child: Scaffold(
-        appBar: const PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight),
-          child: Header(title: 'Profile', showProfileIcon: false, actions: []),
+        appBar: const Header(
+          title: 'Profile',
+          showProfileIcon: false,
+          showCurrencyIcon: false,
+          actions: [],
         ),
         backgroundColor: AppColors.background,
         body: SafeArea(
@@ -90,8 +92,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                     subtitle: 'Account and app settings',
                                     onTap: () => validateTokenBeforeAction(() {
                                       // TODO: Build general settings
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('General settings coming soon')),
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'General settings coming soon',
+                                          ),
+                                        ),
                                       );
                                     }),
                                   ),
@@ -99,9 +107,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                   _buildMenuItem(
                                     icon: HugeIcons.strokeRoundedShield01,
                                     title: 'MFA & Security',
-                                    subtitle: 'Manage two-factor authentication',
+                                    subtitle:
+                                        'Manage two-factor authentication',
                                     onTap: () => validateTokenBeforeAction(() {
-                                      Navigator.of(context).pushNamed(AppRoutes.mfaSettings);
+                                      Navigator.of(
+                                        context,
+                                      ).pushNamed(AppRoutes.mfaSettings);
                                     }),
                                   ),
                                 ],
@@ -122,7 +133,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                               child: Column(
                                 children: [
                                   _buildMenuItem(
-                                    icon: HugeIcons.strokeRoundedCustomerSupport,
+                                    icon:
+                                        HugeIcons.strokeRoundedCustomerSupport,
                                     title: 'Contact Support',
                                     subtitle: 'Get help from our team',
                                     onTap: () => Navigator.of(
@@ -149,7 +161,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                   ),
                                   _buildDivider(),
                                   _buildMenuItem(
-                                    icon: HugeIcons.strokeRoundedComputerTerminal01,
+                                    icon: HugeIcons
+                                        .strokeRoundedComputerTerminal01,
                                     title: 'Terms & Conditions',
                                     subtitle: null,
                                     onTap: () => _openExternalLink(
@@ -250,7 +263,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                     : const Color(0xFFF5F5F5),
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: HugeIcon(icon: icon, color: textColor ?? Colors.black87, size: 16),
+              child: HugeIcon(
+                icon: icon,
+                color: textColor ?? Colors.black87,
+                size: 16,
+              ),
             ),
             const SizedBox(width: 10),
             Expanded(

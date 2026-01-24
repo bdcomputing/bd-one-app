@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:bdcomputing/components/currency/currency_selection_icon.dart';
 import 'package:bdcomputing/core/routes.dart';
@@ -19,7 +18,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
     required this.title,
     this.actions,
     this.leading,
-    this.centerTitle = true,
+    this.centerTitle = false,
     this.showCurrencyIcon = true,
     this.showProfileIcon = true,
     this.showBackButton = true,
@@ -28,24 +27,22 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColors.primary,
-      foregroundColor: AppColors.sage100,
+      backgroundColor: Colors.white,
+      foregroundColor: AppColors.primary,
       elevation: 0,
-      systemOverlayStyle: SystemUiOverlayStyle.light.copyWith(
-        statusBarColor: AppColors.primary,
-      ),
+
       leading:
           leading ??
           (showBackButton
               ? (Navigator.of(context).canPop()
                   ? IconButton(
-                      icon: const HugeIcon(icon : HugeIcons.strokeRoundedArrowLeft01, size: 30, color: Colors.white,),
+                      icon: const HugeIcon(icon : HugeIcons.strokeRoundedArrowLeft01, size: 30, color: AppColors.primary,),
                       onPressed: () {
                         Navigator.of(context).maybePop();
                       },
                     )
                   : IconButton(
-                      icon: const HugeIcon(icon : HugeIcons.strokeRoundedArrowLeft01, size: 30, color: Colors.white,),
+                      icon: const HugeIcon(icon : HugeIcons.strokeRoundedArrowLeft01, size: 30, color: AppColors.primary,),
                       onPressed: () {
                         Navigator.of(
                           context,
@@ -57,9 +54,9 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
       title: Text(
         title,
         style: const TextStyle(
-          color: Colors.blueGrey,
-          fontSize: 24,
-          fontWeight: FontWeight.w600,
+          color: AppColors.primary,
+          fontSize: 20,
+          // fontWeight: FontWeight.w300,
         ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,

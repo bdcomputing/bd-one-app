@@ -1,3 +1,4 @@
+import 'package:bdcomputing/components/shared/header.dart';
 import 'package:bdcomputing/core/styles.dart';
 import 'package:bdcomputing/models/payments/payment.dart';
 import 'package:bdcomputing/providers/providers.dart';
@@ -50,30 +51,26 @@ class _PaymentsScreenState extends ConsumerState<PaymentsScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: const Header(
+        title: 'Payments',
+        showProfileIcon: true,
+        showCurrencyIcon: false,
+        actions: [],
+      ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Payments',
-                    style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
                   // Overview Metrics (simplified from invoices_screen)
                   _buildMetricsOverview(metrics),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 12),
 
                   // Search
                   Row(
@@ -83,7 +80,7 @@ class _PaymentsScreenState extends ConsumerState<PaymentsScreen> {
                           height: 48,
                           decoration: BoxDecoration(
                             border: Border.all(color: const Color(0xFFE5E5E5)),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
                             children: [
@@ -200,7 +197,7 @@ class _PaymentsScreenState extends ConsumerState<PaymentsScreen> {
       child: Row(
         children: [
           _buildMetricItem(
-            'Total Received',
+            'Total Paid',
             NumberFormat.currency(symbol: 'KES ').format(total),
             const Color(0xFF059669),
           ),
@@ -275,123 +272,132 @@ class PaymentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0xFFE5E5E5), width: 1)),
-      ),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  // Payment icon
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: const Color(0xFFE5E5E5)),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+          border: Border(
+            top: BorderSide(color: Color(0xFFE5E5E5), width: 1),
+            bottom: BorderSide(color: Color(0xFFE5E5E5), width: 1),
+            left: BorderSide(color: Color(0xFFE5E5E5), width: 1),
+            right: BorderSide(color: Color(0xFFE5E5E5), width: 1),
+          ),
+        ),
+        child: Column(
+          children: [
+            InkWell(
+              onTap: onTap,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    // Payment icon
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: const Color(0xFFE5E5E5)),
+                      ),
+                      padding: const EdgeInsets.all(6),
+                      child: Image.asset(
+                        _getPaymentIcon(payment.paymentChannel),
+                        fit: BoxFit.contain,
+                      ),
                     ),
-                    padding: const EdgeInsets.all(6),
-                    child: Image.asset(
-                      _getPaymentIcon(payment.paymentChannel),
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              NumberFormat.currency(
-                                symbol: 'KES ',
-                              ).format(payment.amountPaid),
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFD1FAE5),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                payment.paymentChannel.toUpperCase(),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                NumberFormat.currency(
+                                  symbol: 'KES ',
+                                ).format(payment.amountPaid),
                                 style: const TextStyle(
-                                  fontSize: 10,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFF059669),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          DateFormat(
-                            'MMM dd, yyyy • hh:mm a',
-                          ).format(payment.paymentDate),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF666666),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFD1FAE5),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  payment.paymentChannel.toUpperCase(),
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF059669),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
+                          const SizedBox(height: 4),
+                          Text(
+                            DateFormat(
+                              'MMM dd, yyyy • hh:mm a',
+                            ).format(payment.paymentDate),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Color(0xFF666666),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: HugeIcon(
+                        icon: isExpanded
+                            ? HugeIcons.strokeRoundedArrowUp01
+                            : HugeIcons.strokeRoundedArrowDown01,
+                        size: 20,
+                        color: const Color(0xFF999999),
+                      ),
+                      onPressed: onToggle,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            if (isExpanded)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildDetailRow('REFERENCE NO', payment.reference),
+                        const SizedBox(width: 12),
+                        _buildDetailRow('RECEIPT NO', payment.receiptNumber),
+                        const SizedBox(width: 12),
+                        _buildDetailRow('SERIAL', payment.serial),
                       ],
                     ),
-                  ),
-                  IconButton(
-                    icon: HugeIcon(
-                      icon: isExpanded
-                          ? HugeIcons.strokeRoundedArrowUp01
-                          : HugeIcons.strokeRoundedArrowDown01,
-                      size: 20,
-                      color: const Color(0xFF999999),
-                    ),
-                    onPressed: onToggle,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          if (isExpanded)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildDetailRow('REFERENCE NO', payment.reference),
+                    if (payment.notes != null && payment.notes!.isNotEmpty) ...[
                       const SizedBox(width: 12),
-                      _buildDetailRow('RECEIPT NO', payment.receiptNumber),
-                      const SizedBox(width: 12),
-                      _buildDetailRow('SERIAL', payment.serial),
+                      _buildDetailRow('NOTES', payment.notes!),
                     ],
-                  ),
-                  if (payment.notes != null && payment.notes!.isNotEmpty) ...[
-                    const SizedBox(width: 12),
-                    _buildDetailRow('NOTES', payment.notes!),
                   ],
-                ],
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

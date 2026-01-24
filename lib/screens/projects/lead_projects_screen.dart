@@ -1,3 +1,4 @@
+import 'package:bdcomputing/components/shared/header.dart';
 import 'package:bdcomputing/core/styles.dart';
 import 'package:bdcomputing/models/common/lead_project.dart';
 import 'package:bdcomputing/models/common/product.dart';
@@ -48,117 +49,109 @@ class _LeadProjectsScreenState extends ConsumerState<LeadProjectsScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Quote Requests',
-                        style: TextStyle(
-                          fontSize: 34,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: -0.5,
-                        ),
+      appBar: const Header(
+        title: 'Quote Requests',
+        showProfileIcon: true,
+        showCurrencyIcon: false,
+        actions: [],
+      ),
+      body: Column(
+        children: [
+          // Header
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Search
+                    Container(
+                      height: 48,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: const Color(0xFFE5E5E5)),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      IconButton(
-                        onPressed: _showCreateLeadProjectDialog,
-                        icon: const HugeIcon(
-                          icon: HugeIcons.strokeRoundedAdd01,
-                          size: 24,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Search
-                  Container(
-                    height: 48,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: const Color(0xFFE5E5E5)),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 12),
-                        const HugeIcon(
-                          icon: HugeIcons.strokeRoundedSearch01,
-                          size: 18,
-                          color: Color(0xFF999999),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: TextField(
-                            controller: _searchController,
-                            decoration: const InputDecoration(
-                              hintText: 'Search quote requests...',
-                              hintStyle: TextStyle(
-                                color: Color(0xFF999999),
-                                fontSize: 16,
-                              ),
-                              border: InputBorder.none,
-                            ),
-                            onSubmitted: (val) {
-                              ref
-                                  .read(leadProjectsProvider.notifier)
-                                  .setKeyword(val);
-                            },
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 12),
+                          const HugeIcon(
+                            icon: HugeIcons.strokeRoundedSearch01,
+                            size: 18,
+                            color: Color(0xFF999999),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Lead Project List
-            Expanded(
-              child: state.isLoading && state.leadProjects.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
-                  : state.error != null && state.leadProjects.isEmpty
-                  ? Center(child: Text(state.error!))
-                  : RefreshIndicator(
-                      onRefresh: () =>
-                          ref.read(leadProjectsProvider.notifier).refresh(),
-                      child: state.leadProjects.isEmpty
-                          ? _buildEmptyState()
-                          : ListView.builder(
-                              padding: EdgeInsets.zero,
-                              itemCount:
-                                  state.leadProjects.length +
-                                  (state.page <= state.totalPages ? 1 : 0),
-                              itemBuilder: (context, index) {
-                                if (index == state.leadProjects.length) {
-                                  ref
-                                      .read(leadProjectsProvider.notifier)
-                                      .fetchLeadProjects();
-                                  return const Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(16.0),
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                  );
-                                }
-                                final leadProject = state.leadProjects[index];
-                                return LeadProjectCard(
-                                  leadProject: leadProject,
-                                );
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: TextField(
+                              controller: _searchController,
+                              decoration: const InputDecoration(
+                                hintText: 'Search quote requests...',
+                                hintStyle: TextStyle(
+                                  color: Color(0xFF999999),
+                                  fontSize: 16,
+                                ),
+                                border: InputBorder.none,
+                              ),
+                              onSubmitted: (val) {
+                                ref
+                                    .read(leadProjectsProvider.notifier)
+                                    .setKeyword(val);
                               },
                             ),
+                          ),
+                        ],
+                      ),
                     ),
+                    IconButton(
+                      onPressed: _showCreateLeadProjectDialog,
+                      icon: const HugeIcon(
+                        icon: HugeIcons.strokeRoundedAdd01,
+                        size: 24,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+
+          // Lead Project List
+          Expanded(
+            child: state.isLoading && state.leadProjects.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : state.error != null && state.leadProjects.isEmpty
+                ? Center(child: Text(state.error!))
+                : RefreshIndicator(
+                    onRefresh: () =>
+                        ref.read(leadProjectsProvider.notifier).refresh(),
+                    child: state.leadProjects.isEmpty
+                        ? _buildEmptyState()
+                        : ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount:
+                                state.leadProjects.length +
+                                (state.page <= state.totalPages ? 1 : 0),
+                            itemBuilder: (context, index) {
+                              if (index == state.leadProjects.length) {
+                                ref
+                                    .read(leadProjectsProvider.notifier)
+                                    .fetchLeadProjects();
+                                return const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+                              final leadProject = state.leadProjects[index];
+                              return LeadProjectCard(leadProject: leadProject);
+                            },
+                          ),
+                  ),
+          ),
+        ],
       ),
     );
   }
@@ -383,7 +376,6 @@ class _CreateLeadProjectSheetState
     }
   }
 
-
   @override
   void dispose() {
     _titleController.dispose();
@@ -420,8 +412,12 @@ class _CreateLeadProjectSheetState
         description: _descriptionController.text.trim(),
         source: LeadSourceEnum.fromString(_selectedSource),
         projectType: ProjectTypeEnum.fromString(_selectedProjectType),
-        productId: _selectedProjectType == 'product' ? _selectedProductId : null,
-        serviceId: _selectedProjectType == 'service' ? _selectedServiceId : null,
+        productId: _selectedProjectType == 'product'
+            ? _selectedProductId
+            : null,
+        serviceId: _selectedProjectType == 'service'
+            ? _selectedServiceId
+            : null,
         duration: _durationController.text.trim().isNotEmpty
             ? _durationController.text.trim()
             : null,
@@ -647,15 +643,42 @@ class _CreateLeadProjectSheetState
                             border: OutlineInputBorder(),
                           ),
                           items: const [
-                            DropdownMenuItem(value: 'website', child: Text('Website')),
-                            DropdownMenuItem(value: 'referral', child: Text('Referral')),
-                            DropdownMenuItem(value: 'social_media', child: Text('Social Media')),
-                            DropdownMenuItem(value: 'email_campaign', child: Text('Email Campaign')),
-                            DropdownMenuItem(value: 'event', child: Text('Event')),
-                            DropdownMenuItem(value: 'advertisement', child: Text('Advertisement')),
-                            DropdownMenuItem(value: 'phone', child: Text('Phone')),
-                            DropdownMenuItem(value: 'walk_in', child: Text('Walk In')),
-                            DropdownMenuItem(value: 'other', child: Text('Other')),
+                            DropdownMenuItem(
+                              value: 'website',
+                              child: Text('Website'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'referral',
+                              child: Text('Referral'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'social_media',
+                              child: Text('Social Media'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'email_campaign',
+                              child: Text('Email Campaign'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'event',
+                              child: Text('Event'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'advertisement',
+                              child: Text('Advertisement'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'phone',
+                              child: Text('Phone'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'walk_in',
+                              child: Text('Walk In'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'other',
+                              child: Text('Other'),
+                            ),
                           ],
                           validator: (value) {
                             if (value == null || value.isEmpty) {

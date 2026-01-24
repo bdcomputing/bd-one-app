@@ -1,3 +1,4 @@
+import 'package:bdcomputing/components/shared/header.dart';
 import 'package:bdcomputing/models/common/invoice.dart';
 import 'package:bdcomputing/providers/providers.dart';
 import 'package:bdcomputing/screens/billing/invoices_provider.dart';
@@ -49,119 +50,111 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Invoices',
-                    style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+      appBar: const Header(
+        title: 'Invoices',
+        showProfileIcon: true,
+        showCurrencyIcon: false,
+        actions: [],
+      ),
+      body: Column(
+        children: [
+          // Header
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Metrics Summary
+                _buildMetricsSummary(metrics),
+                const SizedBox(height: 8),
 
-                  // Metrics Summary
-                  _buildMetricsSummary(metrics),
-
-                  const SizedBox(height: 16),
-
-                  // Search & Filter
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: 48,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: const Color(0xFFE5E5E5)),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              const SizedBox(width: 12),
-                              const HugeIcon(
-                                icon: HugeIcons.strokeRoundedSearch01,
-                                size: 18,
-                                color: Color(0xFF999999),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: TextField(
-                                  controller: _searchController,
-                                  decoration: const InputDecoration(
-                                    hintText: 'Search invoices...',
-                                    hintStyle: TextStyle(
-                                      color: Color(0xFF999999),
-                                      fontSize: 16,
-                                    ),
-                                    border: InputBorder.none,
-                                  ),
-                                  onSubmitted: (val) {
-                                    ref
-                                        .read(invoicesProvider.notifier)
-                                        .setKeyword(val);
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
+                // Search & Filter
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 48,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: const Color(0xFFE5E5E5)),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            // Invoice List
-            Expanded(
-              child: state.isLoading && state.invoices.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
-                  : state.error != null && state.invoices.isEmpty
-                  ? Center(child: Text(state.error!))
-                  : RefreshIndicator(
-                      onRefresh: () =>
-                          ref.read(invoicesProvider.notifier).refresh(),
-                      child: state.invoices.isEmpty
-                          ? _buildEmptyState()
-                          : ListView.builder(
-                              padding: EdgeInsets.zero,
-                              itemCount:
-                                  state.invoices.length +
-                                  (state.page <= state.totalPages ? 1 : 0),
-                              itemBuilder: (context, index) {
-                                if (index == state.invoices.length) {
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 12),
+                            const HugeIcon(
+                              icon: HugeIcons.strokeRoundedSearch01,
+                              size: 18,
+                              color: Color(0xFF999999),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: TextField(
+                                controller: _searchController,
+                                decoration: const InputDecoration(
+                                  hintText: 'Search invoices...',
+                                  hintStyle: TextStyle(
+                                    color: Color(0xFF999999),
+                                    fontSize: 16,
+                                  ),
+                                  border: InputBorder.none,
+                                ),
+                                onSubmitted: (val) {
                                   ref
                                       .read(invoicesProvider.notifier)
-                                      .fetchInvoices();
-                                  return const Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(16.0),
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                  );
-                                }
-                                final invoice = state.invoices[index];
-                                return InvoiceCard(
-                                  invoice: invoice,
-                                  isExpanded:
-                                      _expandedItems[invoice.id] ?? false,
-                                  onToggle: () => _toggleExpand(invoice.id),
-                                  onTap: () => _showInvoiceDetail(invoice),
-                                );
-                              },
+                                      .setKeyword(val);
+                                },
+                              ),
                             ),
+                          ],
+                        ),
+                      ),
                     ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+
+          // Invoice List
+          Expanded(
+            child: state.isLoading && state.invoices.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : state.error != null && state.invoices.isEmpty
+                ? Center(child: Text(state.error!))
+                : RefreshIndicator(
+                    onRefresh: () =>
+                        ref.read(invoicesProvider.notifier).refresh(),
+                    child: state.invoices.isEmpty
+                        ? _buildEmptyState()
+                        : ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount:
+                                state.invoices.length +
+                                (state.page <= state.totalPages ? 1 : 0),
+                            itemBuilder: (context, index) {
+                              if (index == state.invoices.length) {
+                                ref
+                                    .read(invoicesProvider.notifier)
+                                    .fetchInvoices();
+                                return const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+                              final invoice = state.invoices[index];
+                              return InvoiceCard(
+                                invoice: invoice,
+                                isExpanded: _expandedItems[invoice.id] ?? false,
+                                onToggle: () => _toggleExpand(invoice.id),
+                                onTap: () => _showInvoiceDetail(invoice),
+                              );
+                            },
+                          ),
+                  ),
+          ),
+        ],
       ),
     );
   }
@@ -275,112 +268,116 @@ class InvoiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0xFFE5E5E5), width: 1)),
-      ),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              NumberFormat.currency(
-                                symbol: 'KES ',
-                              ).format(invoice.totalAmount),
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: _getStatusColor(invoice.status),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                invoice.status.toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: 10,
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFFE5E5E5), width: 1),
+        ),
+        child: Column(
+          children: [
+            InkWell(
+              onTap: onTap,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                NumberFormat.currency(
+                                  symbol: 'KES ',
+                                ).format(invoice.totalAmount),
+                                style: const TextStyle(
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: _getStatusTextColor(invoice.status),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          invoice.serial,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFF666666),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: _getStatusColor(invoice.status),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  invoice.status.toUpperCase(),
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: _getStatusTextColor(invoice.status),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 4),
+                          Text(
+                            invoice.serial,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF666666),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
 
-                  const HugeIcon(
-                    icon: HugeIcons.strokeRoundedMoreVertical,
-                    size: 20,
-                    color: Color(0xFF999999),
-                  ),
-                  IconButton(
-                    icon: HugeIcon(
-                      icon: isExpanded
-                          ? HugeIcons.strokeRoundedArrowUp01
-                          : HugeIcons.strokeRoundedArrowDown01,
+                    const HugeIcon(
+                      icon: HugeIcons.strokeRoundedMoreVertical,
                       size: 20,
-                      color: const Color(0xFF999999),
+                      color: Color(0xFF999999),
                     ),
-                    onPressed: onToggle,
-                  ),
-                ],
+                    IconButton(
+                      icon: HugeIcon(
+                        icon: isExpanded
+                            ? HugeIcons.strokeRoundedArrowUp01
+                            : HugeIcons.strokeRoundedArrowDown01,
+                        size: 20,
+                        color: const Color(0xFF999999),
+                      ),
+                      onPressed: onToggle,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          if (isExpanded)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildDetailRow(
-                    'DUE DATE',
-                    DateFormat('MMM dd, yyyy').format(invoice.dueDate),
-                  ),
-                  const SizedBox(width: 12),
-                  _buildDetailRow(
-                    'AMOUNT DUE',
-                    NumberFormat.currency(
-                      symbol: 'KES ',
-                    ).format(invoice.amountDue),
-                  ),
-                  const SizedBox(width: 12),
-                  _buildDetailRow(
-                    'CREATED AT',
-                    DateFormat('MMM dd, yyyy').format(invoice.createdAt),
-                  ),
-                ],
+            if (isExpanded)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildDetailRow(
+                      'DUE DATE',
+                      DateFormat('MMM dd, yyyy').format(invoice.dueDate),
+                    ),
+                    const SizedBox(width: 12),
+                    _buildDetailRow(
+                      'AMOUNT DUE',
+                      NumberFormat.currency(
+                        symbol: 'KES ',
+                      ).format(invoice.amountDue),
+                    ),
+                    const SizedBox(width: 12),
+                    _buildDetailRow(
+                      'CREATED AT',
+                      DateFormat('MMM dd, yyyy').format(invoice.createdAt),
+                    ),
+                  ],
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -432,8 +429,10 @@ class _InvoiceDetailSheetState extends ConsumerState<InvoiceDetailSheet> {
 
     try {
       final invoiceService = ref.read(invoiceServiceProvider);
-      final updatedInvoice = await invoiceService.generateInvoicePdf(widget.invoice.id);
-      
+      final updatedInvoice = await invoiceService.generateInvoicePdf(
+        widget.invoice.id,
+      );
+
       setState(() {
         _updatedInvoice = updatedInvoice;
         _isGeneratingPdf = false;
@@ -450,9 +449,9 @@ class _InvoiceDetailSheetState extends ConsumerState<InvoiceDetailSheet> {
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to generate PDF: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to generate PDF: $e')));
       }
     }
   }
@@ -596,18 +595,19 @@ class _InvoiceDetailSheetState extends ConsumerState<InvoiceDetailSheet> {
                     onPressed: _isGeneratingPdf
                         ? null
                         : (currentInvoice.invoiceLink.isNotEmpty
-                            ? () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => PdfViewerScreen(
-                                      pdfUrl: currentInvoice.invoiceLink,
-                                      documentTitle: 'Invoice ${currentInvoice.serial}',
-                                      documentSerial: currentInvoice.serial,
+                              ? () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => PdfViewerScreen(
+                                        pdfUrl: currentInvoice.invoiceLink,
+                                        documentTitle:
+                                            'Invoice ${currentInvoice.serial}',
+                                        documentSerial: currentInvoice.serial,
+                                      ),
                                     ),
-                                  ),
-                                );
-                              }
-                            : _generatePdf),
+                                  );
+                                }
+                              : _generatePdf),
                     icon: _isGeneratingPdf
                         ? const SizedBox(
                             width: 18,
@@ -626,7 +626,9 @@ class _InvoiceDetailSheetState extends ConsumerState<InvoiceDetailSheet> {
                     label: Text(
                       _isGeneratingPdf
                           ? 'Generating...'
-                          : (currentInvoice.invoiceLink.isNotEmpty ? 'View PDF' : 'Generate PDF'),
+                          : (currentInvoice.invoiceLink.isNotEmpty
+                                ? 'View PDF'
+                                : 'Generate PDF'),
                       style: TextStyle(
                         color: _isGeneratingPdf
                             ? const Color(0xFF9CA3AF)
