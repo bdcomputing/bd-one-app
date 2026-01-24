@@ -491,7 +491,7 @@ class _CreateLeadProjectSheetState
                     TextFormField(
                       controller: _titleController,
                       decoration: const InputDecoration(
-                        labelText: 'Project Title',
+                        labelText: 'Project Title *',
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
@@ -505,7 +505,8 @@ class _CreateLeadProjectSheetState
                     TextFormField(
                       controller: _descriptionController,
                       decoration: const InputDecoration(
-                        labelText: 'Description',
+                        labelText: 'Project Description *',
+                        hintText: 'Enter a description',
                         border: OutlineInputBorder(),
                       ),
                       maxLines: 4,
@@ -518,11 +519,56 @@ class _CreateLeadProjectSheetState
                     ),
                     const SizedBox(height: 16),
 
+                    // Duration (Optional)
+                    TextFormField(
+                      controller: _durationController,
+                      decoration: const InputDecoration(
+                        labelText: 'Duration',
+                        hintText: 'e.g., 2 weeks, 1 month',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Source Selector (Required)
+                    DropdownButtonFormField<String>(
+                      value: _selectedSource,
+                      decoration: const InputDecoration(
+                        labelText: 'Source *',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: const [
+                        DropdownMenuItem(value: 'website', child: Text('Website')),
+                        DropdownMenuItem(value: 'referral', child: Text('Referral')),
+                        DropdownMenuItem(value: 'social_media', child: Text('Social Media')),
+                        DropdownMenuItem(value: 'email_campaign', child: Text('Email Campaign')),
+                        DropdownMenuItem(value: 'event', child: Text('Event')),
+                        DropdownMenuItem(value: 'advertisement', child: Text('Advertisement')),
+                        DropdownMenuItem(value: 'phone', child: Text('Phone')),
+                        DropdownMenuItem(value: 'walk_in', child: Text('Walk In')),
+                        DropdownMenuItem(value: 'other', child: Text('Other')),
+                      ],
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select a source';
+                        }
+                        return null;
+                      },
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() {
+                            _selectedSource = value;
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
                     // Project Type Selector
                     DropdownButtonFormField<String>(
                       value: _selectedProjectType,
                       decoration: const InputDecoration(
-                        labelText: 'Project Type',
+                        labelText: 'Project Type *',
                         border: OutlineInputBorder(),
                       ),
                       items: const [
@@ -535,6 +581,12 @@ class _CreateLeadProjectSheetState
                           child: Text('Product'),
                         ),
                       ],
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select a project type';
+                        }
+                        return null;
+                      },
                       onChanged: (value) {
                         if (value != null) {
                           setState(() {
@@ -545,10 +597,11 @@ class _CreateLeadProjectSheetState
                     ),
                     const SizedBox(height: 16),
 
+                    // Duration (Optional)
                     TextFormField(
                       controller: _durationController,
                       decoration: const InputDecoration(
-                        labelText: 'Estimated Duration (Optional)',
+                        labelText: 'Duration',
                         hintText: 'e.g., 2 weeks, 1 month',
                         border: OutlineInputBorder(),
                       ),
@@ -571,7 +624,7 @@ class _CreateLeadProjectSheetState
                     ElevatedButton(
                       onPressed: _isSubmitting ? null : _submitForm,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
+                        backgroundColor: AppColors.primary,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),

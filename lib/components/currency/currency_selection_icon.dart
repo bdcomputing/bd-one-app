@@ -32,20 +32,18 @@ class _CurrencySelectorIconState extends ConsumerState<CurrencySelectorIcon> {
       // Try to get currency code from provider state
       final currenciesAsync = ref.read(currenciesFutureProvider);
       currenciesAsync.whenData((currencies) {
-        try {
-          final currency = currencies.firstWhere((c) => c.id == savedId);
-          if (mounted) {
-            setState(() {
-              _selectedCode = currency.code;
-            });
-          }
-        } catch (e) {
-          // Currency not found, use default
-          if (mounted) {
-            setState(() {
-              _selectedCode = 'USD';
-            });
-          }
+        final currency = currencies.firstWhere(
+          (c) => c.id == savedId,
+          orElse: () {
+            logger.w('Currency not found for saved ID: $savedId, using USD');
+            return currencies.firstWhere((c) => c.code == 'USD',
+                orElse: () => currencies.first);
+          },
+        );
+        if (mounted) {
+          setState(() {
+            _selectedCode = currency.code;
+          });
         }
       });
     } else {
@@ -82,19 +80,17 @@ class _CurrencySelectorIconState extends ConsumerState<CurrencySelectorIcon> {
 
             // Get the current currency code from provider state
             if (selectedCurrencyId != null) {
-              try {
-                final currency = currencies.firstWhere(
-                  (c) => c.id == selectedCurrencyId,
-                );
-                displayCode = currency.code;
-              } catch (e, s) {
-                // Keep current display code if currency not found
-                logger.w(
-                  'CurrencySelectionIcon: Currency not found for ID: $selectedCurrencyId',
-                  error: e,
-                  stackTrace: s,
-                );
-              }
+              final currency = currencies.firstWhere(
+                (c) => c.id == selectedCurrencyId,
+                orElse: () {
+                  logger.w(
+                    'CurrencySelectionIcon: Currency not found for ID: $selectedCurrencyId',
+                  );
+                  return currencies.firstWhere((c) => c.code == _selectedCode,
+                      orElse: () => currencies.first);
+                },
+              );
+              displayCode = currency.code;
             }
 
             return SizedBox(
