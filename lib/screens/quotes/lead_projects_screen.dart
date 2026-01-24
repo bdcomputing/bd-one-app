@@ -9,7 +9,7 @@ import 'package:bdoneapp/models/enums/project_type.dart';
 import 'package:bdoneapp/providers/providers.dart';
 import 'package:bdoneapp/screens/auth/providers.dart';
 import 'package:bdoneapp/providers/lead_projects_provider.dart';
-import 'package:bdoneapp/screens/projects/quotes/lead_project_detail_screen.dart';
+import 'package:bdoneapp/screens/quotes/lead_project_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';

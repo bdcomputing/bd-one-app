@@ -10,7 +10,7 @@ import 'package:bdoneapp/screens/billing/invoices_screen.dart';
 import 'package:bdoneapp/providers/home_provider.dart';
 import 'package:bdoneapp/providers/payments_provider.dart';
 import 'package:bdoneapp/screens/payments/payments_screen.dart';
-import 'package:bdoneapp/screens/projects/quotes/lead_projects_screen.dart';
+import 'package:bdoneapp/screens/quotes/lead_projects_screen.dart';
 import 'package:bdoneapp/screens/help/support_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

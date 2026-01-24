@@ -2,7 +2,7 @@ import 'package:bdoneapp/components/shared/header.dart';
 import 'package:bdoneapp/models/common/project.dart';
 import 'package:bdoneapp/core/navigation/adaptive_page_route.dart';
 import 'package:bdoneapp/providers/projects_provider.dart';
-import 'package:bdoneapp/screens/projects/projects/project_screen.dart';
+import 'package:bdoneapp/screens/projects/project_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
