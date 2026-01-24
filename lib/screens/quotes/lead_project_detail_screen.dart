@@ -59,12 +59,12 @@ class _LeadProjectDetailScreenState
             });
           }
         } catch (e) {
-            // Quote not found in the list, though hasQuote is true
-             if (mounted) {
-              setState(() {
-               _quoteError = 'Quote details not found.';
-              });
-             }
+          // Quote not found in the list, though hasQuote is true
+          if (mounted) {
+            setState(() {
+              _quoteError = 'Quote details not found.';
+            });
+          }
         }
       }
     } catch (e) {
@@ -84,14 +84,14 @@ class _LeadProjectDetailScreenState
 
   Future<void> _downloadQuote() async {
     if (_quote?.quoteLink == null) return;
-    
+
     final Uri url = Uri.parse(_quote!.quoteLink!);
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-       if (mounted) {
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Could not open quote PDF')),
         );
-       }
+      }
     }
   }
 
@@ -111,7 +111,7 @@ class _LeadProjectDetailScreenState
             // Status Banner
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               color: widget.leadProject.hasQuote
                   ? const Color(0xFFECFDF5) // Green 50
                   : const Color(0xFFFFFBEB), // Amber 50
@@ -159,13 +159,20 @@ class _LeadProjectDetailScreenState
                   const SizedBox(height: 16),
                   _buildDetailRow('Title', widget.leadProject.title),
                   _buildDetailRow(
-                      'Type', widget.leadProject.projectType.toUpperCase()),
-                  _buildDetailRow('Description', widget.leadProject.description),
+                    'Type',
+                    widget.leadProject.projectType.toUpperCase(),
+                  ),
                   _buildDetailRow(
-                      'Date',
-                      DateFormat('MMM dd, yyyy')
-                          .format(widget.leadProject.createdAt)),
-                  
+                    'Description',
+                    widget.leadProject.description,
+                  ),
+                  _buildDetailRow(
+                    'Date',
+                    DateFormat(
+                      'MMM dd, yyyy',
+                    ).format(widget.leadProject.createdAt),
+                  ),
+
                   if (widget.leadProject.features != null &&
                       widget.leadProject.features!.isNotEmpty) ...[
                     const SizedBox(height: 12),
@@ -181,18 +188,22 @@ class _LeadProjectDetailScreenState
                       spacing: 8,
                       runSpacing: 8,
                       children: widget.leadProject.features!
-                          .map((f) => Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF3F4F6),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  f,
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                              ))
+                          .map(
+                            (f) => Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF3F4F6),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                f,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          )
                           .toList(),
                     ),
                   ],
@@ -229,9 +240,9 @@ class _LeadProjectDetailScreenState
                       )
                     else if (_quote != null) ...[
                       _buildQuoteCard(_quote!),
-                    ]
+                    ],
                   ] else ...[
-                     const Center(
+                    const Center(
                       child: Column(
                         children: [
                           HugeIcon(
@@ -242,17 +253,20 @@ class _LeadProjectDetailScreenState
                           SizedBox(height: 16),
                           Text(
                             'No quote generated yet',
-                             style: TextStyle(color: AppColors.textSecondary),
+                            style: TextStyle(color: AppColors.textSecondary),
                           ),
                           SizedBox(height: 4),
-                           Text(
+                          Text(
                             'We will notify you once expected cost is calculated.',
-                             textAlign: TextAlign.center,
-                             style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 12,
+                            ),
                           ),
                         ],
                       ),
-                     )
+                    ),
                   ],
                 ],
               ),
@@ -302,7 +316,7 @@ class _LeadProjectDetailScreenState
         border: Border.all(color: const Color(0xFFE5E5E5)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -314,8 +328,7 @@ class _LeadProjectDetailScreenState
           Container(
             padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
-              border:
-                  Border(bottom: BorderSide(color: Color(0xFFE5E5E5))),
+              border: Border(bottom: BorderSide(color: Color(0xFFE5E5E5))),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -332,8 +345,9 @@ class _LeadProjectDetailScreenState
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      NumberFormat.currency(symbol: 'KES ')
-                          .format(quote.totalAmount),
+                      NumberFormat.currency(
+                        symbol: 'KES ',
+                      ).format(quote.totalAmount),
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -343,8 +357,10 @@ class _LeadProjectDetailScreenState
                   ],
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(20),
@@ -386,35 +402,43 @@ class _LeadProjectDetailScreenState
             ),
           ),
           if (quote.items.isNotEmpty) ...[
-             const Padding(
-               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-               child: Align(
-                 alignment: Alignment.centerLeft,
-                 child: Text('Line Items', style: TextStyle(fontWeight: FontWeight.w600)),
-               ),
-             ),
-            ...quote.items.map((item) => Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: const BoxDecoration(
-                 border: Border(top: BorderSide(color: Color(0xFFF3F4F6))),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Line Items',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      item.description ?? '', 
-                      style: const TextStyle(fontSize: 14),
+            ),
+            ...quote.items.map(
+              (item) => Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                decoration: const BoxDecoration(
+                  border: Border(top: BorderSide(color: Color(0xFFF3F4F6))),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.description ?? '',
+                        style: const TextStyle(fontSize: 14),
+                      ),
                     ),
-                  ),
-                  Text(
-                     NumberFormat.currency(symbol: '').format(item.total),
-                     style: const TextStyle(fontWeight: FontWeight.w500),
-                  )
-                ],
+                    Text(
+                      NumberFormat.currency(symbol: '').format(item.total),
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
               ),
-            )),
+            ),
             const SizedBox(height: 16),
-          ]
+          ],
         ],
       ),
     );
