@@ -102,9 +102,9 @@ class _LoginWithPhoneScreenState extends ConsumerState<LoginWithPhoneScreen> {
                     // Logo/Icon
                     Center(
                     child: Container(
-                      width: 150,
+                      width: 200,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Colors.transparent,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Center(
@@ -129,7 +129,7 @@ class _LoginWithPhoneScreenState extends ConsumerState<LoginWithPhoneScreen> {
                     const SizedBox(height: 8),
                     
                     // Subtitle
-                    Text(
+                    const Text(
                       'To sign in to an account in the application,\nenter your phone and password',
                       style: TextStyle(
                         fontSize: 14,
@@ -210,7 +210,7 @@ class _LoginWithPhoneScreenState extends ConsumerState<LoginWithPhoneScreen> {
                     const SizedBox(height: 12),
   
                     // Don't have an account
-                    Center(
+                    const Center(
                       child: Text(
                         'Don\'t have an account yet?',
                         style: TextStyle(
@@ -318,14 +318,14 @@ class _LoginWithPhoneScreenState extends ConsumerState<LoginWithPhoneScreen> {
                     Center(
                       child: RichText(
                         textAlign: TextAlign.center,
-                        text: TextSpan(
+                        text: const TextSpan(
                           text: 'By clicking "Continue", I have read and agree\nwith the ',
                           style: TextStyle(
                             fontSize: 12,
                             color: AppColors.textSecondary,
                             height: 1.5,
                           ),
-                          children: const [
+                          children: [
                             TextSpan(
                               text: 'Term Sheet',
                               style: TextStyle(

@@ -26,9 +26,9 @@ class AuthSwitchScreen extends StatelessWidget {
                   // Logo/Icon
                   Center(
                     child: Container(
-                      width: 150,
+                      width: 200,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Colors.transparent,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Center(
