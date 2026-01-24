@@ -73,7 +73,7 @@ class ApiEndpoints {
   static const String services = '$baseUrl/services';
 
   // Support Requests
-  static const String supportRequests = '$baseUrl/support-requests';
-  static const String createSupportRequest = '$baseUrl/support-requests';
-  static const String viewSupportRequest = '$baseUrl/support-requests';
+  static const String supportRequests = '$baseUrl/support-request';
+  static const String createSupportRequest = '$baseUrl/support-request';
+  static const String viewSupportRequest = '$baseUrl/support-request';
 }

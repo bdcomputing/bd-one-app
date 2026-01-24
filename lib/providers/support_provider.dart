@@ -52,7 +52,7 @@ class SupportNotifier extends StateNotifier<SupportState> {
     if (state.isLoading) return;
 
     if (refresh) {
-      state = state.copyWith(page: 1, supportRequests: [], isLoading: true);
+      state = state.copyWith(page: 1, isLoading: true);
     } else {
       state = state.copyWith(isLoading: true);
     }

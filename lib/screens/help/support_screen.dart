@@ -108,33 +108,54 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
 
           // List
           Expanded(
-            child: state.isLoading && state.supportRequests.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : state.error != null && state.supportRequests.isEmpty
-                    ? Center(child: Text(state.error!))
-                    : RefreshIndicator(
-                        onRefresh: () => ref.read(supportProvider.notifier).refresh(),
-                        child: state.supportRequests.isEmpty
-                            ? _buildEmptyState()
-                            : ListView.builder(
-                                padding: EdgeInsets.zero,
-                                itemCount: state.supportRequests.length +
-                                    (state.page <= state.totalPages ? 1 : 0),
-                                itemBuilder: (context, index) {
-                                  if (index == state.supportRequests.length) {
-                                    ref.read(supportProvider.notifier).fetchSupportRequests();
-                                    return const Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.all(16.0),
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    );
-                                  }
-                                  final ticket = state.supportRequests[index];
-                                  return SupportTicketCard(ticket: ticket);
-                                },
+            child: RefreshIndicator(
+              onRefresh: () => ref.read(supportProvider.notifier).refresh(),
+              child: state.isLoading && state.supportRequests.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : state.error != null && state.supportRequests.isEmpty
+                      ? LayoutBuilder(
+                          builder: (context, constraints) =>
+                              SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: SizedBox(
+                              height: constraints.maxHeight,
+                              child: Center(child: Text(state.error!)),
+                            ),
+                          ),
+                        )
+                      : state.supportRequests.isEmpty
+                          ? LayoutBuilder(
+                              builder: (context, constraints) =>
+                                  SingleChildScrollView(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                child: SizedBox(
+                                  height: constraints.maxHeight,
+                                  child: _buildEmptyState(),
+                                ),
                               ),
-                      ),
+                            )
+                          : ListView.builder(
+                              padding: EdgeInsets.zero,
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              itemCount: state.supportRequests.length +
+                                  (state.page <= state.totalPages ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (index == state.supportRequests.length) {
+                                  ref
+                                      .read(supportProvider.notifier)
+                                      .fetchSupportRequests();
+                                  return const Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(16.0),
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+                                }
+                                final ticket = state.supportRequests[index];
+                                return SupportTicketCard(ticket: ticket);
+                              },
+                            ),
+            ),
           ),
         ],
       ),
