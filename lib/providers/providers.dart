@@ -1,7 +1,7 @@
 import 'package:bdoneapp/core/socket/socket_service.dart';
 import 'package:bdoneapp/services/support_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bdoneapp/screens/auth/providers.dart';
+import 'package:bdoneapp/providers/auth_providers.dart';
 import 'package:bdoneapp/core/utils/api_client.dart';
 import 'package:bdoneapp/services/settings_service.dart';
 import 'package:bdoneapp/services/terms_service.dart';

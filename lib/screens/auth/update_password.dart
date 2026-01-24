@@ -1,44 +1,69 @@
+import 'package:bdoneapp/models/auth/auth_state.dart';
+import 'package:bdoneapp/models/auth/password_model.dart';
+import 'package:bdoneapp/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bdoneapp/screens/auth/auth_provider.dart';
 import 'package:bdoneapp/core/styles.dart';
 import 'package:bdoneapp/components/shared/custom_text_field.dart';
 import 'package:bdoneapp/components/shared/custom_button.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:bdoneapp/components/shared/auth_background.dart';
 
-class ForgotPasswordScreen extends ConsumerStatefulWidget {
-  const ForgotPasswordScreen({super.key});
+class UpdatePasswordScreen extends ConsumerStatefulWidget {
+  final String token;
+
+  const UpdatePasswordScreen({
+    super.key,
+    required this.token,
+  });
 
   @override
-  ConsumerState<ForgotPasswordScreen> createState() =>
-      _ForgotPasswordScreenState();
+  ConsumerState<UpdatePasswordScreen> createState() =>
+      _UpdatePasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
+class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailCtrl = TextEditingController();
+  final _passwordCtrl = TextEditingController();
+  final _confirmPasswordCtrl = TextEditingController();
   bool _submitting = false;
 
   @override
   void dispose() {
-    _emailCtrl.dispose();
+    _passwordCtrl.dispose();
+    _confirmPasswordCtrl.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+
+    if (_passwordCtrl.text != _confirmPasswordCtrl.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Passwords do not match'),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+      return;
+    }
+
     setState(() => _submitting = true);
     try {
-      await ref
-          .read(authProvider.notifier)
-          .forgotPassword(_emailCtrl.text.trim());
+      final UpdatePasswordModel data = UpdatePasswordModel(
+        code: widget.token,
+        password: _passwordCtrl.text,
+        confirmPassword: _confirmPasswordCtrl.text,
+      );
+      final _ = await ref.read(authProvider.notifier).updatePassword(data);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
-            'Password reset link sent! Please check your email.',
-          ),
+          content: const Text('Password updated successfully!'),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -46,7 +71,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           ),
         ),
       );
-      Navigator.of(context).pop();
+      Navigator.of(context).popUntil((route) => route.isFirst);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -115,7 +140,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                     
                     // Title
                     const Text(
-                      'Forgot Password?',
+                      'Update Password',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -127,7 +152,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                     
                     // Subtitle
                     const Text(
-                      'Enter your email address and we\'ll send you\na link to reset your password',
+                      'Enter your new password below',
                       style: TextStyle(
                         fontSize: 14,
                         color: AppColors.textSecondary,
@@ -137,44 +162,55 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                     ),
                     const SizedBox(height: 40),
   
-                    // Email Field
+                    // New Password Field
                     CustomTextField(
-                      label: 'Email',
-                      controller: _emailCtrl,
-                      hintText: 'e.g., john@example.com',
-                      prefixIcon: HugeIcons.strokeRoundedMail01,
+                      label: 'New Password',
+                      controller: _passwordCtrl,
+                      hintText: 'New Password',
+                      prefixIcon: HugeIcons.strokeRoundedLockPassword,
                       isRequired: true,
-                      keyboardType: TextInputType.emailAddress,
+                      isPassword: true,
                       variant: 'filled',
                       showLabel: true,
-                      validator: (v) =>
-                          (v == null || v.isEmpty) ? 'Email is required' : null,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return 'Password is required';
+                        }
+                        if (v.length < 8) {
+                          return 'Password must be at least 8 characters';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+  
+                    // Confirm Password Field
+                    CustomTextField(
+                      label: 'Confirm Password',
+                      controller: _confirmPasswordCtrl,
+                      hintText: 'Confirm Password',
+                      prefixIcon: HugeIcons.strokeRoundedLockPassword,
+                      isRequired: true,
+                      isPassword: true,
+                      variant: 'filled',
+                      showLabel: true,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return 'Please confirm your password';
+                        }
+                        if (v != _passwordCtrl.text) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 24),
   
-                    // Send Reset Link Button
+                    // Update Password Button
                     CustomButton(
-                      text: 'Send Reset Link',
+                      text: 'Update Password',
                       onPressed: _submit,
                       isLoading: isLoading,
-                    ),
-                    const SizedBox(height: 24),
-  
-                    // Back to Login Link
-                    Center(
-                      child: TextButton(
-                        onPressed: isLoading ? null : () => Navigator.of(context).pop(),
-                        style: TextButton.styleFrom(
-                          foregroundColor: AppColors.primary,
-                        ),
-                        child: const Text(
-                          'Back to Login',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
                     ),
                     const SizedBox(height: 40),
                   ],

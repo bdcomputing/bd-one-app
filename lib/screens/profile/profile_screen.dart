@@ -1,10 +1,10 @@
 import 'package:bdoneapp/core/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bdoneapp/screens/auth/domain/auth_state.dart'
+import 'package:bdoneapp/models/auth/auth_state.dart'
     show Authenticated;
-import 'package:bdoneapp/screens/auth/presentation/auth_guard.dart';
-import 'package:bdoneapp/screens/auth/providers.dart';
+import 'package:bdoneapp/screens/auth/auth_guard.dart';
+import 'package:bdoneapp/providers/auth_providers.dart';
 import 'package:bdoneapp/components/shared/header.dart';
 import 'package:bdoneapp/components/widgets/user_widget.dart';
 import 'package:bdoneapp/core/mixins/token_validation_mixin.dart';

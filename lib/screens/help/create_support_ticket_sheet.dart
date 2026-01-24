@@ -2,7 +2,7 @@ import 'package:bdoneapp/core/styles.dart';
 import 'package:bdoneapp/models/common/project.dart';
 import 'package:bdoneapp/models/common/support_request.dart';
 import 'package:bdoneapp/providers/providers.dart';
-import 'package:bdoneapp/screens/auth/providers.dart';
+import 'package:bdoneapp/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';

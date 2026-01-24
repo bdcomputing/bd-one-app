@@ -7,7 +7,7 @@ import 'package:bdoneapp/models/dtos/create_lead_project_dto.dart';
 import 'package:bdoneapp/models/enums/lead_source.dart';
 import 'package:bdoneapp/models/enums/project_type.dart';
 import 'package:bdoneapp/providers/providers.dart';
-import 'package:bdoneapp/screens/auth/providers.dart';
+import 'package:bdoneapp/providers/auth_providers.dart';
 import 'package:bdoneapp/providers/lead_projects_provider.dart';
 import 'package:bdoneapp/screens/quotes/lead_project_detail_screen.dart';
 import 'package:flutter/material.dart';

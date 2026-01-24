@@ -4,8 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bdoneapp/core/routes.dart';
 import 'package:bdoneapp/core/styles.dart';
-import 'package:bdoneapp/screens/auth/domain/mfa_models.dart';
-import 'package:bdoneapp/screens/auth/providers.dart';
+import 'package:bdoneapp/models/auth/mfa_models.dart';
+import 'package:bdoneapp/providers/auth_providers.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class MfaVerificationScreen extends ConsumerStatefulWidget {

@@ -8,7 +8,7 @@ import 'package:bdoneapp/screens/projects/projects_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:bdoneapp/screens/auth/presentation/auth_guard.dart';
+import 'package:bdoneapp/screens/auth/auth_guard.dart';
 import 'package:bdoneapp/core/styles.dart';
 import 'package:bdoneapp/screens/home_screen.dart';
 

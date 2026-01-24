@@ -1,41 +1,42 @@
 import 'package:bdoneapp/core/navigation/adaptive_page_route.dart';
+import 'package:bdoneapp/models/auth/auth_state.dart';
+import 'package:bdoneapp/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:bdoneapp/core/routes.dart';
-import 'package:bdoneapp/screens/auth/presentation/signup_screen.dart';
-import 'package:bdoneapp/screens/auth/presentation/login_screen_email.dart';
+import 'package:bdoneapp/screens/auth/signup_screen.dart';
+import 'package:bdoneapp/screens/auth/forgot_password.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bdoneapp/screens/auth/auth_provider.dart';
 import 'package:bdoneapp/core/styles.dart';
 import 'package:bdoneapp/components/shared/custom_text_field.dart';
 import 'package:bdoneapp/components/shared/custom_button.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:bdoneapp/screens/auth/domain/mfa_models.dart';
+import 'package:bdoneapp/models/auth/mfa_models.dart';
 import 'package:bdoneapp/components/shared/auth_background.dart';
 
-class LoginWithPhoneScreen extends ConsumerStatefulWidget {
-  const LoginWithPhoneScreen({super.key});
+class LoginWithEmailScreen extends ConsumerStatefulWidget {
+  const LoginWithEmailScreen({super.key});
 
   @override
-  ConsumerState<LoginWithPhoneScreen> createState() =>
-      _LoginWithPhoneScreenState();
+  ConsumerState<LoginWithEmailScreen> createState() =>
+      _LoginWithEmailScreenState();
 }
 
-class _LoginWithPhoneScreenState extends ConsumerState<LoginWithPhoneScreen> {
+class _LoginWithEmailScreenState extends ConsumerState<LoginWithEmailScreen> {
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _phoneCtrl;
+  late final TextEditingController _emailCtrl;
   late final TextEditingController _passwordCtrl;
   bool _submitting = false;
 
   @override
   void initState() {
     super.initState();
-    _phoneCtrl = TextEditingController();
+    _emailCtrl = TextEditingController();
     _passwordCtrl = TextEditingController();
   }
 
   @override
   void dispose() {
-    _phoneCtrl.dispose();
+    _emailCtrl.dispose();
     _passwordCtrl.dispose();
     super.dispose();
   }
@@ -46,7 +47,7 @@ class _LoginWithPhoneScreenState extends ConsumerState<LoginWithPhoneScreen> {
     try {
       final result = await ref
           .read(authProvider.notifier)
-          .loginWithPhone(_phoneCtrl.text.trim(), _passwordCtrl.text);
+          .loginWithEmail(_emailCtrl.text.trim(), _passwordCtrl.text);
       if (mounted) {
         if (result is MfaRequired) {
           Navigator.of(context).pushNamed(
@@ -54,7 +55,7 @@ class _LoginWithPhoneScreenState extends ConsumerState<LoginWithPhoneScreen> {
             arguments: {
               'mfaToken': result.mfaToken,
               'methods': result.mfaMethods,
-              'target': _phoneCtrl.text.trim(),
+              'target': _emailCtrl.text.trim(),
             },
           );
         } else {
@@ -79,6 +80,12 @@ class _LoginWithPhoneScreenState extends ConsumerState<LoginWithPhoneScreen> {
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
+  }
+
+  void _goToForgotPassword() {
+    Navigator.of(context).push(
+      AdaptivePageRoute(builder: (_) => const ForgotPasswordScreen()),
+    );
   }
 
   @override
@@ -132,7 +139,7 @@ class _LoginWithPhoneScreenState extends ConsumerState<LoginWithPhoneScreen> {
                     
                     // Subtitle
                     const Text(
-                      'To sign in to an account in the application,\nenter your phone and password',
+                      'To sign in to an account in the application,\nenter your email and password',
                       style: TextStyle(
                         fontSize: 14,
                         color: AppColors.textSecondary,
@@ -142,22 +149,19 @@ class _LoginWithPhoneScreenState extends ConsumerState<LoginWithPhoneScreen> {
                     ),
                     const SizedBox(height: 40),
   
-                    // Phone Field
+                    // Email Field
                     CustomTextField(
-                      label: 'Phone',
-                      controller: _phoneCtrl,
-                      hintText: 'e.g., 0719155083',
-                      prefixIcon: HugeIcons.strokeRoundedSmartPhone01,
+                      label: 'Email',
+                      controller: _emailCtrl,
+                      hintText: 'e.g., john@example.com',
+                      prefixIcon: HugeIcons.strokeRoundedMail01,
                       isRequired: true,
-                      keyboardType: TextInputType.phone,
+                      keyboardType: TextInputType.emailAddress,
                       variant: 'filled',
                       showLabel: true,
-                      validator: (v) {
-                        if (v == null || v.isEmpty) {
-                          return 'Phone number is required';
-                        }
-                        return null;
-                      },
+                      validator: (v) => (v == null || v.isEmpty)
+                          ? 'Email is required'
+                          : null,
                     ),
                     const SizedBox(height: 16),
   
@@ -175,6 +179,27 @@ class _LoginWithPhoneScreenState extends ConsumerState<LoginWithPhoneScreen> {
                           ? 'Password is required'
                           : null,
                     ),
+                    const SizedBox(height: 16),
+  
+                    // Forgot Password Link
+                    Align(
+                      alignment: Alignment.center,
+                      child: TextButton(
+                        onPressed: isLoading ? null : _goToForgotPassword,
+                        style: TextButton.styleFrom(
+                          foregroundColor: AppColors.primary,
+                          padding: EdgeInsets.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: const Text(
+                          'Forgot password?',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 24),
   
                     // Continue Button
@@ -184,32 +209,6 @@ class _LoginWithPhoneScreenState extends ConsumerState<LoginWithPhoneScreen> {
                       isLoading: isLoading,
                     ),
                     const SizedBox(height: 24),
-  
-                    // Switch to Email Login
-                    Center(
-                      child: TextButton(
-                        onPressed: isLoading
-                            ? null
-                            : () {
-                                Navigator.of(context).pushReplacement(
-                                  AdaptivePageRoute(
-                                    builder: (_) => const LoginWithEmailScreen(),
-                                  ),
-                                );
-                              },
-                        style: TextButton.styleFrom(
-                          foregroundColor: AppColors.primary,
-                        ),
-                        child: const Text(
-                          'Sign in with Email instead',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
   
                     // Don't have an account
                     const Center(

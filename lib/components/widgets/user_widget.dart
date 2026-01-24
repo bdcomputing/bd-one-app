@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bdoneapp/screens/auth/domain/user_model.dart';
+import 'package:bdoneapp/models/auth/user_model.dart';
 import 'package:bdoneapp/core/styles.dart';
 
 class UserWidget extends StatelessWidget {

@@ -2,7 +2,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bdoneapp/models/common/currency.dart';
 import 'package:bdoneapp/services/currency_service.dart';
-import 'package:bdoneapp/screens/auth/providers.dart';
+import 'package:bdoneapp/providers/auth_providers.dart';
 
 // State for currency list management
 class CurrencyListState {

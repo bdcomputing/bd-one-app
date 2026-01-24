@@ -1,7 +1,7 @@
 import 'package:bdoneapp/models/common/project.dart';
 import 'package:bdoneapp/models/common/paginated_data.dart';
 import 'package:bdoneapp/providers/providers.dart';
-import 'package:bdoneapp/screens/auth/providers.dart';
+import 'package:bdoneapp/providers/auth_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 

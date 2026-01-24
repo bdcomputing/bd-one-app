@@ -3,7 +3,7 @@ import 'package:bdoneapp/models/common/currency.dart';
 import 'package:bdoneapp/providers/currencies/currency_list_provider.dart';
 import 'package:bdoneapp/services/currency_service.dart';
 
-import 'package:bdoneapp/screens/auth/providers.dart';
+import 'package:bdoneapp/providers/auth_providers.dart';
 
 class CurrencyNotifier extends Notifier<Currency?> {
   late final CurrencyService _service;
