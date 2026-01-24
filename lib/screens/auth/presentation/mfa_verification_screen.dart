@@ -144,57 +144,77 @@ class _MfaVerificationScreenState extends ConsumerState<MfaVerificationScreen> {
               const SizedBox(height: 48),
 
               // Code Inputs
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(6, (index) {
-                  return SizedBox(
-                    width: 45,
-                    child: KeyboardListener(
-                      focusNode: FocusNode(), // Wrap in KeyboardListener for backspace detection
-                      onKeyEvent: (event) {
-                        if (event is KeyDownEvent && 
-                            event.logicalKey == LogicalKeyboardKey.backspace &&
-                            _controllers[index].text.isEmpty && 
-                            index > 0) {
-                          _focusNodes[index - 1].requestFocus();
-                          _controllers[index - 1].clear();
-                        }
-                      },
-                      child: TextField(
-                        controller: _controllers[index],
-                        focusNode: _focusNodes[index],
-                        textAlign: TextAlign.center,
-                        keyboardType: TextInputType.number,
-                        maxLength: 1,
-                        enabled: !_isLoading,
-                        style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black,
-                        ),
-                        decoration: const InputDecoration(
-                          counterText: '',
-                          contentPadding: EdgeInsets.symmetric(vertical: 8),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFFEEEEEE), width: 2),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black, width: 2),
-                          ),
-                        ),
-                        onChanged: (value) {
-                          if (value.isNotEmpty) {
-                            if (index < 5) {
-                              _focusNodes[index + 1].requestFocus();
-                            } else {
-                              _focusNodes[index].unfocus();
-                            }
+              AutofillGroup(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(6, (index) {
+                    return SizedBox(
+                      width: 45,
+                      child: KeyboardListener(
+                        focusNode: FocusNode(), // Wrap in KeyboardListener for backspace detection
+                        onKeyEvent: (event) {
+                          if (event is KeyDownEvent && 
+                              event.logicalKey == LogicalKeyboardKey.backspace &&
+                              _controllers[index].text.isEmpty && 
+                              index > 0) {
+                            _focusNodes[index - 1].requestFocus();
+                            _controllers[index - 1].clear();
                           }
                         },
+                        child: TextField(
+                          controller: _controllers[index],
+                          focusNode: _focusNodes[index],
+                          textAlign: TextAlign.center,
+                          keyboardType: TextInputType.number,
+                          autofillHints: const [AutofillHints.oneTimeCode],
+                          maxLength: 6, // Increased to allow paste/autofill temporarily
+                          enabled: !_isLoading,
+                          style: const TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
+                          decoration: const InputDecoration(
+                            counterText: '',
+                            contentPadding: EdgeInsets.symmetric(vertical: 8),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFEEEEEE), width: 2),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black, width: 2),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            if (value.length > 1) {
+                              // Handle paste/autofill
+                              final cleanCode = value.replaceAll(RegExp(r'\D'), '');
+                              final chars = cleanCode.split('');
+                              for (var i = 0; i < chars.length && (index + i) < 6; i++) {
+                                _controllers[index + i].text = chars[i];
+                              }
+                              // Move focus to next empty or last
+                              final nextIndex = (index + chars.length).clamp(0, 5);
+                              _focusNodes[nextIndex].requestFocus();
+                              
+                              if (index + chars.length >= 6) {
+                                _focusNodes[5].unfocus();
+                              }
+                              return;
+                            }
+                            
+                            if (value.isNotEmpty) {
+                              if (index < 5) {
+                                _focusNodes[index + 1].requestFocus();
+                              } else {
+                                _focusNodes[index].unfocus();
+                              }
+                            }
+                          },
+                        ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+                ),
               ),
               const SizedBox(height: 32),
 
