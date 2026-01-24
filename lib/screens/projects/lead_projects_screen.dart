@@ -67,40 +67,42 @@ class _LeadProjectsScreenState extends ConsumerState<LeadProjectsScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Search
-                    Container(
-                      height: 48,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: const Color(0xFFE5E5E5)),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 12),
-                          const HugeIcon(
-                            icon: HugeIcons.strokeRoundedSearch01,
-                            size: 18,
-                            color: Color(0xFF999999),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: TextField(
-                              controller: _searchController,
-                              decoration: const InputDecoration(
-                                hintText: 'Search quote requests...',
-                                hintStyle: TextStyle(
-                                  color: Color(0xFF999999),
-                                  fontSize: 16,
-                                ),
-                                border: InputBorder.none,
-                              ),
-                              onSubmitted: (val) {
-                                ref
-                                    .read(leadProjectsProvider.notifier)
-                                    .setKeyword(val);
-                              },
+                    Expanded(
+                      child: Container(
+                        height: 48,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: const Color(0xFFE5E5E5)),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 12),
+                            const HugeIcon(
+                              icon: HugeIcons.strokeRoundedSearch01,
+                              size: 18,
+                              color: Color(0xFF999999),
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: TextField(
+                                controller: _searchController,
+                                decoration: const InputDecoration(
+                                  hintText: 'Search quote requests...',
+                                  hintStyle: TextStyle(
+                                    color: Color(0xFF999999),
+                                    fontSize: 16,
+                                  ),
+                                  border: InputBorder.none,
+                                ),
+                                onSubmitted: (val) {
+                                  ref
+                                      .read(leadProjectsProvider.notifier)
+                                      .setKeyword(val);
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     IconButton(

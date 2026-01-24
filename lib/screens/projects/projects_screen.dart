@@ -38,7 +38,7 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
