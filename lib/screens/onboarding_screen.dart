@@ -20,35 +20,48 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with Ticker
   late AnimationController _floatController;
 
   final List<OnboardingPage> _pages = [
+
     OnboardingPage(
-      topLabel: 'DISCOVER VR',
-      title: 'Stay ahead\nof the tech curve',
-      illustration: 'assets/onboarding1.png',
+      topLabel: 'ONBOARDING',
+      title: 'Seamless\onboarding',
+      illustration: 'assets/images/onboarding/onboarding-1.png',
       gradientColors: [
         const Color(0xFF4ADE80),
         const Color(0xFF22D3EE),
       ],
-      iconData: Icons.videogame_asset_outlined,
+      iconData: Icons.receipt_long_outlined,
+      hasSpecialEffect: true,
     ),
     OnboardingPage(
-      topLabel: 'CUSTOMER APPROACH',
-      title: 'Much more than\nlive chat',
-      illustration: 'assets/onboarding2.png',
+      topLabel: 'BILLING',
+      title: 'Seamless\nbilling',
+      illustration: 'assets/images/onboarding/smile1.png',
+      gradientColors: [
+        const Color(0xFF4ADE80),
+        const Color(0xFF22D3EE),
+      ],
+      iconData: Icons.receipt_long_outlined,
+      hasSpecialEffect: true,
+    ),
+    OnboardingPage(
+      topLabel: 'PAYMENTS',
+      title: 'Seamless\npayments',
+      illustration: 'assets/images/onboarding/onboarding-2.jpg',
       gradientColors: [
         const Color(0xFFFBBF24),
         const Color(0xFF84CC16),
       ],
-      iconData: Icons.chat_bubble_outline,
+      iconData: Icons.payments_outlined,
     ),
     OnboardingPage(
-      topLabel: 'LATEST UPDATES',
-      title: 'Spotlight\nnew features',
-      illustration: 'assets/onboarding3.png',
+      topLabel: 'CONNECTIVITY',
+      title: 'Staying connected\nas a business',
+      illustration: 'assets/images/onboarding/onboarding-3.jpg',
       gradientColors: [
         const Color(0xFFF472B6),
         const Color(0xFFFB923C),
       ],
-      iconData: Icons.auto_awesome_outlined,
+      iconData: Icons.business_outlined,
     ),
   ];
 
@@ -429,6 +442,7 @@ class OnboardingPageWidget extends StatelessWidget {
                   ),
                   child: Stack(
                     alignment: Alignment.center,
+                    clipBehavior: Clip.none,
                     children: [
                       // Gradient background blob with pulse animation
                       AnimatedBuilder(
@@ -444,7 +458,7 @@ class OnboardingPageWidget extends StatelessWidget {
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   colors: page.gradientColors
-                                      .map((c) => c.withValues(alpha:0.3))
+                                      .map((c) => c.withValues(alpha: 0.3))
                                       .toList(),
                                 ),
                                 borderRadius: BorderRadius.circular(150),
@@ -453,35 +467,37 @@ class OnboardingPageWidget extends StatelessWidget {
                           );
                         },
                       ),
-                      // Icon illustration with rotation
-                      AnimatedBuilder(
-                        animation: floatController,
-                        builder: (context, child) {
-                          return Transform.rotate(
-                            angle: math.sin(floatController.value * 2 * math.pi) * 0.05,
-                            child: Container(
-                              width: 200,
-                              height: 200,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(100),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: page.gradientColors[0].withValues(alpha:0.2),
-                                    blurRadius: 30,
-                                    offset: const Offset(0, 10),
-                                  ),
-                                ],
+                      
+                      // The "Going Through" effect
+                      if (page.hasSpecialEffect)
+                        _GoingThroughEffect(
+                          image: page.illustration,
+                          floatValue: floatController.value,
+                        )
+                      else
+                        // Normal image for other slides
+                        Container(
+                          width: 240,
+                          height: 240,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: page.gradientColors[0].withValues(alpha: 0.2),
+                                blurRadius: 30,
+                                offset: const Offset(0, 10),
                               ),
-                              child: Icon(
-                                page.iconData,
-                                size: 100,
-                                color: page.gradientColors[0],
-                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(120),
+                            child: Image.asset(
+                              page.illustration,
+                              fit: BoxFit.cover,
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -691,12 +707,108 @@ class _AnimatedButtonState extends State<_AnimatedButton>
   }
 }
 
+class _GoingThroughEffect extends StatelessWidget {
+  final String image;
+  final double floatValue;
+
+  const _GoingThroughEffect({
+    required this.image,
+    required this.floatValue,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 280,
+      height: 280,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Background part of the circle
+          Container(
+            width: 240,
+            height: 240,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+          ),
+          
+          // The Image (Middle Layer)
+          // We use a Transform to make it look like it's leaning or moving through
+          Transform(
+            transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.001)
+              ..rotateX(-0.2 + (math.sin(floatValue * 2 * math.pi) * 0.05))
+              ..translate(0.0, math.sin(floatValue * 2 * math.pi) * 5),
+            alignment: Alignment.center,
+            child: Image.asset(
+              image,
+              width: 260,
+              height: 260,
+              fit: BoxFit.contain,
+            ),
+          ),
+
+          // Foreground "Ring" Layer
+          // This creates the illusion by clipping the top part of the image
+          // or by having a ring that goes "over" the front of the image.
+          IgnorePointer(
+            child: CustomPaint(
+              size: const Size(240, 240),
+              painter: _RingPainter(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RingPainter extends CustomPainter {
+  final Color color;
+
+  _RingPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 15;
+
+    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
+    
+    // Draw the front part of the ring (the bottom arc)
+    canvas.drawArc(
+      rect,
+      0,
+      math.pi,
+      false,
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
 class OnboardingPage {
   final String topLabel;
   final String title;
   final String illustration;
   final List<Color> gradientColors;
   final IconData iconData;
+  final bool hasSpecialEffect;
 
   OnboardingPage({
     required this.topLabel,
@@ -704,5 +816,6 @@ class OnboardingPage {
     required this.illustration,
     required this.gradientColors,
     required this.iconData,
+    this.hasSpecialEffect = false,
   });
 }
