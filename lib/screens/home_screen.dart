@@ -89,7 +89,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
                   Text(
                     'Hello ${user?.name.split(' ')[0] ?? ''},',
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 26,
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.w800,
                     ),
