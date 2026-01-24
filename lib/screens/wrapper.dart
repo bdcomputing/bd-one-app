@@ -37,7 +37,7 @@ class _HomeWrapperState extends State<HomeWrapper> {
       child: Scaffold(
         backgroundColor: AppColors.background,
         body: SafeArea(
-          child: IndexedStack(index: _currentIndex, children: _screens),
+          child: _screens[_currentIndex],
         ),
         bottomNavigationBar: Consumer(
           builder: (context, ref, _) {
