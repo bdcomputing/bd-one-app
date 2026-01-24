@@ -5,12 +5,12 @@ import 'package:bdoneapp/models/payments/payment.dart';
 import 'package:bdoneapp/screens/auth/domain/auth_state.dart';
 import 'package:bdoneapp/screens/auth/domain/user_model.dart';
 import 'package:bdoneapp/screens/auth/providers.dart';
-import 'package:bdoneapp/screens/billing/invoices_provider.dart';
+import 'package:bdoneapp/providers/invoices_provider.dart';
 import 'package:bdoneapp/screens/billing/invoices_screen.dart';
-import 'package:bdoneapp/screens/home/home_provider.dart';
-import 'package:bdoneapp/screens/payments/payments_provider.dart';
+import 'package:bdoneapp/providers/home_provider.dart';
+import 'package:bdoneapp/providers/payments_provider.dart';
 import 'package:bdoneapp/screens/payments/payments_screen.dart';
-import 'package:bdoneapp/screens/projects/quotes_screen.dart';
+import 'package:bdoneapp/screens/projects/quotes/lead_projects_screen.dart';
 import 'package:bdoneapp/screens/help/support_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -445,7 +445,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
                 AppColors.accent,
                 () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const QuotesScreen()),
+                  MaterialPageRoute(builder: (context) => const LeadProjectsScreen()),
                 ),
               ),
               _buildActionItem(

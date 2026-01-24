@@ -4,7 +4,7 @@ import 'package:bdoneapp/core/styles.dart';
 import 'package:bdoneapp/models/payments/payment.dart';
 import 'package:bdoneapp/providers/providers.dart';
 import 'package:bdoneapp/screens/common/pdf_viewer_screen.dart';
-import 'package:bdoneapp/screens/payments/payments_provider.dart';
+import 'package:bdoneapp/providers/payments_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';

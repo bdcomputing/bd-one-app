@@ -8,7 +8,8 @@ import 'package:bdoneapp/models/enums/lead_source.dart';
 import 'package:bdoneapp/models/enums/project_type.dart';
 import 'package:bdoneapp/providers/providers.dart';
 import 'package:bdoneapp/screens/auth/providers.dart';
-import 'package:bdoneapp/screens/projects/lead_projects_provider.dart';
+import 'package:bdoneapp/providers/lead_projects_provider.dart';
+import 'package:bdoneapp/screens/projects/quotes/lead_project_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -190,36 +191,6 @@ class LeadProjectCard extends ConsumerWidget {
 
   const LeadProjectCard({super.key, required this.leadProject});
 
-  Future<void> _fetchAndShowQuote(BuildContext context, WidgetRef ref) async {
-    try {
-      final quoteService = ref.read(quoteServiceProvider);
-      // Find quote by leadProjectId
-      final quotesResult = await quoteService.fetchQuotes(
-        leadId: leadProject.leadId,
-        clientId: leadProject.clientId,
-        limit: 100,
-      );
-
-      final quote = quotesResult.data?.firstWhere(
-        (q) => q.leadProjectId == leadProject.id,
-        orElse: () => throw Exception('Quote not found'),
-      );
-
-      if (context.mounted && quote != null) {
-        // TODO: Navigate to quote detail screen
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Quote ${quote.serial} found!')));
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error loading quote: $e')));
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final hasQuote = leadProject.projectId != null;
@@ -229,7 +200,15 @@ class LeadProjectCard extends ConsumerWidget {
         border: Border(bottom: BorderSide(color: Color(0xFFE5E5E5), width: 1)),
       ),
       child: InkWell(
-        onTap: hasQuote ? () => _fetchAndShowQuote(context, ref) : null,
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  LeadProjectDetailScreen(leadProject: leadProject),
+            ),
+          );
+        },
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -298,12 +277,11 @@ class LeadProjectCard extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  if (hasQuote)
-                    const HugeIcon(
-                      icon: HugeIcons.strokeRoundedArrowRight01,
-                      size: 20,
-                      color: Color(0xFF999999),
-                    ),
+                  const HugeIcon(
+                    icon: HugeIcons.strokeRoundedArrowRight01,
+                    size: 20,
+                    color: Color(0xFF999999),
+                  ),
                 ],
               ),
             ],
