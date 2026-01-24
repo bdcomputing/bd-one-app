@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bdcomputing/core/routes.dart';
 import 'package:bdcomputing/core/styles.dart';
@@ -148,40 +149,49 @@ class _MfaVerificationScreenState extends ConsumerState<MfaVerificationScreen> {
                 children: List.generate(6, (index) {
                   return SizedBox(
                     width: 45,
-                    child: TextField(
-                      controller: _controllers[index],
-                      focusNode: _focusNodes[index],
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
-                      maxLength: 1,
-                      enabled: !_isLoading,
-                      style: const TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                      ),
-                      decoration: const InputDecoration(
-                        counterText: '',
-                        contentPadding: EdgeInsets.symmetric(vertical: 8),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFFEEEEEE), width: 2),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black, width: 2),
-                        ),
-                      ),
-                      onChanged: (value) {
-                        if (value.isNotEmpty) {
-                          if (index < 5) {
-                            _focusNodes[index + 1].requestFocus();
-                          } else {
-                            _focusNodes[index].unfocus();
-                            _handleVerify();
-                          }
-                        } else if (value.isEmpty && index > 0) {
+                    child: KeyboardListener(
+                      focusNode: FocusNode(), // Wrap in KeyboardListener for backspace detection
+                      onKeyEvent: (event) {
+                        if (event is KeyDownEvent && 
+                            event.logicalKey == LogicalKeyboardKey.backspace &&
+                            _controllers[index].text.isEmpty && 
+                            index > 0) {
                           _focusNodes[index - 1].requestFocus();
+                          _controllers[index - 1].clear();
                         }
                       },
+                      child: TextField(
+                        controller: _controllers[index],
+                        focusNode: _focusNodes[index],
+                        textAlign: TextAlign.center,
+                        keyboardType: TextInputType.number,
+                        maxLength: 1,
+                        enabled: !_isLoading,
+                        style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
+                        decoration: const InputDecoration(
+                          counterText: '',
+                          contentPadding: EdgeInsets.symmetric(vertical: 8),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFFEEEEEE), width: 2),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black, width: 2),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          if (value.isNotEmpty) {
+                            if (index < 5) {
+                              _focusNodes[index + 1].requestFocus();
+                            } else {
+                              _focusNodes[index].unfocus();
+                            }
+                          }
+                        },
+                      ),
                     ),
                   );
                 }),

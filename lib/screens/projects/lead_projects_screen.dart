@@ -49,7 +49,6 @@ class _LeadProjectsScreenState extends ConsumerState<LeadProjectsScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        
         child: Column(
           children: [
             // Header
