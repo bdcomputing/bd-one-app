@@ -3,6 +3,7 @@ import 'package:bdoneapp/core/styles.dart';
 import 'package:bdoneapp/models/common/support_request.dart';
 import 'package:bdoneapp/screens/help/create_support_ticket_sheet.dart';
 import 'package:bdoneapp/providers/support_provider.dart';
+import 'package:bdoneapp/screens/help/support_ticket_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -53,7 +54,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
               children: [
                 Expanded(
@@ -220,7 +221,13 @@ class SupportTicketCard extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          // TODO: View ticket details
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  SupportTicketDetailScreen(ticketId: ticket.id),
+            ),
+          );
         },
         child: Padding(
           padding: const EdgeInsets.all(16),
