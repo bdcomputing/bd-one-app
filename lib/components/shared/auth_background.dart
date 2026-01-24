@@ -51,7 +51,7 @@ class _AuthBackgroundState extends State<AuthBackground>
                     end: Alignment.bottomRight,
                     colors: [
                       Colors.white,
-                      AppColors.primary300.withValues(alpha: 0.005),
+                      AppColors.primary.withValues(alpha: 0.005),
                       AppColors.secondary.withValues(alpha: 0.005),
                       AppColors.accent.withValues(alpha: 0.005),
                       Colors.white,

@@ -22,9 +22,10 @@ class AuthService {
       final payload = (root['data'] ?? root) as Map<String, dynamic>;
 
       // Handle MFA required
-      if (payload['mfaToken'] != null) {
+      final mfaRequired = payload['mfaRequired'] == true || payload['mfaToken'] != null || payload['mfaTicket'] != null;
+      if (mfaRequired) {
         return MfaRequired(
-          mfaToken: payload['mfaToken'] as String,
+          mfaToken: (payload['mfaToken'] ?? payload['mfaTicket'] ?? '') as String,
           mfaMethods: (payload['mfaMethods'] as List?)
                   ?.map((e) => MfaMethod.fromString(e.toString()))
                   .toList() ??
@@ -74,9 +75,10 @@ class AuthService {
       final payload = (root['data'] ?? root) as Map<String, dynamic>;
 
       // Handle MFA required
-      if (payload['mfaToken'] != null) {
+      final mfaRequired = payload['mfaRequired'] == true || payload['mfaToken'] != null || payload['mfaTicket'] != null;
+      if (mfaRequired) {
         return MfaRequired(
-          mfaToken: payload['mfaToken'] as String,
+          mfaToken: (payload['mfaToken'] ?? payload['mfaTicket'] ?? '') as String,
           mfaMethods: (payload['mfaMethods'] as List?)
                   ?.map((e) => MfaMethod.fromString(e.toString()))
                   .toList() ??
@@ -181,7 +183,11 @@ class AuthService {
     try {
       final res = await _apiClient.post(
         ApiEndpoints.mfaVerifyEndpoint,
-        data: {'mfaToken': mfaToken, 'code': code},
+        data: {
+          'mfaToken': mfaToken,
+          'mfaTicket': mfaToken,
+          'code': code,
+        },
       );
 
       final root = res.data as Map<String, dynamic>;
@@ -257,9 +263,10 @@ class AuthService {
     final payload = (root['data'] ?? root) as Map<String, dynamic>;
 
     // Handle MFA required
-    if (payload['mfaToken'] != null) {
+    final mfaRequired = payload['mfaRequired'] == true || payload['mfaToken'] != null || payload['mfaTicket'] != null;
+    if (mfaRequired) {
       return MfaRequired(
-        mfaToken: payload['mfaToken'] as String,
+        mfaToken: (payload['mfaToken'] ?? payload['mfaTicket'] ?? '') as String,
         mfaMethods: (payload['mfaMethods'] as List?)
                 ?.map((e) => MfaMethod.fromString(e.toString()))
                 .toList() ??
@@ -296,7 +303,10 @@ class AuthService {
     try {
       await _apiClient.post(
         ApiEndpoints.mfaResendEndpoint,
-        data: {'mfaToken': mfaToken},
+        data: {
+          'mfaToken': mfaToken,
+          'mfaTicket': mfaToken,
+        },
       );
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
