@@ -488,34 +488,76 @@ class _CreateLeadProjectSheetState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    TextFormField(
-                      controller: _titleController,
-                      decoration: const InputDecoration(
-                        labelText: 'Project Title *',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a title';
-                        }
-                        return null;
-                      },
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text: const TextSpan(
+                            text: 'Project Title',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: ' *',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _titleController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a title';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _descriptionController,
-                      decoration: const InputDecoration(
-                        labelText: 'Project Description *',
-                        hintText: 'Enter a description',
-                        border: OutlineInputBorder(),
-                      ),
-                      maxLines: 4,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a description';
-                        }
-                        return null;
-                      },
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text: const TextSpan(
+                            text: 'Project Description',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: ' *',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _descriptionController,
+                          decoration: const InputDecoration(
+                            hintText: 'Enter a description',
+                            border: OutlineInputBorder(),
+                          ),
+                          maxLines: 4,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a description';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
 
@@ -531,69 +573,111 @@ class _CreateLeadProjectSheetState
                     const SizedBox(height: 16),
 
                     // Source Selector (Required)
-                    DropdownButtonFormField<String>(
-                      value: _selectedSource,
-                      decoration: const InputDecoration(
-                        labelText: 'Source *',
-                        border: OutlineInputBorder(),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: 'website', child: Text('Website')),
-                        DropdownMenuItem(value: 'referral', child: Text('Referral')),
-                        DropdownMenuItem(value: 'social_media', child: Text('Social Media')),
-                        DropdownMenuItem(value: 'email_campaign', child: Text('Email Campaign')),
-                        DropdownMenuItem(value: 'event', child: Text('Event')),
-                        DropdownMenuItem(value: 'advertisement', child: Text('Advertisement')),
-                        DropdownMenuItem(value: 'phone', child: Text('Phone')),
-                        DropdownMenuItem(value: 'walk_in', child: Text('Walk In')),
-                        DropdownMenuItem(value: 'other', child: Text('Other')),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text: const TextSpan(
+                            text: 'Source',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: ' *',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        DropdownButtonFormField<String>(
+                          value: _selectedSource,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                          items: const [
+                            DropdownMenuItem(value: 'website', child: Text('Website')),
+                            DropdownMenuItem(value: 'referral', child: Text('Referral')),
+                            DropdownMenuItem(value: 'social_media', child: Text('Social Media')),
+                            DropdownMenuItem(value: 'email_campaign', child: Text('Email Campaign')),
+                            DropdownMenuItem(value: 'event', child: Text('Event')),
+                            DropdownMenuItem(value: 'advertisement', child: Text('Advertisement')),
+                            DropdownMenuItem(value: 'phone', child: Text('Phone')),
+                            DropdownMenuItem(value: 'walk_in', child: Text('Walk In')),
+                            DropdownMenuItem(value: 'other', child: Text('Other')),
+                          ],
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select a source';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                _selectedSource = value;
+                              });
+                            }
+                          },
+                        ),
                       ],
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please select a source';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        if (value != null) {
-                          setState(() {
-                            _selectedSource = value;
-                          });
-                        }
-                      },
                     ),
                     const SizedBox(height: 16),
 
-                    // Project Type Selector
-                    DropdownButtonFormField<String>(
-                      value: _selectedProjectType,
-                      decoration: const InputDecoration(
-                        labelText: 'Project Type *',
-                        border: OutlineInputBorder(),
-                      ),
-                      items: const [
-                        DropdownMenuItem(
-                          value: 'service',
-                          child: Text('Service'),
+                    // Project Type Selector (Required)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text: const TextSpan(
+                            text: 'Project Type',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: ' *',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ],
+                          ),
                         ),
-                        DropdownMenuItem(
-                          value: 'product',
-                          child: Text('Product'),
+                        const SizedBox(height: 8),
+                        DropdownButtonFormField<String>(
+                          value: _selectedProjectType,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'service',
+                              child: Text('Service'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'product',
+                              child: Text('Product'),
+                            ),
+                          ],
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select a project type';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                _selectedProjectType = value;
+                              });
+                            }
+                          },
                         ),
                       ],
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please select a project type';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        if (value != null) {
-                          setState(() {
-                            _selectedProjectType = value;
-                          });
-                        }
-                      },
                     ),
                     const SizedBox(height: 16),
 
