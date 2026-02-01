@@ -10,6 +10,7 @@ import 'package:bdoneapp/screens/billing/invoices_screen.dart';
 import 'package:bdoneapp/providers/home_provider.dart';
 import 'package:bdoneapp/providers/payments_provider.dart';
 import 'package:bdoneapp/screens/payments/payments_screen.dart';
+import 'package:bdoneapp/screens/profile/profile_screen.dart';
 import 'package:bdoneapp/screens/quotes/lead_projects_screen.dart';
 import 'package:bdoneapp/screens/help/support_screen.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
       ref.read(paymentsProvider.notifier).refresh(),
     ]);
   }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
@@ -126,8 +128,8 @@ class _HomeTabState extends ConsumerState<HomeTab>
           ),
           const Spacer(),
           // Container(
-          //   width: 40,
-          //   height: 40,
+          //   width: 38,
+          //   height: 38,
           //   decoration: BoxDecoration(
           //     color: AppColors.surface,
           //     borderRadius: BorderRadius.circular(12),
@@ -135,46 +137,39 @@ class _HomeTabState extends ConsumerState<HomeTab>
           //   ),
           //   child: const HugeIcon(
           //     icon: HugeIcons.strokeRoundedNotification02,
-          //     size: 20,
+          //     size: 16,
           //     color: AppColors.textPrimary,
           //   ),
           // ),
-          // const SizedBox(width: 12),
-          // Container(
-          //   width: 40,
-          //   height: 40,
-          //   decoration: BoxDecoration(
-          //     color: AppColors.surface,
-          //     borderRadius: BorderRadius.circular(12),
-          //     border: Border.all(color: AppColors.border),
-          //   ),
-          //   child: const HugeIcon(
-          //     icon: HugeIcons.strokeRoundedAiScan,
-          //     size: 20,
-          //     color: AppColors.textPrimary,
-          //   ),
-          // ),
-          // const SizedBox(width: 12),
-          // Container(
-          //   width: 32,
-          //   height: 32,
-          //   decoration: const BoxDecoration(
-          //     gradient: LinearGradient(
-          //       colors: [AppColors.primary, AppColors.primary700],
-          //       begin: Alignment.topLeft,
-          //       end: Alignment.bottomRight,
-          //     ),
-          //     shape: BoxShape.circle,
-          //   ),
-          //   child: const Center(
-          //     child: HugeIcon(
-          //       icon: HugeIcons.strokeRoundedAnalytics01,
-          //       color: Colors.white,
-          //       size: 18,
-          //     ),
-          //   ),
-          // ),
-        
+          const SizedBox(width: 12),
+          InkWell(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ProfileScreen(),
+                ),
+              );
+            },
+            child: Container(
+              width: 38,
+              height: 38,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppColors.primary, AppColors.primary700],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                shape: BoxShape.circle,
+              ),
+              child: const Center(
+                child: HugeIcon(
+                  icon: HugeIcons.strokeRoundedUser,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -202,17 +197,13 @@ class _HomeTabState extends ConsumerState<HomeTab>
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         gradient: const LinearGradient(
-          colors: [
-            AppColors.primary900,
-            AppColors.primary800,
-            AppColors.accent,
-          ],
+          colors: [AppColors.primary, AppColors.primary, Colors.white],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha:0.3),
+            color: AppColors.primary.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -231,7 +222,8 @@ class _HomeTabState extends ConsumerState<HomeTab>
                   animation: _controller,
                   builder: (context, child) {
                     // Pulse scale between 1.0 and 1.1
-                    final pulse = 1.0 + 0.05 * (1 - (2 * _controller.value - 1).abs());
+                    final pulse =
+                        1.0 + 0.05 * (1 - (2 * _controller.value - 1).abs());
 
                     return Transform.scale(
                       scale: pulse,
@@ -248,8 +240,8 @@ class _HomeTabState extends ConsumerState<HomeTab>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          Colors.white.withValues(alpha:0.1),
-                          Colors.white.withValues(alpha:0.0),
+                          Colors.white.withValues(alpha: 0.1),
+                          Colors.white.withValues(alpha: 0.0),
                         ],
                       ),
                     ),
@@ -265,7 +257,12 @@ class _HomeTabState extends ConsumerState<HomeTab>
                 child: AnimatedBuilder(
                   animation: _controller,
                   builder: (context, child) {
-                     final pulse = 1.0 + 0.08 * (1 - (2 * ((_controller.value + 0.5) % 1.0) - 1).abs());
+                    final pulse =
+                        1.0 +
+                        0.08 *
+                            (1 -
+                                (2 * ((_controller.value + 0.5) % 1.0) - 1)
+                                    .abs());
                     return Transform.scale(
                       scale: pulse,
                       child: Transform.rotate(
@@ -281,8 +278,8 @@ class _HomeTabState extends ConsumerState<HomeTab>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          Colors.white.withValues(alpha:0.08),
-                          Colors.white.withValues(alpha:0.0),
+                          Colors.white.withValues(alpha: 0.08),
+                          Colors.white.withValues(alpha: 0.0),
                         ],
                       ),
                     ),
@@ -299,9 +296,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
                 width: 200,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: const NetworkImage(
-                      'https://bdcomputing.co.ke/assets/images/daisy.jpg',
-                    ),
+                    image: const AssetImage('assets/images/general/daisy.jpg'),
                     fit: BoxFit.contain,
                     colorFilter: ColorFilter.mode(
                       AppColors.primary.withValues(alpha: 0.3),
@@ -311,7 +306,6 @@ class _HomeTabState extends ConsumerState<HomeTab>
                 ),
               ),
             ),
-
 
             Padding(
               padding: const EdgeInsets.all(24),
@@ -449,7 +443,9 @@ class _HomeTabState extends ConsumerState<HomeTab>
                 AppColors.accent,
                 () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const LeadProjectsScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const LeadProjectsScreen(),
+                  ),
                 ),
               ),
               _buildActionItem(
@@ -459,7 +455,9 @@ class _HomeTabState extends ConsumerState<HomeTab>
                 AppColors.accent,
                 () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const PaymentsScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const PaymentsScreen(),
+                  ),
                 ),
               ),
               _buildActionItem(
@@ -469,7 +467,9 @@ class _HomeTabState extends ConsumerState<HomeTab>
                 AppColors.accent,
                 () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const BillingScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const BillingScreen(),
+                  ),
                 ),
               ),
               _buildActionItem(
@@ -479,7 +479,9 @@ class _HomeTabState extends ConsumerState<HomeTab>
                 AppColors.accent,
                 () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SupportScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const SupportScreen(),
+                  ),
                 ),
               ),
             ],
@@ -534,7 +536,10 @@ class _HomeTabState extends ConsumerState<HomeTab>
     );
   }
 
-  Widget _buildRecentTransactions(BuildContext context, List<BaseTransaction> transactions) {
+  Widget _buildRecentTransactions(
+    BuildContext context,
+    List<BaseTransaction> transactions,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -630,7 +635,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: AppColors.textPrimary.withValues(alpha:0.04),
+              color: AppColors.textPrimary.withValues(alpha: 0.04),
               blurRadius: 10,
               offset: const Offset(0, 2),
             ),
@@ -645,7 +650,11 @@ class _HomeTabState extends ConsumerState<HomeTab>
                 color: transaction.statusColor,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: HugeIcon(icon: transaction.icon, size: 24, color: Colors.white),
+              child: HugeIcon(
+                icon: transaction.icon,
+                size: 24,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -675,7 +684,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
-                      color: AppColors.textSecondary.withValues(alpha:0.7),
+                      color: AppColors.textSecondary.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -694,9 +703,12 @@ class _HomeTabState extends ConsumerState<HomeTab>
                 ),
                 const SizedBox(height: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: transaction.statusColor.withValues(alpha:0.1),
+                    color: transaction.statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(

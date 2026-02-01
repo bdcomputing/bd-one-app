@@ -6,6 +6,7 @@ import 'package:bdoneapp/core/utils/api_client.dart';
 import 'package:bdoneapp/services/settings_service.dart';
 import 'package:bdoneapp/services/terms_service.dart';
 import 'package:bdoneapp/services/invoice_service.dart';
+import 'package:bdoneapp/services/statements_service.dart';
 import 'package:bdoneapp/services/payment_service.dart';
 import 'package:bdoneapp/services/quote_service.dart';
 import 'package:bdoneapp/services/project_service.dart';
@@ -45,6 +46,11 @@ final termsServiceProvider = Provider<TermsService>((ref) {
 final invoiceServiceProvider = Provider<InvoiceService>((ref) {
   final client = ref.watch(apiClientProvider);
   return InvoiceService(apiClient: client);
+});
+
+final statementsServiceProvider = Provider<StatementsService>((ref) {
+  final client = ref.watch(apiClientProvider);
+  return StatementsService(apiClient: client);
 });
 
 final paymentServiceProvider = Provider<PaymentService>((ref) {

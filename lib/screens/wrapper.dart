@@ -148,10 +148,10 @@ class _HomeWrapperState extends State<HomeWrapper> {
 
                 const BottomNavigationBarItem(
                   icon: HugeIcon(
-                    icon: HugeIcons.strokeRoundedUser,
+                    icon: HugeIcons.strokeRoundedFileDownload,
                     size: 30,
                   ),
-                  label: 'Profile',
+                  label: 'Statement',
                 ),
               ],
               onTap: (index) {

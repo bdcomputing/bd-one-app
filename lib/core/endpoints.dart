@@ -49,6 +49,8 @@ class ApiEndpoints {
   // Invoices
   static const String invoices = '$baseUrl/invoices';
 
+  // Statements
+  static const String statements = '$baseUrl/statements';
 
   // Settings
   static const String settings = '$baseUrl/settings';
