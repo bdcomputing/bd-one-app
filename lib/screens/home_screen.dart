@@ -355,7 +355,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
                   const Row(
                     children: [
                       Text(
-                        'Client Balance',
+                        'My Balance',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
