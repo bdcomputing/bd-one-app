@@ -81,7 +81,9 @@ class StatementsService {
     final response = await _apiClient.get(url);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return response.data['data'];
+      // Backend now returns IResponse wrapper, extract the actual data
+      final responseData = response.data['data'];
+      return responseData ?? {};
     }
     throw Exception('Failed to fetch statement data: ${response.statusCode}');
   }
