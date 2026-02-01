@@ -3,7 +3,6 @@ import 'package:bdoneapp/models/common/statement.dart';
 import 'package:bdoneapp/models/common/request_statement_dto.dart';
 import 'package:bdoneapp/core/endpoints.dart';
 import 'package:bdoneapp/models/common/paginated_data.dart';
-import 'package:bdoneapp/models/common/http_response.dart';
 
 class StatementsService {
   final ApiClient _apiClient;
