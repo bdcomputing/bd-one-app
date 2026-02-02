@@ -12,6 +12,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   dio: ^5.2.1
   equatable: ^2.0.7
+  file_picker: ^10.3.8
+  fl_chart:
   flutter:
     sdk: flutter
   flutter_html: ^3.0.0
@@ -19,7 +21,6 @@ dependencies:
   flutter_riverpod:
   flutter_secure_storage: ^10.0.0
   fluttertoast:
-  fl_chart:
   geocoding: ^4.0.0
   google_fonts: ^8.0.0
   google_sign_in: ^6.2.1
@@ -27,17 +28,16 @@ dependencies:
   hugeicons: ^1.0.0
   intl: ^0.20.2
   logger: ^2.6.2
+  path_provider: ^2.1.5
   permission_handler: ^12.0.1
   provider: ^6.0.5
   qr_flutter: ^4.1.0
   riverpod: ^3.0.1
   shared_preferences: ^2.2.2
   socket_io_client: ^3.1.2
+  syncfusion_flutter_pdfviewer: ^32.1.24
   url_launcher: ^6.3.2
   uuid: ^4.5.1
-  file_picker: ^10.3.8
-  path_provider: ^2.1.5
-  syncfusion_flutter_pdfviewer: ^32.1.24
 
 
 dev_dependencies:
