@@ -48,7 +48,7 @@ class SectionCard extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
-              if (trailing != null) trailing!,
+              ?trailing,
             ],
           ),
           const SizedBox(height: 16),
