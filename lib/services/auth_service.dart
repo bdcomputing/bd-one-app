@@ -15,7 +15,7 @@ class AuthService {
     try {
       final res = await _apiClient.post(
         ApiEndpoints.loginWithEmailEndpoint,
-        data: {'email': email, 'password': password},
+        data: {'email': email, 'password': password, 'rememberMe': true},
       );
 
       final root = res.data as Map<String, dynamic>;
@@ -68,7 +68,7 @@ class AuthService {
     try {
       final res = await _apiClient.post(
         ApiEndpoints.loginWithPhoneEndpoint,
-        data: {'phone': phone, 'password': password},
+        data: {'phone': phone, 'password': password, 'rememberMe': true},
       );
 
       final root = res.data as Map<String, dynamic>;
